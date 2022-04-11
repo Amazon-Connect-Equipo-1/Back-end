@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/Amazon-Connect-Equipo-1/Back-end/issues"
   },
-  "homepage": "https://github.com/Amazon-Connect-Equipo-1/Back-end#readme"
+  "homepage": "https://github.com/Amazon-Connect-Equipo-1/Back-end#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  }
 }
