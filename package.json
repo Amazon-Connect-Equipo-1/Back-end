@@ -1,0 +1,20 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "description": "Repositorio para todo el back-end de la aplicación para Amazon Connect.\r Repository for the back-end functionalities for the Amazon Connect application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amazon-Connect-Equipo-1/Back-end.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Amazon-Connect-Equipo-1/Back-end/issues"
+  },
+  "homepage": "https://github.com/Amazon-Connect-Equipo-1/Back-end#readme"
+}
