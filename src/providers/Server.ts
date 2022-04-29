@@ -1,4 +1,5 @@
-import express,{ Response } from 'express';
+import express, { Response } from 'express';
+import AbstractController from '../controllers/AbstractController';
 import db from '../models';
 
 class Server{
@@ -8,7 +9,7 @@ class Server{
     private env: string;
 
     //Constructor
-    constructor(appInit:{port:number;middlewares:any[];controllers:any[];env:string}){
+    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string}){
         this.app = express();
         this.port = appInit.port;
         this.env = appInit.env;
@@ -24,7 +25,7 @@ class Server{
     }
 
     //Load routes
-    private routes(controllers:any[]):void{
+    private routes(controllers:AbstractController[]):void{
         //Auxiliar route to verify app is functioning
         this.app.get('/', (_:any, res:Response) => 
                     res.status(200).send({
@@ -33,7 +34,7 @@ class Server{
                     })         
         )
         //Add controllers
-        controllers.forEach((controller:any) => {
+        controllers.forEach((controller:AbstractController) => {
             this.app.use(`/${controller.prefix}`, controller.router)
         });
     }
