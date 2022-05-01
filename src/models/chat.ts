@@ -6,7 +6,6 @@ interface ChatAttributes{
   client_id: string,
   satisfaction: number,
   date: string,
-  tags: string,
   comments: string
 };
 
@@ -16,18 +15,15 @@ module.exports = (sequelize:any, DataTypes:any) => {
     client_id!: string;
     satisfaction!: number;
     date!: string;
-    tags!: string;
     comments!: string;
     
     static associate(models:any) {
-      /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-      // define association here
+      Chat.belongsTo(models.Client, {
+        foreignKey: 'client_id'
+      });
     }
   }
+
   Chat.init({
     chat_id: {
       type: DataTypes.INTEGER,
@@ -47,10 +43,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.DATE,
       allowNull: false
     },
-    tags: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
     comments: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -59,5 +51,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     sequelize,
     modelName: 'Chat',
   });
+  
   return Chat;
 };

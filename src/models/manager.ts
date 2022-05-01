@@ -7,6 +7,7 @@ interface ManagerAttributes{
   manager_surname: string,
   password: string,
   email: string,
+  profile_picture: string,
   is_quality: boolean
 };
 
@@ -17,17 +18,20 @@ module.exports = (sequelize:any, DataTypes:any) => {
     manager_surname!: string;
     password!: string;
     email!: string;
+    profile_picture!: string;
     is_quality!: boolean;
     
     static associate(models:any) {
-      /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-      // define association here
+      Manager.hasMany(models.Comments, {
+        foreignKey: 'super_id'
+      });
+
+      Manager.hasMany(models.Agent, {
+        foreignKey: 'super_id'
+      });
     }
   }
+
   Manager.init({
     manager_id: {
       type: DataTypes.UUID,
@@ -51,6 +55,10 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    profile_picture: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     is_quality: {
       type: DataTypes.BOOLEAN,
       allowNull: false
@@ -59,5 +67,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     sequelize,
     modelName: 'Manager',
   });
+
   return Manager;
 };

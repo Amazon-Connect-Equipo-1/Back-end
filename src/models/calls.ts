@@ -10,7 +10,6 @@ interface CallAttributes{
   duration: number,
   satisfaction: number,
   date: string,
-  tags: string,
   comments: string
 };
 
@@ -24,18 +23,19 @@ module.exports = (sequelize:any, DataTypes:any) => {
     duration!: number;
     satisfaction!: number;
     date!: string;
-    tags!: string;
     comments!: string;
     
     static associate(models:any) {
-      /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-      // define association here
+      Calls.belongsTo(models.Agent, {
+        foreignKey: 'agent_id'
+      });
+
+      Calls.belongsTo(models.Client, {
+        foreignKey: 'client_id'
+      });
     }
   }
+
   Calls.init({
     call_id: {
       type: DataTypes.INTEGER,
@@ -71,10 +71,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.DATE,
       allowNull: false
     },
-    tags: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
     comments: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -83,5 +79,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     sequelize,
     modelName: 'Calls',
   });
+
   return Calls;
 };

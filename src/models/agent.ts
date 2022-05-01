@@ -8,6 +8,7 @@ interface AgentAttributes{
   surname: string,
   password: string,
   email: string,
+  profile_picture: string,
   rating: number,
   status: number,
   calls: number
@@ -21,19 +22,26 @@ module.exports = (sequelize:any, DataTypes:any) => {
     surname!: string;
     password!: string;
     email!: string;
+    profile_picture!: string;
     rating!: number;
     status!: number;
     calls!: number;
     
     static associate(models:any) {
-      /*
-        Helper method for defining associations.
-        This method is not a part of Sequelize lifecycle.
-        The `models/index` file will call this method automatically.
-     */
-      // define association here
+      Agent.hasMany(models.Calls, {
+        foreignKey: 'agent_id'
+      });
+
+      Agent.hasMany(models.Comments, {
+        foreignKey: 'agent_id'
+      });
+
+      Agent.belongsTo(models.Manager, {
+        foreignKey: 'super_id'
+      });
     }
   }
+
   Agent.init({
     agent_id: {
       type: DataTypes.UUID,
@@ -62,6 +70,10 @@ module.exports = (sequelize:any, DataTypes:any) => {
       allowNull: false,
       unique: true
     },
+    profile_picture: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     rating: {
       type: DataTypes.DECIMAL(2, 1),
       allowNull: true
@@ -78,5 +90,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     sequelize,
     modelName: 'Agent',
   });
+  
   return Agent;
 };

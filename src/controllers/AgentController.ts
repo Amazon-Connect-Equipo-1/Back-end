@@ -16,7 +16,7 @@ class UserController extends AbstractController{
 
     //Route configuration
     protected initRoutes(): void {
-        //Here add all routes the user controller has
+        //this.router.get('/readUser', this.getReadUser.bind(this));        
     }
 
     //Controllers

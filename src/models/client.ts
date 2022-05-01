@@ -11,9 +11,6 @@ interface ClientAttributes{
 
 module.exports = (sequelize:any, DataTypes:any) => {
   class Client extends Model<ClientAttributes> implements ClientAttributes {
-    /*
-    Class description
-    */
     client_id!: string;
     client_name!: string;
     password!: string;
@@ -21,17 +18,16 @@ module.exports = (sequelize:any, DataTypes:any) => {
     phone_number!: string;
     
     static associate(models:any) {
-      /*
-      Helper method for defining associations.
-      This method is not a part of Sequelize lifecycle.
-      The `models/index` file will call this method automatically.
-     */
+      Client.hasMany(models.Chat, {
+        foreignKey: 'client_id'
+      });
 
-      /*Client.belongsToMany(models.Projects, {
-        through: 'ProjectAssignments'
-      });*/
+      Client.hasMany(models.Calls, {
+        foreignKey: 'client_id'
+      });
     }
   }
+  
   Client.init({
     //Definition of the characteristics of the table attributes
     client_id: {
@@ -61,5 +57,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     sequelize,
     modelName: 'Client',
   });
+
   return Client;
 };

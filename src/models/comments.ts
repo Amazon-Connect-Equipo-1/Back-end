@@ -18,14 +18,16 @@ module.exports = (sequelize:any, DataTypes:any) => {
     seen!: boolean;
     
     static associate(models:any) {
-      /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-      // define association here
+      Comments.belongsTo(models.Manager, {
+        foreignKey: 'super_id'
+      });
+
+      Comments.belongsTo(models.Agent, {
+        foreignKey: 'agent_id'
+      });
     }
   }
+
   Comments.init({
     comment_id: {
       type: DataTypes.INTEGER,
@@ -53,5 +55,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     sequelize,
     modelName: 'Comments',
   });
+
   return Comments;
 };

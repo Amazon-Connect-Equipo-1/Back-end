@@ -10,7 +10,9 @@ const ProcessedRecordingsModel = dynamodb.define('processed_recordings', {
         superId: dynamodb.types.uuid(),
         callId: Joi.number(),
         processedRecording: Joi.string(),
-        length: Joi.number()
+        length: Joi.number(),
+        date: Joi.date(),
+        tags: Joi.array()
     },
     tableName: `Processed Recordings${PREFIX_TABLE}` 
 });

@@ -8,7 +8,7 @@ const ChatRecordingsModel = dynamodb.define('chat_recordings', {
     schema: {
         ChatRecordingId: dynamodb.types.uuid(),
         chatId: Joi.number(),
-        chatRecroding: Joi.string()
+        chatRecording: Joi.string()
     },
     tableName: `Chat Recordings${PREFIX_TABLE}` 
 });
