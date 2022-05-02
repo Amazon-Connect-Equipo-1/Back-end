@@ -1,3 +1,14 @@
+/*
+index.ts
+Author:
+- Israel Sánchez Miranda
+
+Creation date: 28/04/2022
+Last modification date: 29/04/2022
+
+Index that defines all the sensitive and confidential data within the project
+*/
+
 export const PORT:number = process.env.PORT ? + process.env.PORT: 8080;
 export const NODE_ENV:string = process.env.NODE_ENV ? process.env.NODE_ENV as string : 'development';
 export const DB_NAME = process.env.DB_NAME ? process.env.DB_NAME : 'test';

@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/Amazon-Connect-Equipo-1/Back-end#readme",
   "dependencies": {
-    "aws-sdk": "^2.1124.0",
+    "aws-sdk": "^2.1125.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "dynamodb": "^1.3.0",

@@ -1,3 +1,14 @@
+/*
+client.ts
+Author:
+- Israel Sánchez Miranda
+
+Creation date: 28/04/2022
+Last modification date: 01/05/2022
+
+Program that defines the table Client model and its relationships
+*/
+
 import { Model, UUIDV4 } from 'sequelize';
 
 //Interface that defines the attributes a register in the table Client needs
@@ -11,13 +22,23 @@ interface ClientAttributes{
 
 module.exports = (sequelize:any, DataTypes:any) => {
   class Client extends Model<ClientAttributes> implements ClientAttributes {
+    /*
+    Class that implements the model of the Client table
+    */
+   
+    //Attributes
     client_id!: string;
     client_name!: string;
     password!: string;
     email!: string;
     phone_number!: string;
     
+    //Methods
     static associate(models:any) {
+      /*
+      Method called by the index.ts program in the models folder
+      that creates and implements all the relationships the table Client has
+      */
       Client.hasMany(models.Chat, {
         foreignKey: 'client_id'
       });
@@ -29,7 +50,9 @@ module.exports = (sequelize:any, DataTypes:any) => {
   }
   
   Client.init({
-    //Definition of the characteristics of the table attributes
+    /*
+    Method that initializes the Client table and its attributes
+    */
     client_id: {
       type: DataTypes.UUID,
       defaultValue: UUIDV4,

@@ -1,3 +1,14 @@
+/*
+chat.ts
+Author:
+- Israel Sánchez Miranda
+
+Creation date: 28/04/2022
+Last modification date: 01/05/2022
+
+Program that defines the table Chat model and its relationships
+*/
+
 import { Model } from 'sequelize';
 
 //Interface that defines the attributes a register in the table Chat needs
@@ -11,13 +22,23 @@ interface ChatAttributes{
 
 module.exports = (sequelize:any, DataTypes:any) => {
   class Chat extends Model<ChatAttributes> implements ChatAttributes {
+    /*
+    Class that implements the model of the Chat table
+    */
+   
+    //Attributes
     chat_id!: number;
     client_id!: string;
     satisfaction!: number;
     date!: string;
     comments!: string;
     
+    //Methods
     static associate(models:any) {
+      /*
+      Method called by the index.ts program in the models folder
+      that creates and implements all the relationships the table Chat has
+      */
       Chat.belongsTo(models.Client, {
         foreignKey: 'client_id'
       });
@@ -25,6 +46,9 @@ module.exports = (sequelize:any, DataTypes:any) => {
   }
 
   Chat.init({
+    /*
+    Method that initializes the Chat table and its attributes
+    */
     chat_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

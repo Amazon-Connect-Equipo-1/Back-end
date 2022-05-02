@@ -1,3 +1,14 @@
+/*
+config.ts
+Author:
+- Israel Sánchez Miranda
+
+Creation date: 28/04/2022
+Last modification date: 28/04/2022
+
+Program that stores all of the credentials related to AWS and the RDS database
+*/
+
 import { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST } from './index';
 
 export default{

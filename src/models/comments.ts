@@ -1,3 +1,14 @@
+/*
+comments.ts
+Author:
+- Israel Sánchez Miranda
+
+Creation date: 28/04/2022
+Last modification date: 01/05/2022
+
+Program that defines the table Comments model and its relationships
+*/
+
 import { Model } from 'sequelize';
 
 //Interface that defines the attributes a register in the table Comments needs
@@ -11,13 +22,23 @@ interface CommentAttributes{
 
 module.exports = (sequelize:any, DataTypes:any) => {
   class Comments extends Model<CommentAttributes> implements CommentAttributes {
+    /*
+    Class that implements the model of the Comments table
+    */
+   
+    //Attributes
     comment_id!: number;
     super_id!: string;
     agent_id!: string;
     comment!: string;
     seen!: boolean;
     
+    //Methods
     static associate(models:any) {
+      /*
+      Method called by the index.ts program in the models folder
+      that creates and implements all the relationships the table Comments has
+      */
       Comments.belongsTo(models.Manager, {
         foreignKey: 'super_id'
       });
@@ -29,6 +50,9 @@ module.exports = (sequelize:any, DataTypes:any) => {
   }
 
   Comments.init({
+    /*
+    Method that initializes the Agent table and its attributes
+    */
     comment_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

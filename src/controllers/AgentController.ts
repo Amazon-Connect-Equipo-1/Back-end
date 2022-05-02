@@ -1,3 +1,15 @@
+/*
+AgentController.ts
+Author:
+- Israel Sánchez Miranda
+- Erick Hernández Silva
+
+Creation date: 28/04/2022
+Last modification date: 01/05/2022
+
+Program that defines the controller for the Agent, its routes and functionalities
+*/
+
 import AbstractController from './AbstractController';
 
 class UserController extends AbstractController{
