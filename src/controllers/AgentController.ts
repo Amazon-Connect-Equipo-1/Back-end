@@ -33,9 +33,10 @@ class AgentController extends AbstractController{
     protected initRoutes(): void {
         this.router.post('/agentLogin', this.postAgentLogin.bind(this)); 
         this.router.post('/createAgents', this.postCreateAgents.bind(this));   
+        this.router.get('/agentProfile', this.getAgentProfile.bind(this));
        /*  this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this)); 
         this.router.post('/agentResetPassword', this.postAgentResetPassword.bind(this));
-        this.router.get('/agentProfile', this.getAgentProfile.bind(this)); */     
+         */     
     }
 
     //Controllers
@@ -45,7 +46,8 @@ class AgentController extends AbstractController{
                 where: {
                     email: req.body.email,
                     password: req.body.password
-                }
+                },
+                raw: true
             });
 
             if(result.length > 0){
@@ -69,6 +71,27 @@ class AgentController extends AbstractController{
         }catch(err:any){
             console.log(err);
             res.status(500).send("Error")
+        }
+    }
+
+    private async getAgentProfile(req:Request, res:Response){
+        try{
+            let result:any = await db["Agent"].findAll({
+                where: {
+                    email: req.body.email
+                },
+                raw: true
+            });
+            if(result.length > 0){
+                console.log(result);
+                res.status(200).send(result);
+            }else{
+                console.log(`No agent with email: ${req.body.email} found`);
+                res.status(500).send(console.log(`No agent with email: ${req.body.email} found`));
+            }
+        }catch(err:any){
+            console.log(err);
+            res.status(500).send("Error retrieving agent data")
         }
     }
 }
