@@ -22,7 +22,8 @@ interface AgentAttributes{
   profile_picture: string,
   rating: number,
   status: number,
-  calls: number
+  calls: number,
+  security_token: string
 };
 
 module.exports = (sequelize:any, DataTypes:any) => {
@@ -42,6 +43,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     rating!: number;
     status!: number;
     calls!: number;
+    security_token!: string;
     
     //Methods
     static associate(models:any) {
@@ -109,7 +111,11 @@ module.exports = (sequelize:any, DataTypes:any) => {
     calls: {
       type: DataTypes.INTEGER,
       allowNull: false
-    }
+    },
+    security_token: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
   }, {
     sequelize,
     modelName: 'Agent',

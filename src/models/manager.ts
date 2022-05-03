@@ -19,7 +19,8 @@ interface ManagerAttributes{
   password: string,
   email: string,
   profile_picture: string,
-  is_quality: boolean
+  is_quality: boolean,
+  security_token: string
 };
 
 module.exports = (sequelize:any, DataTypes:any) => {
@@ -36,6 +37,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     email!: string;
     profile_picture!: string;
     is_quality!: boolean;
+    security_token!: string;
     
     //Methods
     static associate(models:any) {
@@ -86,7 +88,11 @@ module.exports = (sequelize:any, DataTypes:any) => {
     is_quality: {
       type: DataTypes.BOOLEAN,
       allowNull: false
-    }
+    },
+    security_token: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
   }, {
     sequelize,
     modelName: 'Manager',

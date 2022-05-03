@@ -12,9 +12,11 @@ Program that creates the Server and initializes it
 
 import Server from './providers/Server';
 import AgentController from './controllers/AgentController';
+import ManagerController from './controllers/ManagerController';
 import { PORT, NODE_ENV } from './config';
 import express from 'express';
 import cors from 'cors';
+
 
 const app = new Server({
     //Parameters of the server
@@ -27,7 +29,8 @@ const app = new Server({
     ],
     controllers: [
         //Controllers that will be loaded
-        AgentController.getInstance()
+        AgentController.getInstance(),
+        ManagerController.getInstance()
     ],
     env: NODE_ENV
 });
