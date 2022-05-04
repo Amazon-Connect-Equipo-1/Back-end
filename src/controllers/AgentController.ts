@@ -15,6 +15,7 @@ import AbstractController from './AbstractController';
 import {Request, Response} from 'express';
 import db from '../models/index';
 import crypto from 'crypto';
+import fetch from 'node-fetch';
 
 class AgentController extends AbstractController{
     //Singleton
@@ -36,9 +37,7 @@ class AgentController extends AbstractController{
         this.router.post('/createAgents', this.postCreateAgents.bind(this));   
         this.router.get('/agentProfile', this.getAgentProfile.bind(this));
         this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this));
-       /*  
-        this.router.post('/agentResetPassword', this.postAgentResetPassword.bind(this));
-         */     
+        this.router.get('/agentResetPassword', this.getAgentResetPassword.bind(this));    
     }
 
     //Controllers
@@ -98,8 +97,49 @@ class AgentController extends AbstractController{
     }
 
     private async postAgentForgotPassword(req:Request, res:Response){
-        const token = crypto.createCipheriv('aes-256-ocb', 'owo', crypto.randomBytes(16));
-        
+        //const token = crypto.createCipheriv('aes-256-ocb', 'owo', crypto.randomBytes(16));
+        const token = "12345"
+        await db["Agent"].update({security_token: token}, {
+            where: {
+                email: req.body.email
+            }
+        });
+
+        const payload ={
+            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will bbe req.body.mail
+            "message": "Click the following link to reset your password: http://localhost:8080/agent/agentResetPassword?token=" + token,
+            "subject": "Request to change your password."
+        }
+
+        try{
+            await fetch('https://y63tjetjmb.execute-api.us-west-2.amazonaws.com/default/emailMessaging', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            res.status(200).send("Password resseting email sent!");
+        }catch(err:any){
+            console.log(err);
+            res.status(500).send("Error sending the mail");
+        }
+    }
+
+    private async getAgentResetPassword(req:Request, res:Response){
+        const query_result = await db["Agent"].findAll({
+            where: {
+                security_token: req.query.token
+            }, 
+            raw: true
+        });
+        if(query_result.length > 0){
+            await db["Agent"].update({password: "WebiWabo"}, {
+                where: {
+                    security_token: req.query.token
+                }
+            });
+            res.status(200).send("Password changed succesfully!");
+        }else{
+            res.status(500).send("Requested token has expired.")
+        }
     }
 }
 
