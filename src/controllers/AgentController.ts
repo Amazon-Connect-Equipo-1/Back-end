@@ -98,15 +98,14 @@ class AgentController extends AbstractController{
 
     private async postAgentForgotPassword(req:Request, res:Response){
         //Token and its keys to be encrypted
-        var token = req.body.email + "$" + new Date().getTime();
-        console.log(token);
+        var token = req.body.email + "$" + Date.now();
         const iv = crypto.randomBytes(16);
         const key = crypto.randomBytes(32);
 
         //Creating the cypher for the token
         const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
 
-        //Encryptinh the token
+        //Encrypting the token
         var encrypted_token = cipher.update(token);
         encrypted_token = Buffer.concat([encrypted_token, cipher.final()]);
         
@@ -116,12 +115,17 @@ class AgentController extends AbstractController{
                 email: req.body.email
             }
         });
+         
+        //Building the message
+        const message = "Click the following link to reset your password:"
+        const link = "http://localhost:8080/agent/agentResetPassword?token=" 
+        + encrypted_token.toString('hex') + "$" + iv.toString('hex') + "$" + key.toString('hex');
 
         //Payload to fetch emailMessaging API
         const payload ={
-            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will be req.body.mail
-            "message": "Click the following link to reset your password: \n http://localhost:8080/agent/agentResetPassword?token=" 
-                + encrypted_token.toString('hex') + "$" + iv.toString('hex') + "$" + key.toString('hex'),
+            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will be req.body.email
+            "message": message,
+            "link": link,
             "subject": "Request to change your password."
         }
          console.log(payload);
@@ -164,14 +168,22 @@ class AgentController extends AbstractController{
         });
 
         if(query_result.length > 0){
-            await db["Agent"].update({password: "WebiWabo", security_token: null}, {
-                where: {
-                    security_token: token
-                }
-            });
-            res.status(200).send("Password changed succesfully!");
+            //Obtaining timestamp related to the token
+            const timestamp = token.split("$")[1];
+            if(Date.now() - parseInt(timestamp) < 300000){
+                //If token is still valid the password changes *CHANGE PASSWORD IN COGNITO TOO*
+                await db["Agent"].update({password: "WebiWabo", security_token: null}, {
+                    where: {
+                        security_token: token
+                    }
+                });
+                res.status(200).send("Password changed succesfully!");
+            } else {
+                //If time exceeds 5 min the token expired
+                res.status(500).send("Requested token has expired.");
+            }
         }else{
-            res.status(500).send("Requested token has expired.")
+            res.status(500).send("Invalid token.")
         }
     }
 }
