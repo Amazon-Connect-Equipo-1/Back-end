@@ -14,6 +14,7 @@ Program that defines the controller for the Agent, its routes and functionalitie
 import AbstractController from './AbstractController';
 import {Request, Response} from 'express';
 import db from '../models/index';
+import crypto from 'crypto';
 
 class AgentController extends AbstractController{
     //Singleton
@@ -34,7 +35,8 @@ class AgentController extends AbstractController{
         this.router.post('/agentLogin', this.postAgentLogin.bind(this)); 
         this.router.post('/createAgents', this.postCreateAgents.bind(this));   
         this.router.get('/agentProfile', this.getAgentProfile.bind(this));
-       /*  this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this)); 
+        this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this));
+       /*  
         this.router.post('/agentResetPassword', this.postAgentResetPassword.bind(this));
          */     
     }
@@ -93,6 +95,11 @@ class AgentController extends AbstractController{
             console.log(err);
             res.status(500).send("Error retrieving agent data")
         }
+    }
+
+    private async postAgentForgotPassword(req:Request, res:Response){
+        const token = crypto.createCipheriv('aes-256-ocb', 'owo', crypto.randomBytes(16));
+        
     }
 }
 
