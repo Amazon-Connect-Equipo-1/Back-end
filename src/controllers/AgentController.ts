@@ -97,20 +97,34 @@ class AgentController extends AbstractController{
     }
 
     private async postAgentForgotPassword(req:Request, res:Response){
-        //const token = crypto.createCipheriv('aes-256-ocb', 'owo', crypto.randomBytes(16));
-        const token = "12345"
+        //Token and its keys to be encrypted
+        var token = req.body.email + "$" + new Date().getTime();
+        console.log(token);
+        const iv = crypto.randomBytes(16);
+        const key = crypto.randomBytes(32);
+
+        //Creating the cypher for the token
+        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+
+        //Encryptinh the token
+        var encrypted_token = cipher.update(token);
+        encrypted_token = Buffer.concat([encrypted_token, cipher.final()]);
+        
+        //Updating the token at the database
         await db["Agent"].update({security_token: token}, {
             where: {
                 email: req.body.email
             }
         });
 
+        //Payload to fetch emailMessaging API
         const payload ={
-            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will bbe req.body.mail
-            "message": "Click the following link to reset your password: http://localhost:8080/agent/agentResetPassword?token=" + token,
+            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will be req.body.mail
+            "message": "Click the following link to reset your password: \n http://localhost:8080/agent/agentResetPassword?token=" 
+                + encrypted_token.toString('hex') + "$" + iv.toString('hex') + "$" + key.toString('hex'),
             "subject": "Request to change your password."
         }
-
+         console.log(payload);
         try{
             await fetch('https://y63tjetjmb.execute-api.us-west-2.amazonaws.com/default/emailMessaging', {
                 method: 'POST',
@@ -124,16 +138,35 @@ class AgentController extends AbstractController{
     }
 
     private async getAgentResetPassword(req:Request, res:Response){
+        //Parsing data within the token query
+        var cipher_data:any = req.query.token?.toString().split("$");
+
+        //Encrypted token and its keys to be dencrypted
+        const encrypted_token = Buffer.from(cipher_data[0], 'hex');
+        const iv = Buffer.from(cipher_data[1], 'hex');
+        const key = Buffer.from(cipher_data[2], 'hex');
+
+        //Creating the decipher for the token
+        const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
+
+        //Dencrypting the token
+        var decrypted_token = decipher.update(encrypted_token);
+        decrypted_token = Buffer.concat([decrypted_token, decipher.final()]);
+
+        //Original token
+        const token = decrypted_token.toString();
+
         const query_result = await db["Agent"].findAll({
             where: {
-                security_token: req.query.token
+                security_token: token
             }, 
             raw: true
         });
+
         if(query_result.length > 0){
-            await db["Agent"].update({password: "WebiWabo"}, {
+            await db["Agent"].update({password: "WebiWabo", security_token: null}, {
                 where: {
-                    security_token: req.query.token
+                    security_token: token
                 }
             });
             res.status(200).send("Password changed succesfully!");
