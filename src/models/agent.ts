@@ -16,12 +16,11 @@ interface AgentAttributes{
   agent_id: string,
   super_id: string,
   name: string,
-  surname: string,
   password: string,
   email: string,
   profile_picture: string,
   rating: number,
-  status: number,
+  status: string,
   calls: number,
   security_token: string
 };
@@ -36,12 +35,11 @@ module.exports = (sequelize:any, DataTypes:any) => {
     agent_id!: string;
     super_id!: string;
     name!: string;
-    surname!: string;
     password!: string;
     email!: string;
     profile_picture!: string;
     rating!: number;
-    status!: number;
+    status!: string;
     calls!: number;
     security_token!: string;
     
@@ -83,10 +81,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    surname: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false
@@ -98,23 +92,28 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     profile_picture: {
       type: DataTypes.STRING,
-      allowNull: true
+      defaultValue: 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
+      allowNull: false
     },
     rating: {
       type: DataTypes.DECIMAL(2, 1),
-      allowNull: true
+      defaultValue: 0.00,
+      allowNull: false
     },
     status: {
-      type: DataTypes.INTEGER,
+      //Possible status: Inactive, Active, in-call
+      type: DataTypes.STRING,
+      defaultValue: "Inactive",
       allowNull: false
     },
     calls: {
       type: DataTypes.INTEGER,
+      defaultValue: 0,
       allowNull: false
     },
     security_token: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
   }, {
     sequelize,

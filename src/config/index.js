@@ -1,4 +1,14 @@
 "use strict";
+/*
+index.ts
+Author:
+- Israel Sánchez Miranda
+
+Creation date: 28/04/2022
+Last modification date: 29/04/2022
+
+Index that defines all the sensitive and confidential data within the project
+*/
 exports.__esModule = true;
 exports.PREFIX_TABLE = exports.AWS_SECRET_ACCESS_KEY = exports.AWS_ACCESS_KEY = exports.AWS_REGION = exports.DB_HOST = exports.DB_PASSWORD = exports.DB_USER = exports.DB_DIALECT = exports.DB_NAME = exports.NODE_ENV = exports.PORT = void 0;
 exports.PORT = process.env.PORT ? +process.env.PORT : 8080;

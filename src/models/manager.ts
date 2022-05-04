@@ -15,7 +15,6 @@ import { Model, UUIDV4 } from 'sequelize';
 interface ManagerAttributes{
   manager_id: string,
   manager_name: string,
-  manager_surname: string,
   password: string,
   email: string,
   profile_picture: string,
@@ -32,7 +31,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
     //Attributes
     manager_id!: string;
     manager_name!: string;
-    manager_surname!: string;
     password!: string;
     email!: string;
     profile_picture!: string;
@@ -69,10 +67,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    manager_surname: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false
@@ -83,7 +77,8 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     profile_picture: {
       type: DataTypes.STRING,
-      allowNull: true
+      defaultValue: 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
+      allowNull: false
     },
     is_quality: {
       type: DataTypes.BOOLEAN,
@@ -91,7 +86,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     security_token: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
   }, {
     sequelize,

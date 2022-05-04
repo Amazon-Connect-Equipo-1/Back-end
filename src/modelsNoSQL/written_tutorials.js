@@ -1,3 +1,4 @@
+"use strict";
 /*
 written_tutorials.ts
 Author:
@@ -8,16 +9,15 @@ Last modification date: 01/05/2022
 
 Program that defines the noSQL table Written Tutorials model and its relationships
 */
-
+exports.__esModule = true;
 /* import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
 import { PREFIX_TABLE } from '../config'; */
-const dynamodb = require('../services/dynamoService');
-const Joi = require('joi');
-const PREFIX_TABLE = require('../config');
-
+var dynamodb = require('../services/dynamoService');
+var Joi = require('joi');
+var PREFIX_TABLE = require('../config');
 //Model of the Written Tutorials table
-const WrittenTutorialsModel = dynamodb.define('written_tutorials', {
+var WrittenTutorialsModel = dynamodb.define('written_tutorials', {
     hashKey: 'WrittenTutorialId',
     timestamps: true,
     schema: {
@@ -26,10 +26,9 @@ const WrittenTutorialsModel = dynamodb.define('written_tutorials', {
         name: Joi.string(),
         tutorial: Joi.string()
     },
-    tableName: `WrittenTutorials${PREFIX_TABLE}` 
+    tableName: "WrittenTutorials".concat(PREFIX_TABLE)
 });
-
-dynamodb.createTables((err:any) => {
+dynamodb.createTables(function (err) {
     /*
     Function that creates the tables or raises an error
 
@@ -38,12 +37,11 @@ dynamodb.createTables((err:any) => {
     Returns:
     Returns the error raised if ocurred
     */
-    if(err){
+    if (err) {
         //If an error ocurrs the system will notify it
         return console.log('Error creating tables', err);
     }
     //If no error ocurrs the system will create the tables and notify it
     console.log('Table Written Tutorials created succesfully');
 });
-
-export default WrittenTutorialsModel;
+exports["default"] = WrittenTutorialsModel;

@@ -17,6 +17,7 @@ interface CommentAttributes{
   super_id: string,
   agent_id: string,
   comment: string,
+  date: string,
   seen: boolean
 };
 
@@ -31,6 +32,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     super_id!: string;
     agent_id!: string;
     comment!: string;
+    date!: string;
     seen!: boolean;
     
     //Methods
@@ -71,8 +73,14 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.TEXT,
       allowNull: false
     },
+    date: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.fn("now"),
+      allowNull: false
+    },
     seen: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false,
       allowNull: false
     }
   }, {

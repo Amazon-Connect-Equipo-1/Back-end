@@ -65,6 +65,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     date: {
       type: DataTypes.DATE,
+      defaultValue: sequelize.fn("now"),
       allowNull: false
     },
     comments: {

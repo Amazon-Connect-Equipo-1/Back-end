@@ -77,15 +77,16 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     time_start: {
       type: DataTypes.DATE,
+      defaultValue: sequelize.fn("now"),
       allowNull: false
     },
     time_finish: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     duration: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     satisfaction: {
       type: DataTypes.INTEGER,
@@ -93,6 +94,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     date: {
       type: DataTypes.DATE,
+      defaultValue: sequelize.fn("now"),
       allowNull: false
     },
     comments: {

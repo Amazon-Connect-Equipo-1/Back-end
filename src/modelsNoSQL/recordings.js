@@ -1,36 +1,37 @@
+"use strict";
 /*
-third_party_services.ts
+recordings.ts
 Author:
 - Israel Sánchez Miranda
 
 Creation date: 28/04/2022
 Last modification date: 01/05/2022
 
-Program that defines the noSQL table Third Party Services model and its relationships
+Program that defines the noSQL table Recordings model and its relationships
 */
-
+exports.__esModule = true;
 /* import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
 import { PREFIX_TABLE } from '../config'; */
-const dynamodb = require('../services/dynamoService');
-const Joi = require('joi');
-const PREFIX_TABLE = require('../config');
-
-//Model of the THird Party Services table
-const ThirdPartyServicesModel = dynamodb.define('third_party_services', {
-    hashKey: 'ThirdPartyServiceId',
+var dynamodb = require('../services/dynamoService');
+var Joi = require('joi');
+var PREFIX_TABLE = require('../config');
+//Model of the Recordings table
+var RecordingsModel = dynamodb.define('recordings', {
+    hashKey: 'RecordingId',
     timestamps: true,
     schema: {
         //Table attributes
-        ThirdPartyServiceId: dynamodb.types.uuid(),
+        RecordingId: dynamodb.types.uuid(),
         callId: Joi.number(),
+        videoRecording: Joi.string(),
+        keystrokeClickRecording: Joi.string(),
         date: Joi.date(),
-        serivceData: Joi.array()
+        tags: Joi.array()
     },
-    tableName: `ThirdPartySerivces${PREFIX_TABLE}` 
+    tableName: "Recordings".concat(PREFIX_TABLE)
 });
-
-dynamodb.createTables((err:any) => {
+dynamodb.createTables(function (err) {
     /*
     Function that creates the tables or raises an error
 
@@ -39,12 +40,11 @@ dynamodb.createTables((err:any) => {
     Returns:
     Returns the error raised if ocurred
     */
-    if(err){
+    if (err) {
         //If an error ocurrs the system will notify it
         return console.log('Error creating tables', err);
     }
     //If no error ocurrs the system will create the tables and notify it
-    console.log('Table Third Party Services created succesfully');
+    console.log('Table Recordings created succesfully');
 });
-
-export default ThirdPartyServicesModel;
+exports["default"] = RecordingsModel;

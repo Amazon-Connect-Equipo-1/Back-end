@@ -17,7 +17,8 @@ interface ClientAttributes{
   client_name: string,
   password: string,
   email: string,
-  phone_number: string
+  phone_number: string,
+  client_pin: string
 };
 
 module.exports = (sequelize:any, DataTypes:any) => {
@@ -32,6 +33,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     password!: string;
     email!: string;
     phone_number!: string;
+    client_pin!: string;
     
     //Methods
     static associate(models:any) {
@@ -73,6 +75,10 @@ module.exports = (sequelize:any, DataTypes:any) => {
       unique: true
     },
     phone_number: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    client_pin: {
       type: DataTypes.STRING,
       allowNull: false
     }
