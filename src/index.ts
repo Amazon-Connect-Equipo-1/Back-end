@@ -13,7 +13,7 @@ Program that creates the Server and initializes it
 import Server from './providers/Server';
 import AgentController from './controllers/AgentController';
 import ManagerController from './controllers/ManagerController';
-import ThirdPartyServiceController from './controllers/ThirdPartyServiceController';
+import ThirdPartyServicesController from './controllers/ThirdPartyServiceController';
 import { PORT, NODE_ENV } from './config';
 import express from 'express';
 import cors from 'cors';
@@ -32,7 +32,7 @@ const app = new Server({
         //Controllers that will be loaded
         AgentController.getInstance(),
         ManagerController.getInstance(),
-        ThirdPartyServiceController.getInstance()
+        ThirdPartyServicesController.getInstance()
     ],
     env: NODE_ENV
 });

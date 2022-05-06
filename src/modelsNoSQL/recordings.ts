@@ -9,12 +9,9 @@ Last modification date: 01/05/2022
 Program that defines the noSQL table Recordings model and its relationships
 */
 
-/* import dynamodb from '../services/dynamoService';
+import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
-import { PREFIX_TABLE } from '../config'; */
-const dynamodb = require('../services/dynamoService');
-const Joi = require('joi');
-const PREFIX_TABLE = require('../config');
+import { PREFIX_TABLE } from '../config';
 
 //Model of the Recordings table
 const RecordingsModel = dynamodb.define('recordings', {
@@ -26,8 +23,6 @@ const RecordingsModel = dynamodb.define('recordings', {
         callId: Joi.number(),
         videoRecording: Joi.string(),
         keystrokeClickRecording: Joi.string(),
-        date: Joi.date(),
-        tags: Joi.array()
     },
     tableName: `Recordings${PREFIX_TABLE}` 
 });

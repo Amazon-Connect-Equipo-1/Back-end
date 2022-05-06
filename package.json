@@ -4,7 +4,7 @@
   "description": "Repositorio para todo el back-end de la aplicación para Amazon Connect.\r Repository for the back-end functionalities for the Amazon Connect application.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc && node -r dotenv/config dist/index.js",
     "build": "tsc",
     "start": "node -r dotenv/config dist/index.js",
     "dev:js": "nodemon -r dotenv/config dist/index.js"
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/Amazon-Connect-Equipo-1/Back-end#readme",
   "dependencies": {
     "aws-sdk": "^2.1125.0",
+    "axios": "^0.27.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.0",

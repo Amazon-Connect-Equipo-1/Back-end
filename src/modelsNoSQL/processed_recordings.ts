@@ -9,12 +9,9 @@ Last modification date: 01/05/2022
 Program that defines the noSQL table Processed Recordings model and its relationships
 */
 
-/* import dynamodb from '../services/dynamoService';
+import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
-import { PREFIX_TABLE } from '../config'; */
-const dynamodb = require('../services/dynamoService');
-const Joi = require('joi');
-const PREFIX_TABLE = require('../config');
+import { PREFIX_TABLE } from '../config';
 
 //Model of the Processed Recordings table
 const ProcessedRecordingsModel = dynamodb.define('processed_recordings', {
@@ -27,8 +24,9 @@ const ProcessedRecordingsModel = dynamodb.define('processed_recordings', {
         callId: Joi.number(),
         processedRecording: Joi.string(),
         duration: Joi.number(),
-        date: Joi.date(),
-        tags: Joi.array()
+        recording_date: Joi.date(),
+        tags: Joi.array(),
+        recording_data: Joi.array()
     },
     tableName: `ProcessedRecordings${PREFIX_TABLE}` 
 });
