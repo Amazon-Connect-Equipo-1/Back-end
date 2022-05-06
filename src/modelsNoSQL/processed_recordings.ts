@@ -25,8 +25,8 @@ const ProcessedRecordingsModel = dynamodb.define('processed_recordings', {
         processedRecording: Joi.string(),
         duration: Joi.number(),
         recording_date: Joi.date(),
-        tags: Joi.array(),
-        recording_data: Joi.array()
+        tags: Joi.object(),
+        recording_data: Joi.object()
     },
     tableName: `ProcessedRecordings${PREFIX_TABLE}` 
 });
