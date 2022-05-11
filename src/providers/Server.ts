@@ -67,7 +67,7 @@ class Server{
         )
         //Add controllers
         controllers.forEach((controller:AbstractController) => {
-            this.app.use(`/${controller.prefix}`, controller.router)
+            this.app.use(`/${controller.prefix}`, controller.router);
         });
     }
 

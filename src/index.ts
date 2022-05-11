@@ -14,9 +14,12 @@ import Server from './providers/Server';
 import AgentController from './controllers/AgentController';
 import ManagerController from './controllers/ManagerController';
 import ThirdPartyServicesController from './controllers/ThirdPartyServiceController';
+import WrittenTutorialsController from './controllers/WrittenTutorialsControllers';
+
 import { PORT, NODE_ENV } from './config';
 import express from 'express';
 import cors from 'cors';
+
 
 
 const app = new Server({
@@ -32,7 +35,8 @@ const app = new Server({
         //Controllers that will be loaded
         AgentController.getInstance(),
         ManagerController.getInstance(),
-        ThirdPartyServicesController.getInstance()
+        ThirdPartyServicesController.getInstance(),
+        WrittenTutorialsController.getInstance()
     ],
     env: NODE_ENV
 });
