@@ -52,6 +52,7 @@ class AgentController extends AbstractController{
             });
 
             if(result.length > 0){
+                //Return quality or not and data of agent
                 console.log("Logged in");
                 res.status(200).send("Logged in");
             }else{

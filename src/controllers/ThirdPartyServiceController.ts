@@ -35,7 +35,7 @@ class ThirdPartyServicesController extends AbstractController{
             }
             message = message + `Your order will be delivered at ${service_response.client_location} by ${service_response.delivery_name} in ${service_response.delivery_time} minutes. <br/> The total price of your order is $${service_response.total}`;
         }else if(service === "Oxxo"){
-            message = `Here's your service data, ${service_response.client}:<br/>Oxxo address to retire your money: Street ${service_response.oxxo_address.street}, ${service_response.oxxo_address.colony}, ${service_response.oxxo_address.state}, ${service_response.oxxo_address.country}, ${service_response.oxxo_address.zip_code}.<br/>You will retire $${service_response.quantity} from your account ${service_response.account_number} with the reference ${service_response.reference} and the token ${service_response.security_token}.`;
+            message = `Here's your service data, ${service_response.client}:<br/>Oxxo address to retire your money:<br/>Street ${service_response.oxxo_address.street}, ${service_response.oxxo_address.colony}, ${service_response.oxxo_address.state}, ${service_response.oxxo_address.country}, ${service_response.oxxo_address.zip_code}.<br/>You will retire $${service_response.quantity} from your account ${service_response.account_number} with the reference ${service_response.reference} and the token ${service_response.security_token}.`;
         }
 
         const payload ={
