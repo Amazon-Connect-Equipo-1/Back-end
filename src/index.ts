@@ -5,7 +5,7 @@ Author:
 - Erick Hernández Silva
 
 Creation date: 28/04/2022
-Last modification date: 01/05/2022
+Last modification date: 15/05/2022
 
 Program that creates the Server and initializes it
 */
@@ -19,6 +19,7 @@ import WrittenTutorialsController from './controllers/WrittenTutorialsController
 import { PORT, NODE_ENV } from './config';
 import express from 'express';
 import cors from 'cors';
+import RecordingsController from './controllers/RecordingsController';
 
 
 
@@ -34,6 +35,7 @@ const app = new Server({
     controllers: [
         //Controllers that will be loaded
         AgentController.getInstance(),
+        RecordingsController.getInstance(),
         ManagerController.getInstance(),
         ThirdPartyServicesController.getInstance(),
         WrittenTutorialsController.getInstance()

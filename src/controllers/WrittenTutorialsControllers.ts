@@ -4,7 +4,7 @@ Author:
 - Ariadna Huesca Coronado
 
 Creation date: 09/05/2022
-Last modification date: 11/05/2022
+Last modification date: 15/05/2022
 
 Program that handles the written tutorials
 */
@@ -37,9 +37,9 @@ class WrittenTutorialsController extends AbstractController{
         const tutorial:string = req.body.tutorial;
         //res.send("ni idea de que estoy haciendo");  
         try{
-            const users = await WrittenTutorialsModel.scan().exec().promise();
-            //res.send("adfads");
-            res.status(200).send(users);
+            const pdfs = await WrittenTutorialsModel.scan().exec().promise();
+            const found = pdfs[0].Items.find(element => element.attrs.name === tutorial);
+            res.status(200).send(found?.attrs.tutorial_pdf);
         }catch(err){
             res.status(500).send("Error fatal:"+err);
         }
