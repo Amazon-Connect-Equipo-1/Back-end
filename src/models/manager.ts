@@ -58,8 +58,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     Method that initializes the Manager table and its attributes
     */
     manager_id: {
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true
     },

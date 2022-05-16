@@ -38,7 +38,8 @@ const app = new Server({
         RecordingsController.getInstance(),
         ManagerController.getInstance(),
         ThirdPartyServicesController.getInstance(),
-        WrittenTutorialsController.getInstance()
+        WrittenTutorialsController.getInstance(),
+        //AuthenticationController.getInstance()
     ],
     env: NODE_ENV
 });

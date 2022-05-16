@@ -68,8 +68,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     Method that initializes the Agent table and its attributes
     */
     agent_id: {
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true
     },

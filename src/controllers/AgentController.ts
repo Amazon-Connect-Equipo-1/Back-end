@@ -13,7 +13,7 @@ Program that defines the controller for the Agent, its routes and functionalitie
 
 import AbstractController from './AbstractController';
 import {Request, Response} from 'express';
-import db from '../models/index';
+import db from '../models';
 import crypto from 'crypto';
 import fetch from 'node-fetch';
 
@@ -29,6 +29,11 @@ class AgentController extends AbstractController{
         //If instance was not created we create it
         this.instance = new AgentController("agent");
         return this.instance;
+    }
+
+    //Body validation
+    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
+        //To be implemented
     }
 
     //Route configuration
