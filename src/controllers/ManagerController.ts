@@ -29,6 +29,11 @@ class ManagerController extends AbstractController{
         return this.instance;
     }
 
+    //Body validation
+    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
+        //To be implemented
+    }
+
     //Route configuration
     protected initRoutes(): void {
         this.router.post('/createManagers', this.postCreateManagers.bind(this));     

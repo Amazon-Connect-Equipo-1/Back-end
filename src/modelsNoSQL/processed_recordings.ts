@@ -20,9 +20,10 @@ const ProcessedRecordingsModel = dynamodb.define('processed_recordings', {
     schema: {
         //Table attributes
         ProcessedRecordingId: dynamodb.types.uuid(),
-        superId: dynamodb.types.uuid(),
-        callId: Joi.number(),
+        superId: Joi.string(),
+        callId: Joi.string(),
         processedRecording: Joi.string(),
+        thumbnail: Joi.string(),
         duration: Joi.number(),
         recording_date: Joi.date(),
         tags: Joi.object(),

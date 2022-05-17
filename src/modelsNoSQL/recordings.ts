@@ -20,9 +20,9 @@ const RecordingsModel = dynamodb.define('recordings', {
     schema: {
         //Table attributes
         RecordingId: dynamodb.types.uuid(),
-        callId: Joi.number(),
+        callId: Joi.string(),
         videoRecording: Joi.string(),
-        keystrokeClickRecording: Joi.string(),
+        keystrokeClickRecording: Joi.object(),
     },
     tableName: `Recordings${PREFIX_TABLE}` 
 });

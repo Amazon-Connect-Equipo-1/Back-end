@@ -28,6 +28,11 @@ class RecordingsController extends AbstractController{
             return this.instance;
     }
 
+    //Body validation
+    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
+        //To be implemented
+    }
+
     //Route configuration
     protected initRoutes():void{
         this.router.post('/addKeystroke', this.postAddKeystroke.bind(this));  

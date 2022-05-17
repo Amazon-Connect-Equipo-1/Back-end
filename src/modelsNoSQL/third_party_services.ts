@@ -20,7 +20,7 @@ const ThirdPartyServicesModel = dynamodb.define('third_party_services', {
     schema: {
         //Table attributes
         ThirdPartyServiceId: dynamodb.types.uuid(),
-        callId: Joi.number(),
+        callId: Joi.string(),
         service: Joi.string(),
         serviceData: Joi.object()
     },

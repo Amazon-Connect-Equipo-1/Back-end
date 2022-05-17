@@ -13,7 +13,7 @@ import { Model } from 'sequelize';
 
 //Interface that defines the attributes a register in the table Calls needs
 interface CallAttributes{
-  call_id: number,
+  call_id: string,
   agent_id: string,
   client_id: string,
   time_start: string,
@@ -31,7 +31,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     */
 
     //Attributes
-    call_id!: number;
+    call_id!: string;
     agent_id!: string;
     client_id!: string;
     time_start!: string;
@@ -62,13 +62,12 @@ module.exports = (sequelize:any, DataTypes:any) => {
     Method that initializes the Calls table and its attributes
     */
     call_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true
     },
     agent_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false
     },
     client_id: {

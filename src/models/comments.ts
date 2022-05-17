@@ -17,6 +17,7 @@ interface CommentAttributes{
   super_id: string,
   agent_id: string,
   comment: string,
+  rating: number,
   date: string,
   seen: boolean
 };
@@ -32,6 +33,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     super_id!: string;
     agent_id!: string;
     comment!: string;
+    rating!: number;
     date!: string;
     seen!: boolean;
     
@@ -62,15 +64,19 @@ module.exports = (sequelize:any, DataTypes:any) => {
       autoIncrement: true
     },
     super_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false
     },
     agent_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false
     },
     comment: {
       type: DataTypes.TEXT,
+      allowNull: false
+    },
+    rating: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     date: {

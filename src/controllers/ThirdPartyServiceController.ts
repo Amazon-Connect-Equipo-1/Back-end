@@ -18,41 +18,47 @@ class ThirdPartyServicesController extends AbstractController{
             return this.instance;
     }
 
+    //Body validation
+    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
+        //To be implemented
+    }
+
     //Route configuration
     protected initRoutes():void{
         this.router.post('/askService', this.postAskService.bind(this));
+        this.router.post('/sendService', this.sendEmail.bind(this));
     }
 
-    private async sendEmail(service:string, service_response:any){
+    private async sendEmail(req:Request, res:Response){
         var message = "";
-        if(service === "Uber"){
-            message = `Here's your service data, ${service_response.client}:<br/>Your rider is ${service_response.rider}, he will arrive to ${service_response.client_location} in a ${service_response.car.model} color ${service_response.car.color} with the plates ${service_response.car.plate} to take you to ${service_response.destination}.<br/>Your ride will arrive in approximately ${service_response.arrival_time} minutes and it will last ${service_response.ride_time} minutes.<br/>Here's a link to your ride: ${service_response.url}.`;
-        }else if(service === "UberEats"){
-            message = `Here's your service data, ${service_response.client}: <br/>Your order:<br/> `;
-            const order = service_response.order;
+        if(req.body.service === "Uber"){
+            message = `Here's your service data, ${req.body.service_data.client}:<br/>Your rider is ${req.body.service_data.rider}, he will arrive to ${req.body.service_data.client_location} in a ${req.body.service_data.car.model} color ${req.body.service_data.car.color} with the plates ${req.body.service_data.car.plate} to take you to ${req.body.service_data.destination}.<br/>Your ride will arrive in approximately ${req.body.service_data.arrival_time} minutes and it will last ${req.body.service_data.ride_time} minutes.<br/>Here's a link to your ride: ${req.body.service_data.url}.`;
+        }else if(req.body.service === "UberEats"){
+            message = `Here's your service data, ${req.body.service_data.client}: <br/>Your order:<br/> `;
+            const order = req.body.service_data.order;
             for(const key in order){
                 message = message + order[key].quantity + " " + key + " x $" + order[key].price + "" + "<br/>";
             }
-            message = message + `Your order will be delivered at ${service_response.client_location} by ${service_response.delivery_name} in ${service_response.delivery_time} minutes. <br/> The total price of your order is $${service_response.total}`;
-        }else if(service === "Oxxo"){
-            message = `Here's your service data, ${service_response.client}:<br/>Oxxo address to retire your money:<br/>Street ${service_response.oxxo_address.street}, ${service_response.oxxo_address.colony}, ${service_response.oxxo_address.state}, ${service_response.oxxo_address.country}, ${service_response.oxxo_address.zip_code}.<br/>You will retire $${service_response.quantity} from your account ${service_response.account_number} with the reference ${service_response.reference} and the token ${service_response.security_token}.`;
+            message = message + `Your order will be delivered at ${req.body.service_data.client_location} by ${req.body.service_data.delivery_name} in ${req.body.service_data.delivery_time} minutes. <br/> The total price of your order is $${req.body.service_data.total}`;
+        }else if(req.body.service === "Oxxo"){
+            message = `Here's your service data, ${req.body.service_data.client}:<br/>Oxxo address to retire your money:<br/>Street ${req.body.service_data.oxxo_address.street}, ${req.body.service_data.oxxo_address.colony}, ${req.body.service_data.oxxo_address.state}, ${req.body.service_data.oxxo_address.country}, ${req.body.service_data.oxxo_address.zip_code}.<br/>You will retire $${req.body.service_data.quantity} from your account ${req.body.service_data.account_number} with the reference ${req.body.service_data.reference} and the token ${req.body.service_data.security_token}.`;
         }
 
         const payload ={
-            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will be req.body.email
+            "recipient": req.body.service_data.client_email,  //For testing, when deployed it will be req.body.email
             "message": message,
-            "subject": `Your ${service} information.`
+            "subject": `Your ${req.body.service} information.`
         };
         console.log(payload);
+
         try{
             await fetch('https://y63tjetjmb.execute-api.us-west-2.amazonaws.com/default/emailMessaging', {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
-            return 200;
+            res.status(200).send({message: "Email sent!"});
         }catch(err:any){
-            console.log(err);
-            return 500;
+            res.status(500).send({code: err.code, message: err.message});
         }
     }
 
@@ -66,29 +72,25 @@ class ThirdPartyServicesController extends AbstractController{
         }else if(service === "Oxxo"){
             service_api = 'https://358ylrjr87.execute-api.us-west-2.amazonaws.com/default/OxxoService'            
         }else{
-            res.status(500).send("Service doesn't exist");
+            res.status(500).send({message: "Service doesn't exist"});
         }
+
         try{
             axios.post(service_api,req.body.service_data)
                 .then(async response=>{
                     console.log(response.data);
-                    const result = await this.sendEmail(service, response.data);
-                    if(result === 200){
-                        //Store in noSQL database
-                        const object = {
-                            "callId": req.body.callId,
-                            "service": service,
-                            "serviceData": req.body.service_data
-                        }
-                        await ThirdPartyServicesModel.create(object);
-                        res.status(result).send("Email sent!")
-                    }else if(result === 500){
-                        res.status(result).send("Error sending the email");
+                    //Store in noSQL database
+                    const object = {
+                        "callId": req.body.callId,
+                        "service": service,
+                        "serviceData": req.body.service_data
                     }
+                    await ThirdPartyServicesModel.create(object);
+                    res.status(200).send({message: "Service asked!", body: response.data})
                 });
         }catch(err:any){
             console.log(err);
-            res.status(500).send("Error retreiving service");
+            res.status(500).send({code: err.code, message: err.message});
         }
     }
 };

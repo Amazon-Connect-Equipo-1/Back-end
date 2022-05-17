@@ -73,7 +73,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
       primaryKey: true
     },
     super_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false
     },
     name: {
@@ -91,7 +91,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     profile_picture: {
       type: DataTypes.STRING,
-      defaultValue: 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
+      defaultValue: 'FaUserCircle',
       allowNull: false
     },
     rating: {
