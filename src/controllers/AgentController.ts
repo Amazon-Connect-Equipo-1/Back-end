@@ -148,7 +148,7 @@ class AgentController extends AbstractController{
     }
 
     private async getAgentResetPassword(req:Request, res:Response){
-        //Parsing data within the token query
+        //Parsing data within the token query(FRONT)
         var cipher_data:any = req.query.token?.toString().split("$");
 
         //Encrypted token and its keys to be dencrypted
