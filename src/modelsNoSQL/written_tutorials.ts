@@ -26,6 +26,7 @@ const WrittenTutorialsModel = dynamodb.define('written_tutorials', {
     tableName: `WrittenTutorials${PREFIX_TABLE}` 
 });
 
+/*
 dynamodb.createTables((err:any) => {
     /*
     Function that creates the tables or raises an error
@@ -35,12 +36,13 @@ dynamodb.createTables((err:any) => {
     Returns:
     Returns the error raised if ocurred
     */
+   /*
     if(err){
         //If an error ocurrs the system will notify it
         return console.log('Error creating tables', err);
     }
     //If no error ocurrs the system will create the tables and notify it
     console.log('Table Written Tutorials created succesfully');
-});
+});*/
 
 export default WrittenTutorialsModel;

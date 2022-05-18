@@ -42,6 +42,8 @@ class ThirdPartyServicesController extends AbstractController{
             message = message + `Your order will be delivered at ${req.body.service_data.client_location} by ${req.body.service_data.delivery_name} in ${req.body.service_data.delivery_time} minutes. <br/> The total price of your order is $${req.body.service_data.total}`;
         }else if(req.body.service === "Oxxo"){
             message = `Here's your service data, ${req.body.service_data.client}:<br/>Oxxo address to retire your money:<br/>Street ${req.body.service_data.oxxo_address.street}, ${req.body.service_data.oxxo_address.colony}, ${req.body.service_data.oxxo_address.state}, ${req.body.service_data.oxxo_address.country}, ${req.body.service_data.oxxo_address.zip_code}.<br/>You will retire $${req.body.service_data.quantity} from your account ${req.body.service_data.account_number} with the reference ${req.body.service_data.reference} and the token ${req.body.service_data.security_token}.`;
+        }else if(req.body.service === "Report"){
+            message = `Here's your service data, ${req.body.service_data.client}:<br/>You placed a report with the following description:<br/>${req.body.service_data.client_statement}.<br/>The statement was reported at ${req.body.service_data.client_location}. ${req.body.service_data.client_location_reference} at ${req.body.service_data.timestamp}.<br/>Your report will continue its process with the folio ${req.body.service_data.folio}, you will be contacted by your email (${req.body.service_data.client_email}) to continue the process.`;
         }
 
         const payload ={
@@ -71,6 +73,8 @@ class ThirdPartyServicesController extends AbstractController{
             service_api = 'https://p0pkc05on4.execute-api.us-west-2.amazonaws.com/default/UberEatsService'
         }else if(service === "Oxxo"){
             service_api = 'https://358ylrjr87.execute-api.us-west-2.amazonaws.com/default/OxxoService'            
+        }else if(service === "Report"){
+            service_api = ' https://gt5y43i317.execute-api.us-west-2.amazonaws.com/default/AnonymousReporting'
         }else{
             res.status(500).send({message: "Service doesn't exist"});
         }
