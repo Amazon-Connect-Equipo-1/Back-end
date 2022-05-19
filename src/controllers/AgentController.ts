@@ -42,7 +42,9 @@ class AgentController extends AbstractController{
         this.router.post('/createAgents', this.postCreateAgents.bind(this));   
         this.router.get('/agentProfile', this.getAgentProfile.bind(this));
         this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this));
-        this.router.get('/agentResetPassword', this.getAgentResetPassword.bind(this));    
+        this.router.get('/agentResetPassword', this.getAgentResetPassword.bind(this));  
+        this.router.post('/acceptFeedback', this.acceptFeedback.bind(this)); 
+        this.router.get('/getFeedback', this.getFeedback.bind(this)); 
     }
 
     //Controllers
@@ -190,6 +192,42 @@ class AgentController extends AbstractController{
             }
         }else{
             res.status(500).send("Invalid token.")
+        }
+    }
+
+    private async acceptFeedback(req:Request, res:Response){
+        try{
+            await db["Comments"].update({seen: true}, {
+                where:{
+                    comment_id: req.body.comment_id
+                }
+            });
+            res.status(200).send({message: `Comment ${req.body.comment_id} has been updated`});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async getFeedback(req:Request, res:Response){
+        const email = req.query.email?.toString();
+        try{
+            let agent = await db["Agent"].findAll({
+                attributes: ['agent_id', 'name'],
+                where: {
+                    email: email
+                }
+            });
+
+            let feedback = await db["Comment"].findAll({
+                attributes: ['super_id', 'comment', 'rating', 'date'],
+                where: {
+                    agent_id: agent[0].agent_id
+                }
+            });
+
+            res.status(200).send({agent_name: agent[0].name, agent_email: email, comments: feedback});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
         }
     }
 }

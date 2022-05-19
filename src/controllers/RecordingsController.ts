@@ -10,9 +10,6 @@ Program that handles the recordings in no relational database
 */
 import { Request, Response } from 'express';
 import AbstractController from './AbstractController';
-import fetch from "node-fetch";
-import axios from 'axios';
-import WrittenTutorialsModel from "../modelsNoSQL/recordings";
 
 class RecordingsController extends AbstractController{
     //Singleton
