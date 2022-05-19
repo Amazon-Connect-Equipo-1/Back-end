@@ -38,7 +38,7 @@ class ManagerController extends AbstractController{
     //Route configuration
     protected initRoutes(): void {
         this.router.post('/createManagers', this.postCreateManagers.bind(this));  
-        this.router.post('/agentList', this.agentList.bind(this));   
+        this.router.get('/agentList', this.agentList.bind(this));   
         this.router.get('/showRecording', this.showRecording.bind(this));
         this.router.post('/postComment', this.postComment.bind(this));
     }
@@ -80,7 +80,7 @@ class ManagerController extends AbstractController{
                 }
             });
 
-            res.status(200).send({message: `Comment to ${agent_email}`});
+            res.status(200).send({message: `Comment posted to ${agent_email[0].email}`});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }

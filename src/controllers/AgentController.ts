@@ -218,7 +218,7 @@ class AgentController extends AbstractController{
                 }
             });
 
-            let feedback = await db["Comment"].findAll({
+            let feedback = await db["Comments"].findAll({
                 attributes: ['super_id', 'comment', 'rating', 'date'],
                 where: {
                     agent_id: agent[0].agent_id

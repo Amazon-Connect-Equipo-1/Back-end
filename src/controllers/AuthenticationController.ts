@@ -39,7 +39,7 @@ class AuthenticationController extends AbstractController{
 
     private async signupAgent(req:Request, res:Response){
         /*Verify if make different route for agent signup or add value here*/
-        const{email, password, name, super_id} = req.body;
+        const{email, password, name} = req.body;
 
         try{
             //Create Cognito user
@@ -141,7 +141,7 @@ class AuthenticationController extends AbstractController{
                 role = "Quality-agent";
                 res.status(200).send({...login.AuthenticationResult, role: role, body: agentResult[0]});
             }else if(managerResult.length > 0){
-                role = "admin";
+                role = "Admin";
                 res.status(200).send({...login.AuthenticationResult, role: role, body: agentResult[0]});
             }else{
                 res.status(404).send({code: 'UserNotFound', message: 'User not found in the database'});
