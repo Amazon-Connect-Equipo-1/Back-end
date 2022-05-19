@@ -43,9 +43,9 @@ class Server{
         Returns:
         Nothing, but the method loads the middlewares into the app
         */
-        middlewares.forEach((middlewares:any) => {
+        middlewares.forEach((middleware:any) => {
             //Iteration over the middlewares array to load them
-            this.app.use(middlewares);
+            this.app.use(middleware);
         });
     }
 

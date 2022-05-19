@@ -30,7 +30,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     /*
     Class that implements the model of the Agent table
     */
-   
+    
     //Attributes
     agent_id!: string;
     super_id!: string;

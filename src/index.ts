@@ -15,11 +15,12 @@ import AgentController from './controllers/AgentController';
 import ManagerController from './controllers/ManagerController';
 import ThirdPartyServicesController from './controllers/ThirdPartyServiceController';
 import WrittenTutorialsController from './controllers/WrittenTutorialsControllers';
-
+import AuthenticationController from './controllers/AuthenticationController';
 import { PORT, NODE_ENV } from './config';
 import express from 'express';
 import cors from 'cors';
 import RecordingsController from './controllers/RecordingsController';
+import ClientController from './controllers/ClientController';
 
 
 
@@ -39,7 +40,8 @@ const app = new Server({
         ManagerController.getInstance(),
         ThirdPartyServicesController.getInstance(),
         WrittenTutorialsController.getInstance(),
-        //AuthenticationController.getInstance()
+        AuthenticationController.getInstance(),
+        ClientController.getInstance()
     ],
     env: NODE_ENV
 });

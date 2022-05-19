@@ -32,7 +32,7 @@ class AgentController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
+    protected validateBody(type:|'agentProfile'|'agentForgotPassword'|'agentResetPassword'){
         //To be implemented
     }
 
