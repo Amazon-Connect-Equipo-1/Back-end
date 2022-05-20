@@ -183,14 +183,14 @@ class ManagerController extends AbstractController{
 
     //Route configuration
     protected initRoutes(): void {
-        this.router.post('/createManagers', this.postCreateManagers.bind(this));  
-        this.router.post('/createAgents', this.postCreateAgents.bind(this));
-        this.router.get('/agentList', this.agentList.bind(this)); 
-        this.router.get('/agentProfile', this.getAgentProfile.bind(this));
-        this.router.post('/managerForgotPassword', this.postManagerForgotPassword.bind(this));
-        this.router.get('/managerResetPassword', this.getManagerResetPassword.bind(this));  //* 
-        this.router.get('/showRecording', this.showRecording.bind(this));
-        this.router.post('/postComment', this.postComment.bind(this));
+        this.router.post('/createManagers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.validateBody('createManager'), this.handleErrors, this.postCreateManagers.bind(this));  
+        this.router.post('/createAgents', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.validateBody('createAgent'), this.handleErrors, this.postCreateAgents.bind(this));
+        this.router.get('/agentList', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.agentList.bind(this)); 
+        this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
+        this.router.post('/managerForgotPassword', this.authMiddleware.verifyToken, this.validateBody('managerForgotPassword'), this.handleErrors, this.postManagerForgotPassword.bind(this));
+        this.router.get('/managerResetPassword', this.authMiddleware.verifyToken, this.validateBody('managerResetPassword'), this.handleErrors, this.getManagerResetPassword.bind(this));  //* 
+        this.router.get('/showRecording', this.showRecording.bind(this));  //*
+        this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
     }
 
     //Controllers

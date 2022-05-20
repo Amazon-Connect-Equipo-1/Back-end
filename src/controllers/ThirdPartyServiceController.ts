@@ -71,8 +71,8 @@ class ThirdPartyServicesController extends AbstractController{
 
     //Route configuration
     protected initRoutes():void{
-        this.router.post('/askService', this.postAskService.bind(this));
-        this.router.post('/sendService', this.sendEmail.bind(this));
+        this.router.post('/askService', this.authMiddleware.verifyToken, this.validateBody('askService'), this.handleErrors, this.postAskService.bind(this));
+        this.router.post('/sendService', this.authMiddleware.verifyToken, this.validateBody('sendService'), this.handleErrors, this.sendEmail.bind(this));
     }
 
     private async sendEmail(req:Request, res:Response){

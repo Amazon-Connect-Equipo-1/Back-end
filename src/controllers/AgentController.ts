@@ -77,11 +77,11 @@ class AgentController extends AbstractController{
     protected initRoutes(): void {
         /*this.router.post('/agentLogin', this.postAgentLogin.bind(this)); 
         this.router.post('/createAgents', this.postCreateAgents.bind(this)); */ 
-        this.router.get('/agentProfile', this.getAgentProfile.bind(this));
-        this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this));
-        this.router.get('/agentResetPassword', this.getAgentResetPassword.bind(this));  
-        this.router.post('/acceptFeedback', this.acceptFeedback.bind(this)); 
-        this.router.get('/getFeedback', this.getFeedback.bind(this)); 
+        this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
+        this.router.post('/agentForgotPassword', this.authMiddleware.verifyToken, this.validateBody('agentForgotPassword'), this.handleErrors, this.postAgentForgotPassword.bind(this));
+        this.router.get('/agentResetPassword', this.authMiddleware.verifyToken, this.validateBody('agentResetPassword'), this.handleErrors, this.getAgentResetPassword.bind(this));  
+        this.router.post('/acceptFeedback', this.authMiddleware.verifyToken, this.validateBody('acceptFeedback'), this.handleErrors, this.acceptFeedback.bind(this)); 
+        this.router.get('/getFeedback', this.authMiddleware.verifyToken, this.handleErrors, this.getFeedback.bind(this)); 
     }
 
     //Controllers

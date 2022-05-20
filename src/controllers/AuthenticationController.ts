@@ -34,7 +34,7 @@ class AuthenticationController extends AbstractController{
         this.router.post('/signupManager', this.validateBody('signupManager'), this.handleErrors, this.signupManager.bind(this));
         this.router.post('/signin', this.validateBody('signin'), this.handleErrors, this.signin.bind(this));
         this.router.post('/verify', this.validateBody('verify'), this.handleErrors, this.verify.bind(this));
-        this.router.get('/readUsers', this.getReadUsers.bind(this));
+        this.router.get('/readUsers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.getReadUsers.bind(this));
     }
 
     private async signupAgent(req:Request, res:Response){

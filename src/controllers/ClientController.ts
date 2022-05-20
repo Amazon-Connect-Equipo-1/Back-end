@@ -82,6 +82,17 @@ class ClientController extends AbstractController{
                             options: [['any'], {strictMode: true}],
                             errorMessage: 'Must be a valid phone number'
                         }
+                    },
+                    client_pint: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        },
+                        isLength: {
+                            options: {
+                                max: 4
+                            },
+                            errorMessage: 'Pin must be 4 characters long'
+                        }
                     }
                 });
         }
@@ -90,8 +101,8 @@ class ClientController extends AbstractController{
     //Methods
     protected initRoutes():void {
         //Routes fot his controller
-        this.router.post('/clientLogin', this.clientLogin.bind(this));
-        this.router.post('/clientRegister', this.clientRegister.bind(this));
+        this.router.post('/clientLogin', this.validateBody('clientLogin'), this.handleErrors, this.clientLogin.bind(this));
+        this.router.post('/clientRegister', this.validateBody('clientRegister'), this.handleErrors, this.clientRegister.bind(this));
     }
 
     private async clientLogin(req:Request, res:Response){

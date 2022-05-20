@@ -62,8 +62,8 @@ class RecordingsController extends AbstractController{
 
     //Route configuration
     protected initRoutes():void{
-        this.router.post('/addKeystroke', this.postAddKeystroke.bind(this));  
-        this.router.post('/addClick', this.postAddClick.bind(this));              
+        this.router.post('/addKeystroke', this.authMiddleware.verifyToken, this.validateBody('addKeystroke'), this.handleErrors, this.postAddKeystroke.bind(this));  
+        this.router.post('/addClick', this.authMiddleware.verifyToken, this.validateBody('addClick'), this.handleErrors, this.postAddClick.bind(this));              
     }
     
     private async postAddKeystroke(req:Request, res:Response){
