@@ -6,7 +6,7 @@ Author:
 - Ariadna Huesca Coronado
 
 Creation date: 28/04/2022
-Last modification date: 03/05/2022
+Last modification date: 20/05/2022
 
 Program that defines the controller for the Agent, its routes and functionalities
 */
@@ -16,6 +16,7 @@ import {Request, Response} from 'express';
 import db from '../models';
 import crypto from 'crypto';
 import fetch from 'node-fetch';
+import { checkSchema } from 'express-validator';
 
 class AgentController extends AbstractController{
     //Singleton
@@ -32,14 +33,50 @@ class AgentController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'agentProfile'|'agentForgotPassword'|'agentResetPassword'){
-        //To be implemented
+    protected validateBody(type:|'agentForgotPassword'|'agentResetPassword'|'acceptFeedback'){
+        switch(type){
+            case 'agentForgotPassword':
+                return checkSchema({
+                    email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    }
+                });
+            case 'agentResetPassword': 
+                return checkSchema({
+                    token: {
+                        isString: {
+                            errorMessage: 'Invalid token. Token is not a string'
+                        }
+                    },
+                    password: {
+                        isString: {
+                            errorMessage: 'Password must be a string'
+                        },
+                        isLength: {
+                            options: {
+                                min: 8
+                            },
+                            errorMessage: 'Must be at least 8 characters long'
+                        }
+                    }
+                });
+            case 'acceptFeedback':
+                return checkSchema({
+                    comment_id: {
+                        isString: {
+                            errorMessage: 'Comment ID must be a string'
+                        }
+                    }
+                });
+        }
     }
 
     //Route configuration
     protected initRoutes(): void {
-        this.router.post('/agentLogin', this.postAgentLogin.bind(this)); 
-        this.router.post('/createAgents', this.postCreateAgents.bind(this));   
+        /*this.router.post('/agentLogin', this.postAgentLogin.bind(this)); 
+        this.router.post('/createAgents', this.postCreateAgents.bind(this)); */ 
         this.router.get('/agentProfile', this.getAgentProfile.bind(this));
         this.router.post('/agentForgotPassword', this.postAgentForgotPassword.bind(this));
         this.router.get('/agentResetPassword', this.getAgentResetPassword.bind(this));  
@@ -48,7 +85,7 @@ class AgentController extends AbstractController{
     }
 
     //Controllers
-    private async postAgentLogin(req:Request, res:Response){
+    /* private async postAgentLogin(req:Request, res:Response){
         try {
             let result:any = await db["Agent"].findAll({
                 where: {
@@ -70,9 +107,9 @@ class AgentController extends AbstractController{
             console.log(err);
             res.status(500).send("Error");
         }
-    }  
+    } */  
     
-    private async postCreateAgents(req:Request, res:Response){
+    /* private async postCreateAgents(req:Request, res:Response){
         try{
             await db["Agent"].create(req.body);
             console.log("Agent registered");
@@ -81,13 +118,13 @@ class AgentController extends AbstractController{
             console.log(err);
             res.status(500).send("Error")
         }
-    }
+    } */
 
     private async getAgentProfile(req:Request, res:Response){
         try{
             let result:any = await db["Agent"].findAll({
                 where: {
-                    email: req.body.email
+                    email: req.query.email?.toString()
                 },
                 raw: true
             });

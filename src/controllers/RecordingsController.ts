@@ -2,13 +2,16 @@
 RecordingsControllers.ts
 Author:
 - Ariadna Huesca Coronado
+- Israel Sánchez Miranda
+- Claudia Sarahí Armenta Maya
 
 Creation date: 15/05/2022
-Last modification date: 15/05/2022
+Last modification date: 20/05/2022
 
-Program that handles the recordings in no relational database
+Program that defines the controller for the Recordings, its routes and functionalities
 */
 import { Request, Response } from 'express';
+import { checkSchema } from 'express-validator';
 import AbstractController from './AbstractController';
 
 class RecordingsController extends AbstractController{
@@ -26,8 +29,35 @@ class RecordingsController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
-        //To be implemented
+    protected validateBody(type:|'addKeystroke'|'addClick'){
+        switch(type){
+            case 'addKeystroke': 
+                return checkSchema({
+                    key: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    },
+                    agent_id: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    }
+                });
+                case 'addClick': 
+                return checkSchema({
+                    button: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    },
+                    agent_id: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    }
+                });
+        }
     }
 
     //Route configuration
@@ -39,9 +69,8 @@ class RecordingsController extends AbstractController{
     private async postAddKeystroke(req:Request, res:Response){
         const key:string = req.body.key;
         const agent_id:string = req.body.agent_id;
-        const description:string = req.body.description;
         
-        res.send("writing "+key+" "+agent_id+" "+description+" on a document");
+        res.send("writing "+key+" "+agent_id+" "+" on a document");
     }
 
     private async postAddClick(req:Request, res:Response){

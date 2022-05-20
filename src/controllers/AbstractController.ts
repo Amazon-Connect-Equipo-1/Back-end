@@ -5,12 +5,14 @@ Author:
 - Erick Hernández Silva
 
 Creation date: 28/04/2022
-Last modification date: 28/04/2022
+Last modification date: 20/05/2022
 
 Class that stores the abstract implementation of the controllers
 */
 
 import { Router } from 'express';
+import AuthMiddleware from '../middlewares/authorization';
+import PermissionMiddleware from '../middlewares/permission';
 import ValidationErrorMiddleware from '../middlewares/validationError';
 import CognitoService from '../services/cognitoService';
 
@@ -25,6 +27,8 @@ export default abstract class AbstractController{
 
     //Middlewares
     protected handleErrors = ValidationErrorMiddleware.handleErrors;
+    protected authMiddleware = AuthMiddleware.getInstance();
+    protected permissionMiddleware = PermissionMiddleware.getInstance();
     protected cognitoService = CognitoService.getInstance();
 
     //Getters

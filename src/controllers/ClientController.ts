@@ -5,9 +5,9 @@ Author:
 - David Rodríguez Fragoso
 
 Creation date: 18/05/2022
-Last modification date: 18/05/2022
+Last modification date: 20/05/2022
 
-Program that handles all controllers used for the Client
+Program that defines the controller for the Client, its routes and functionalities
 */
 
 import { Request, Response } from 'express';
@@ -26,6 +26,65 @@ class ClientController extends AbstractController{
         }
         this.instance = new ClientController("client");
         return this.instance;
+    }
+
+    //Body validation
+    protected validateBody(type: |'clientLogin'|'clientRegister'){
+        switch(type){
+            case 'clientLogin':
+                return checkSchema({
+                    email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    },
+                    password: {
+                        isString: {
+                            errorMessage: 'Password must be a string'
+                        } 
+                    }
+                });
+            case 'clientRegister':
+                return checkSchema({
+                    client_name: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        },
+                        isLength: {
+                            options: {
+                                min: 2, 
+                                max: 40
+                            },
+                            errorMessage: 'Must be between 2 and 40 characters long'
+                        }
+                    }, 
+                    password: {
+                        isString: {
+                            errorMessage: 'Password must be a string'
+                        },
+                        isLength: {
+                            options: {
+                                min: 8
+                            }, 
+                            errorMessage: 'Must be at least 8 characters long'
+                        }
+                    },
+                    email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    },
+                    phone_number: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        },
+                        isMobilePhone: {
+                            options: [['any'], {strictMode: true}],
+                            errorMessage: 'Must be a valid phone number'
+                        }
+                    }
+                });
+        }
     }
 
     //Methods
@@ -63,11 +122,6 @@ class ClientController extends AbstractController{
             res.status(500).send({code: error.code, message: error.message});
         }
     }
-
-    protected validateBody(type: any) {
-        //To be implemented
-    }
-
 }
 
 export default ClientController;

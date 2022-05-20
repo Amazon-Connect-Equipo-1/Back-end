@@ -1,8 +1,21 @@
+/*
+AgentController.ts
+Author:
+- Israel Sánchez Miranda
+- Erick Hernández Silva
+
+Creation date: 28/04/2022
+Last modification date: 20/05/2022
+
+Program that defines the controller for the Third Party Services, its routes and functionalities
+*/
+
 import { Request, Response } from 'express';
 import AbstractController from './AbstractController';
 import fetch from "node-fetch";
 import axios from 'axios';
 import ThirdPartyServicesModel from "../modelsNoSQL/third_party_services";
+import { checkSchema } from 'express-validator';
 
 class ThirdPartyServicesController extends AbstractController{
     //Singleton
@@ -19,8 +32,41 @@ class ThirdPartyServicesController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createAgent'|'updateAgent'|'deleteAgent'){
-        //To be implemented
+    protected validateBody(type:|'askService'|'sendService'){
+        switch(type){
+            case 'askService':
+                return checkSchema({
+                    serivce: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    },
+                    service_data: {
+                        isObject: {
+                            options: {
+                                strict: true
+                            },
+                            errorMessage: 'Must be a JSON object'
+                        }
+                    }
+                });
+            case 'sendService': 
+                return checkSchema({
+                    serivce: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    },
+                    service_data: {
+                        isObject: {
+                            options: {
+                                strict: true
+                            },
+                            errorMessage: 'Must be a JSON object'
+                        }
+                    }
+                });
+        }
     }
 
     //Route configuration

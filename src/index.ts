@@ -5,7 +5,7 @@ Author:
 - Erick Hernández Silva
 
 Creation date: 28/04/2022
-Last modification date: 15/05/2022
+Last modification date: 20/05/2022
 
 Program that creates the Server and initializes it
 */
@@ -45,6 +45,17 @@ const app = new Server({
     ],
     env: NODE_ENV
 });
+
+//Extending the Request interface from the Express module
+declare global{
+    namespace Express{
+        interface Request{
+            user:string;
+            token:string;
+        }
+    }
+}
+
 
 //Initializing the server
 app.init();
