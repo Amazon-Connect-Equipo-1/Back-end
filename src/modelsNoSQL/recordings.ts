@@ -24,15 +24,29 @@ const RecordingsModel = dynamodb.define('recordings', {
         keystrokeClickRecording: Joi.string(),
         processedRecording: Joi.string(),
         superId: Joi.string(),
+        agentId: Joi.string(),
         thumbnail: Joi.string(),
         duration: Joi.number(),
         recordingDate: Joi.date(),
         tags: Joi.array(),
         recordingData: Joi.array()
     },
-    tableName: `Recordings${PREFIX_TABLE}` 
+    tableName: `Recordings${PREFIX_TABLE}`,
+    indexes: [
+        {
+            hashKey: 'RecordingId',
+            name: 'callId',
+            type: 'global'
+        },
+        {
+            hashKey: 'agentId',
+            name: 'agentId',
+            type: 'global'
+        }
+    ]
 });
 
+/*
 dynamodb.createTables((err:any) => {
     /*
     Function that creates the tables or raises an error
@@ -41,13 +55,13 @@ dynamodb.createTables((err:any) => {
     err - the error that may be raised during the creation of the table
     Returns:
     Returns the error raised if ocurred
-    */
+    *//*
     if(err){
         //If an error ocurrs the system will notify it
         return console.log('Error creating tables', err);
     }
     //If no error ocurrs the system will create the tables and notify it
     console.log('Table Recordings created succesfully');
-});
+});*/
 
 export default RecordingsModel;

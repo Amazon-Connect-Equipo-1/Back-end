@@ -13,7 +13,7 @@ import AWS from 'aws-sdk';
 import crypto from 'crypto';
 import { COGNITO_APP_CLIENT_ID, COGNITO_APP_SECRET_HASH, AWS_REGION } from '../config';
 
-type CognitoAttributes = 'email' | 'name' ;
+type CognitoAttributes = 'email' | 'name' | 'phone_number' ;
 
 class CognitoService{
     //Attributes for connecting to Cognito
@@ -61,7 +61,7 @@ class CognitoService{
             UserAttributes: userAttr, //User data
         };
 
-        return await this.cognitoIdentity.signUp(params).promise;
+        return await this.cognitoIdentity.signUp(params).promise();
     }
 
     public async verifyUser(email:string, code:string){

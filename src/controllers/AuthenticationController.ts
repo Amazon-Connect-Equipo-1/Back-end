@@ -39,7 +39,7 @@ class AuthenticationController extends AbstractController{
 
     private async signupAgent(req:Request, res:Response){
         /*Verify if make different route for agent signup or add value here*/
-        const{email, password, name} = req.body;
+        const{super_id, name, password, email, phone_number} = req.body;
 
         try{
             //Create Cognito user
@@ -51,12 +51,22 @@ class AuthenticationController extends AbstractController{
                 {
                     Name: 'name',
                     Value: name
+                },
+                {
+                    Name: 'phone_number',
+                    Value: phone_number
                 }
             ]);
             console.log('Cognito user created!', user);
 
             //Save user in RDS database
-            await db["Agent"].create(req.body);
+            await db["Agent"].create({
+                agent_id: user.UserSub,
+                super_id: super_id,
+                name: name,
+                password: password,
+                email: email
+            });
             console.log("Agent created");
             res.status(201).send({message: 'Agent signed up', body: req.body});
         }catch(error:any){
@@ -66,7 +76,7 @@ class AuthenticationController extends AbstractController{
 
     private async signupManager(req:Request, res:Response){
         /*Verify if make different route for agent signup or add value here*/
-        const{email, password, name, role} = req.body;
+        const{name, password, email, role, phone_number} = req.body;
 
         try{
             //Create Cognito user
@@ -79,19 +89,24 @@ class AuthenticationController extends AbstractController{
                     Name: 'name',
                     Value: name
                 },
+                {
+                    Name: 'phone_number',
+                    Value: phone_number
+                }
             ]);
             console.log('Cognito user created!', user);
 
             //Save user in RDS database
-            if(role === "admin"){
-                await db["Manager"].create(req.body);
-                console.log("Admin created");
-                res.status(201).send({message: 'Admin signed up', body: req.body});
-            }else if(role === "quality"){
-                await db["Manager"].create(req.body);
-                console.log("Quality agent created");
-                res.status(201).send({message: 'Quality agent signed up', body: req.body});
-            }
+            await db["Manager"].create({
+                manager_id: user.UserSub,
+                manager_name: name, 
+                password: password,
+                email: email,
+                is_quality: role
+            });
+
+            console.log("Admin created");
+            res.status(201).send({message: 'Admin signed up', body: req.body});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
@@ -102,7 +117,7 @@ class AuthenticationController extends AbstractController{
         try{
             await this.cognitoService.verifyUser(email, code);
             //await this.emailService.emailNotificationSignUp(email,email);
-            return res.status(200).end();
+            return res.status(200).send({message: `User ${email} verified`});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
@@ -155,7 +170,9 @@ class AuthenticationController extends AbstractController{
         try{
             //Deploy users
             let agents = await db["Agent"].findAll();
-            let managers = await db["Managers"].findAll();
+            console.log(agents)
+            let managers = await db["Manager"].findAll();
+
 
             res.status(200).send({agents: agents, managers: managers});
         }catch(error:any){
@@ -167,36 +184,36 @@ class AuthenticationController extends AbstractController{
         switch(type){
             case 'signupAgent':
                 return checkSchema({
-                    email:{
+                    email: {
                         in: 'body',
-                        isEmail:{
+                        isEmail: {
                             errorMessage: 'Must be a valid email address'
                         }
                     },
                     password:{
-                        isString:{
+                        isString: {
                             errorMessage: 'Must be a string'
                         },
-                        isLength:{
-                            options:{
+                        isLength: {
+                            options: {
                                 min:8
                             },
                             errorMessage: 'Must be at least 8 characters long'
                         }
                     },
-                    name:{
-                        isString:{
+                    name: {
+                        isString: {
                             errorMessage: 'Must be a string'
                         },
-                        isLength:{
-                            options:{
+                        isLength: {
+                            options: {
                                 min: 2, 
                                 max: 40
                             },
                             errorMessage: 'Must be between 2 and 40 characters long'
                         }
                     },
-                    super_id:{
+                    super_id: {
                         isString:{
                             errorMessage: 'Must be a string'
                         }
@@ -204,38 +221,38 @@ class AuthenticationController extends AbstractController{
                 });
             case 'signupManager':
                 return checkSchema({
-                    email:{
-                        in: 'body',
-                        isEmail:{
-                            errorMessage: 'Must be a valid email address'
-                        }
-                    },
-                    password:{
-                        isString:{
+                    name: {
+                        isString: {
                             errorMessage: 'Must be a string'
                         },
-                        isLength:{
-                            options:{
-                                min:8
-                            },
-                            errorMessage: 'Must be at least 8 characters long'
-                        }
-                    },
-                    name:{
-                        isString:{
-                            errorMessage: 'Must be a string'
-                        },
-                        isLength:{
-                            options:{
+                        isLength: {
+                            options: {
                                 min: 2, 
                                 max: 40
                             },
                             errorMessage: 'Must be between 2 and 40 characters long'
                         }
                     },
-                    role:{
-                        isString:{
+                    password: {
+                        isString: {
                             errorMessage: 'Must be a string'
+                        },
+                        isLength: {
+                            options: {
+                                min:8
+                            },
+                            errorMessage: 'Must be at least 8 characters long'
+                        }
+                    },
+                    email:{
+                        in: 'body',
+                        isEmail: {
+                            errorMessage: 'Must be a valid email address'
+                        }
+                    },
+                    role:{
+                        isBoolean: {
+                            errorMessage: 'Must be boolean'
                         }
                     }
                 });

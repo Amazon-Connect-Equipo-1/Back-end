@@ -154,17 +154,11 @@ class ManagerController extends AbstractController{
                     super_id: {
                         isString: {
                             errorMessage: 'Must be a string'
-                        },
-                        isAlphanumeric: {
-                            errorMessage: 'Manager ID must be alphanumeric'
                         }
                     },
                     agent_id: {
                         isString: {
                             errorMessage: 'Must be a string'
-                        },
-                        isAlphanumeric: {
-                            errorMessage: 'Manager ID must be alphanumeric'
                         }
                     },
                     comment: {
@@ -189,7 +183,9 @@ class ManagerController extends AbstractController{
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
         this.router.post('/managerForgotPassword', this.authMiddleware.verifyToken, this.validateBody('managerForgotPassword'), this.handleErrors, this.postManagerForgotPassword.bind(this));
         this.router.get('/managerResetPassword', this.authMiddleware.verifyToken, this.validateBody('managerResetPassword'), this.handleErrors, this.getManagerResetPassword.bind(this));  //* 
-        this.router.get('/showRecording', this.showRecording.bind(this));  //*
+        this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));
+        this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
+        this.router.get('/agentRecordings', this.showAgentRecordings.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
     }
 
@@ -339,7 +335,87 @@ class ManagerController extends AbstractController{
     }
 
     private async showRecording(req:Request, res:Response){
-        
+        var recording_id:any = req.query.recording_id?.toString();
+
+        try{
+            //Obtaining recording data
+            const recording = await RecordingsModel
+                .query(recording_id)
+                .usingIndex('callId')
+                .exec()
+                .promise();
+            
+            //Obtaining RDS call data
+            const call_data = await db["Calls"].findAll({
+                attributes: ["satisfaction"],
+                include: [{
+                    association: "Agent",
+                    attributes: ["name", "email"]
+                }],
+                raw: true
+            });
+                  
+            res.status(200).send({agent: call_data[0]['Agent.name'], agent_email: call_data[0]['Agent.email'], rating: call_data[0].satisfaction, recording: recording[0].Items[0]});
+        }catch(error:any){
+            console.log(error);
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async showTopRecordings(req:Request, res:Response){
+        //Falta sortear el arreglo xd
+        var result:object[] = [];
+        try {
+            const recordings = await RecordingsModel
+                .scan()
+                .attributes(["recordingDate", "thumbnail", "tags", "RecordingId"])
+                .limit(50)
+                .exec()
+                .promise();
+            
+            for(const recording of recordings[0].Items){
+                var data = await db["Calls"].findAll({
+                    attributes: ["satisfaction"],
+                    include: [{
+                        association: "Agent",
+                        attributes: ["name"]
+                    }],
+                    where: {
+                        call_id: recording.attrs.RecordingId
+                    },
+                    raw: true
+                });
+
+                result.push({agent_name: data[0]['Agent.name'], satisfaction: data[0].satisfaction, recording_data: recording.attrs});
+            }
+
+            res.status(200).send({recordings: result});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async showAgentRecordings(req:Request, res:Response){
+        var email = req.query.email?.toString();
+        try {
+            let agent_id = await db["Agent"].findAll({
+                attributes: ["agent_id", "name"],
+                where: {
+                    email: email
+                },
+                raw: true
+            });
+    
+            const agent_recordings = await RecordingsModel
+                .query(agent_id[0].agent_id)
+                .usingIndex('agentId')
+                .exec()
+                .promise();
+            
+            res.status(200).send({agent_name: agent_id[0].name, agent_email: email, recordings: agent_recordings[0].Items});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
     }
 
     private async postComment(req:Request, res:Response){

@@ -20,7 +20,7 @@ export default class PermissionMiddleware{
         try{
             const user = await db["Manager"].findAll({
                 where: {
-                    email: req.body.email
+                    manager_id: req.user
                 }, 
                 raw: true
             });
@@ -39,11 +39,11 @@ export default class PermissionMiddleware{
         try{
             const user = await db["Manager"].findAll({
                 where: {
-                    email: req.body.email
+                    manager_id: req.user
                 },
                 raw: true
             });
-            if(user.length > 0 && user.is_quality){
+            if(user.length > 0 && user[0].is_quality){
                 next();
             }else{
                 res.status(401).send({code: 'UserNotQualityException', message: 'The logged account is not a quality agent'});
