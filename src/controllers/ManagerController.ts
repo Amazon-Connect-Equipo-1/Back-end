@@ -15,6 +15,7 @@ import AbstractController from './AbstractController';
 import {Request, Response} from 'express';
 import db from '../models/index';
 import RecordingsModel from '../modelsNoSQL/recordings';
+import UserConfigModel from '../modelsNoSQL/user_configurations';
 import fetch from 'node-fetch';
 import crypto from 'crypto';
 import { checkSchema } from 'express-validator';
@@ -88,9 +89,6 @@ class ManagerController extends AbstractController{
                     super_id: {
                         isString: {
                             errorMessage: 'Must be a string'
-                        },
-                        isAlphanumeric: {
-                            errorMessage: 'Manager ID must be alphanumeric'
                         }
                     },
                     name: {
@@ -185,7 +183,8 @@ class ManagerController extends AbstractController{
         this.router.get('/managerResetPassword', this.authMiddleware.verifyToken, this.validateBody('managerResetPassword'), this.handleErrors, this.getManagerResetPassword.bind(this));  //* 
         this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));
         this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
-        this.router.get('/agentRecordings', this.showAgentRecordings.bind(this));
+        this.router.get('/agentRecordings', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.showAgentRecordings.bind(this));
+        this.router.post('/filterRecordings', this.filterRecordings.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
     }
 
@@ -193,6 +192,15 @@ class ManagerController extends AbstractController{
     private async postCreateManagers(req:Request, res:Response){
         try{
             await db["Manager"].create(req.body);
+            await UserConfigModel.create(
+                {
+                userId: req.body.manager_id,
+                color: "Dark",
+                textSize: "medium",
+                language: "EN"
+                },
+                {overwrite: false}
+            );
             console.log("Manager registered");
             res.status(200).send("Manager registered")
         }catch(err:any){
@@ -204,6 +212,15 @@ class ManagerController extends AbstractController{
     private async postCreateAgents(req:Request, res:Response){
         try{
             await db["Agent"].create(req.body);
+            await UserConfigModel.create(
+                {
+                userId: req.body.agent_id,
+                color: "Dark",
+                textSize: "medium",
+                language: "EN"
+                },
+                {overwrite: false}
+            );
             console.log("Agent registered");
             res.status(200).send("Agent registered")
         }catch(err:any){
@@ -346,16 +363,15 @@ class ManagerController extends AbstractController{
                 .promise();
             
             //Obtaining RDS call data
-            const call_data = await db["Calls"].findAll({
-                attributes: ["satisfaction"],
-                include: [{
-                    association: "Agent",
-                    attributes: ["name", "email"]
-                }],
+            const call_data = await db["Agent"].findAll({
+                attributes: ["name", "email"],
+                where: {
+                    agent_id: recording[0].Items[0].attrs.agentId
+                },
                 raw: true
             });
                   
-            res.status(200).send({agent: call_data[0]['Agent.name'], agent_email: call_data[0]['Agent.email'], rating: call_data[0].satisfaction, recording: recording[0].Items[0]});
+            res.status(200).send({agent: call_data[0].name, agent_email: call_data[0].email, recording: recording[0].Items[0]});
         }catch(error:any){
             console.log(error);
             res.status(500).send({code: error.code, message: error.message});
@@ -364,30 +380,36 @@ class ManagerController extends AbstractController{
 
     private async showTopRecordings(req:Request, res:Response){
         //Falta sortear el arreglo xd
-        var result:object[] = [];
+        var result = [];
         try {
             const recordings = await RecordingsModel
                 .scan()
-                .attributes(["recordingDate", "thumbnail", "tags", "RecordingId"])
+                .attributes(["recordingDate", "thumbnail", "tags", "agentId", "RecordingId", "satisfaction"])
                 .limit(50)
                 .exec()
                 .promise();
             
             for(const recording of recordings[0].Items){
-                var data = await db["Calls"].findAll({
-                    attributes: ["satisfaction"],
-                    include: [{
-                        association: "Agent",
-                        attributes: ["name"]
-                    }],
+                var data = await db["Agent"].findAll({
+                    attributes: ["name"],
                     where: {
-                        call_id: recording.attrs.RecordingId
+                        agent_id: recording.attrs.agentId
                     },
                     raw: true
                 });
 
-                result.push({agent_name: data[0]['Agent.name'], satisfaction: data[0].satisfaction, recording_data: recording.attrs});
+                result.push({agent_name: data[0].name, recording_data: recording.attrs});
             }
+
+           result = result.sort((sat1, sat2) => {
+                if(sat1.recording_data.satisfaction > sat2.recording_data.satisfaction){
+                    return -1;
+                } 
+                if(sat1.recording_data.satisfaction < sat2.recording_data.satisfaction){
+                    return 1;
+                }
+                return 0;
+            });
 
             res.status(200).send({recordings: result});
         }catch(error:any){
@@ -413,6 +435,40 @@ class ManagerController extends AbstractController{
                 .promise();
             
             res.status(200).send({agent_name: agent_id[0].name, agent_email: email, recordings: agent_recordings[0].Items});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async filterRecordings(req:Request, res:Response){
+        var body_tags = req.body.tags
+        var result = [];
+        try{
+            const recordings = await RecordingsModel
+                .scan()
+                .attributes(["recordingDate", "thumbnail", "tags", "agentId", "RecordingId", "satisfaction"])
+                .limit(50)
+                .exec()
+                .promise();
+
+            for(const recording of recordings[0].Items){
+                for(const tag of recording.attrs.tags){
+                    if(body_tags.includes(tag)){
+                        var data = await db["Agent"].findAll({
+                            attributes: ["name"],
+                            where: {
+                                agent_id: recording.attrs.agentId
+                            },
+                            raw: true
+                        });
+
+                        result.push({agent_name: data[0].name, recording_data: recording.attrs});
+                        break;
+                    }
+                }
+            }
+
+            res.status(200).send({recordings: result});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }

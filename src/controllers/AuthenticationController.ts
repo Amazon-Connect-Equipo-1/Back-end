@@ -13,6 +13,7 @@ import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 import AbstractController from './AbstractController';
 import db from '../models';
+import UserConfigModel from '../modelsNoSQL/user_configurations';
 
 class AuthenticationController extends AbstractController{
     //Singleton
@@ -67,6 +68,15 @@ class AuthenticationController extends AbstractController{
                 password: password,
                 email: email
             });
+            await UserConfigModel.create(
+                {
+                userId: req.body.manager_id,
+                color: "Dark",
+                textSize: "medium",
+                language: "EN"
+                },
+                {overwrite: false}
+            );
             console.log("Agent created");
             res.status(201).send({message: 'Agent signed up', body: req.body});
         }catch(error:any){
@@ -104,6 +114,15 @@ class AuthenticationController extends AbstractController{
                 email: email,
                 is_quality: role
             });
+            await UserConfigModel.create(
+                {
+                userId: req.body.manager_id,
+                color: "Dark",
+                textSize: "medium",
+                language: "EN"
+                },
+                {overwrite: false}
+            );
 
             console.log("Admin created");
             res.status(201).send({message: 'Admin signed up', body: req.body});

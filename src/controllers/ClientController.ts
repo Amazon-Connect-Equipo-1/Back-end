@@ -79,11 +79,10 @@ class ClientController extends AbstractController{
                             errorMessage: 'Must be a string'
                         },
                         isMobilePhone: {
-                            options: [['any'], {strictMode: true}],
                             errorMessage: 'Must be a valid phone number'
                         }
                     },
-                    client_pint: {
+                    client_pin: {
                         isString: {
                             errorMessage: 'Must be a string'
                         },

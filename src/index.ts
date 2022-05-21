@@ -20,6 +20,7 @@ import express from 'express';
 import cors from 'cors';
 import RecordingsController from './controllers/RecordingsController';
 import ClientController from './controllers/ClientController';
+import UserConfigController from './controllers/UserConfigurations';
 
 
 
@@ -39,7 +40,8 @@ const app = new Server({
         ManagerController.getInstance(),
         ThirdPartyServicesController.getInstance(),
         AuthenticationController.getInstance(),
-        ClientController.getInstance()
+        ClientController.getInstance(),
+        UserConfigController.getInstance()
     ],
     env: NODE_ENV
 });

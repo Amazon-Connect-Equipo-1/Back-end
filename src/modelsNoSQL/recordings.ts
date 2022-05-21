@@ -27,6 +27,7 @@ const RecordingsModel = dynamodb.define('recordings', {
         agentId: Joi.string(),
         thumbnail: Joi.string(),
         duration: Joi.number(),
+        satisfaction: Joi.number(),
         recordingDate: Joi.date(),
         tags: Joi.array(),
         recordingData: Joi.array()
@@ -41,6 +42,12 @@ const RecordingsModel = dynamodb.define('recordings', {
         {
             hashKey: 'agentId',
             name: 'agentId',
+            type: 'global'
+        },
+        {
+            hashKey: 'RecordingId',
+            rangeKey: 'satisfaction',
+            name: 'topRecording',
             type: 'global'
         }
     ]
