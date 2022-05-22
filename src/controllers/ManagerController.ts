@@ -18,7 +18,8 @@ import RecordingsModel from '../modelsNoSQL/recordings';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
 import fetch from 'node-fetch';
 import crypto from 'crypto';
-import { checkSchema } from 'express-validator';
+import { body, checkSchema } from 'express-validator';
+import cryptoService from '../services/cryptoService';
 
 class ManagerController extends AbstractController{
     //Singleton
@@ -190,8 +191,19 @@ class ManagerController extends AbstractController{
 
     //Controllers
     private async postCreateManagers(req:Request, res:Response){
+        const encryption = new cryptoService();
         try{
-            await db["Manager"].create(req.body);
+            //Hashing managers's password
+            var hashedPasswordObject = encryption.encrypt(req.body.password);
+            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+
+            await db["Manager"].create({
+                manager_id: req.body.manager_id,
+                manager_name: req.body.manager_name,
+                password: hashedPassword,
+                email: req.body.email,
+                is_quality: req.body.is_quality
+            });
             await UserConfigModel.create(
                 {
                 userId: req.body.manager_id,
@@ -210,8 +222,20 @@ class ManagerController extends AbstractController{
     }
 
     private async postCreateAgents(req:Request, res:Response){
+        const encryption = new cryptoService();
         try{
-            await db["Agent"].create(req.body);
+            //Hashing managers's password
+            var hashedPasswordObject = encryption.encrypt(req.body.password);
+            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+
+            await db["Agent"].create({
+                agent_id: req.body.agent_id,
+                super_id: req.body.super_id,
+                name: req.body.name,
+                password: hashedPassword,
+                email: req.body.email,
+            });
+
             await UserConfigModel.create(
                 {
                 userId: req.body.agent_id,
@@ -221,6 +245,7 @@ class ManagerController extends AbstractController{
                 },
                 {overwrite: false}
             );
+
             console.log("Agent registered");
             res.status(200).send("Agent registered")
         }catch(err:any){
@@ -261,17 +286,12 @@ class ManagerController extends AbstractController{
     }
 
     private async postManagerForgotPassword(req:Request, res:Response){
-        //Token and its keys to be encrypted
+        //Encription service
+        const encryption = new cryptoService();
+
+        //Creating and encrypting the token
         var token = req.body.email + "$" + Date.now();
-        const iv = crypto.randomBytes(16);
-        const key = crypto.randomBytes(32);
-
-        //Creating the cypher for the token
-        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
-
-        //Encrypting the token
-        var encrypted_token = cipher.update(token);
-        encrypted_token = Buffer.concat([encrypted_token, cipher.final()]);
+        var encryptedToken = encryption.encrypt(token);
         
         //Updating the token at the database
         await db["Agent"].update({security_token: token}, {
@@ -282,8 +302,7 @@ class ManagerController extends AbstractController{
          
         //Building the message
         const message = "Click the following link to reset your password:"
-        const link = "http://localhost:8080/agent/agentResetPassword?token=" 
-        + encrypted_token.toString('hex') + "$" + iv.toString('hex') + "$" + key.toString('hex');
+        const link = "http://localhost:8080/agent/agentResetPassword?token=" + encryptedToken.iv + "$" + encryptedToken.content;
 
         //Payload to fetch emailMessaging API
         const payload ={
@@ -306,23 +325,19 @@ class ManagerController extends AbstractController{
     }
 
     private async getManagerResetPassword(req:Request, res:Response){
-        //Parsing data within the token query(FRONT)
-        var cipher_data:any = req.query.token?.toString().split("$");
+        //Encrypting service
+        const encryption = new cryptoService();
+
+        //Parsing data within the token query
+        var query_data:any = req.query.token?.toString().split("$");
 
         //Encrypted token and its keys to be dencrypted
-        const encrypted_token = Buffer.from(cipher_data[0], 'hex');
-        const iv = Buffer.from(cipher_data[1], 'hex');
-        const key = Buffer.from(cipher_data[2], 'hex');
+        const cipher_data = {
+            iv: Buffer.from(query_data[0], 'hex'), 
+            content: Buffer.from(query_data[1], 'hex'),
+        }
 
-        //Creating the decipher for the token
-        const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
-
-        //Dencrypting the token
-        var decrypted_token = decipher.update(encrypted_token);
-        decrypted_token = Buffer.concat([decrypted_token, decipher.final()]);
-
-        //Original token
-        const token = decrypted_token.toString();
+        const token = encryption.dencrypt(cipher_data);
 
         const query_result = await db["Agent"].findAll({
             where: {

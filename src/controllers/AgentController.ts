@@ -17,6 +17,7 @@ import db from '../models';
 import crypto from 'crypto';
 import fetch from 'node-fetch';
 import { checkSchema } from 'express-validator';
+import cryptoService from '../services/cryptoService';
 
 class AgentController extends AbstractController{
     //Singleton
@@ -142,17 +143,12 @@ class AgentController extends AbstractController{
     }
 
     private async postAgentForgotPassword(req:Request, res:Response){
-        //Token and its keys to be encrypted
+        //Encription service
+        const encryption = new cryptoService();
+
+        //Creating and encrypting the token
         var token = req.body.email + "$" + Date.now();
-        const iv = crypto.randomBytes(16);
-        const key = crypto.randomBytes(32);
-
-        //Creating the cypher for the token
-        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
-
-        //Encrypting the token
-        var encrypted_token = cipher.update(token);
-        encrypted_token = Buffer.concat([encrypted_token, cipher.final()]);
+        var encryptedToken = encryption.encrypt(token);
         
         //Updating the token at the database
         await db["Agent"].update({security_token: token}, {
@@ -163,8 +159,7 @@ class AgentController extends AbstractController{
          
         //Building the message
         const message = "Click the following link to reset your password:"
-        const link = "http://localhost:8080/agent/agentResetPassword?token=" 
-        + encrypted_token.toString('hex') + "$" + iv.toString('hex') + "$" + key.toString('hex');
+        const link = "http://localhost:8080/agent/agentResetPassword?token=" + encryptedToken.iv + "$" + encryptedToken.content;
 
         //Payload to fetch emailMessaging API
         const payload ={
@@ -187,23 +182,19 @@ class AgentController extends AbstractController{
     }
 
     private async getAgentResetPassword(req:Request, res:Response){
-        //Parsing data within the token query(FRONT)
-        var cipher_data:any = req.query.token?.toString().split("$");
+         //Encrypting service
+         const encryption = new cryptoService();
 
-        //Encrypted token and its keys to be dencrypted
-        const encrypted_token = Buffer.from(cipher_data[0], 'hex');
-        const iv = Buffer.from(cipher_data[1], 'hex');
-        const key = Buffer.from(cipher_data[2], 'hex');
-
-        //Creating the decipher for the token
-        const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
-
-        //Dencrypting the token
-        var decrypted_token = decipher.update(encrypted_token);
-        decrypted_token = Buffer.concat([decrypted_token, decipher.final()]);
-
-        //Original token
-        const token = decrypted_token.toString();
+         //Parsing data within the token query
+         var query_data:any = req.query.token?.toString().split("$");
+ 
+         //Encrypted token and its keys to be dencrypted
+         const cipher_data = {
+             iv: Buffer.from(query_data[0], 'hex'), 
+             content: Buffer.from(query_data[1], 'hex'),
+         }
+ 
+         const token = encryption.dencrypt(cipher_data);
 
         const query_result = await db["Agent"].findAll({
             where: {

@@ -12,6 +12,7 @@ Program that handles the Authentication methods for every user (Agent, Quality a
 import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 import AbstractController from './AbstractController';
+import cryptoService from '../services/cryptoService';
 import db from '../models';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
 
@@ -41,6 +42,7 @@ class AuthenticationController extends AbstractController{
     private async signupAgent(req:Request, res:Response){
         /*Verify if make different route for agent signup or add value here*/
         const{super_id, name, password, email, phone_number} = req.body;
+        const encryption = new cryptoService();
 
         try{
             //Create Cognito user
@@ -60,14 +62,19 @@ class AuthenticationController extends AbstractController{
             ]);
             console.log('Cognito user created!', user);
 
+            //Hashing managers's password
+            var hashedPasswordObject = encryption.encrypt(password);
+            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+
             //Save user in RDS database
             await db["Agent"].create({
                 agent_id: user.UserSub,
                 super_id: super_id,
                 name: name,
-                password: password,
+                password: hashedPassword,
                 email: email
             });
+
             await UserConfigModel.create(
                 {
                 userId: req.body.manager_id,
@@ -77,6 +84,7 @@ class AuthenticationController extends AbstractController{
                 },
                 {overwrite: false}
             );
+
             console.log("Agent created");
             res.status(201).send({message: 'Agent signed up', body: req.body});
         }catch(error:any){
@@ -87,6 +95,7 @@ class AuthenticationController extends AbstractController{
     private async signupManager(req:Request, res:Response){
         /*Verify if make different route for agent signup or add value here*/
         const{name, password, email, role, phone_number} = req.body;
+        const encryption = new cryptoService();
 
         try{
             //Create Cognito user
@@ -106,14 +115,19 @@ class AuthenticationController extends AbstractController{
             ]);
             console.log('Cognito user created!', user);
 
+            //Hashing managers's password
+            var hashedPasswordObject = encryption.encrypt(password);
+            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+
             //Save user in RDS database
             await db["Manager"].create({
                 manager_id: user.UserSub,
                 manager_name: name, 
-                password: password,
+                password: hashedPassword,
                 email: email,
                 is_quality: role
             });
+            
             await UserConfigModel.create(
                 {
                 userId: req.body.manager_id,

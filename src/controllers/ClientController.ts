@@ -11,6 +11,7 @@ Program that defines the controller for the Client, its routes and functionaliti
 */
 
 import { Request, Response } from 'express';
+import cryptoService from '../services/cryptoService';
 import { checkSchema } from 'express-validator';
 import AbstractController from './AbstractController';
 import db from '../models';
@@ -124,8 +125,22 @@ class ClientController extends AbstractController{
     }
 
     private async clientRegister(req:Request, res:Response){
+        const encryption = new cryptoService();
         try{
-            let register = await db["Client"].create(req.body);
+            //Hashing client's password and pin
+            var hashedPasswordObject = encryption.encrypt(req.body.password);
+            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+            var hashedPinObject = encryption.encrypt(req.body.client_pin);
+            var hashedPin = hashedPinObject.iv + "$" + hashedPinObject.content;
+
+            let register = await db["Client"].create({
+                client_name: req.body.client_name,
+                password: hashedPassword,
+                email: req.body.email,
+                phone_number: req.body.phone_number,
+                client_pin: hashedPin
+            });
+            
             console.log("Client registered");
             res.status(200).send({message: "Client registered", body: register});
         }catch(error:any){

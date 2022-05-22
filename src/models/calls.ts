@@ -72,7 +72,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     client_id: {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: true
     },
     time_start: {
       type: DataTypes.DATE,
