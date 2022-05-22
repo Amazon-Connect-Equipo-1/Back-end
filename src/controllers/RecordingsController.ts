@@ -80,7 +80,30 @@ class RecordingsController extends AbstractController{
         res.send("writing "+button+" "+agent_id+" "+" on a document");
     }
 
-    
+    /*async uploadFilesToS3(file,fileName) {
+        return new Promise(async (resolve, reject) => {
+          const bucket = new S3(
+            {
+              accessKeyId: "*your accesskey*",
+              secretAccessKey: "*your s3SecretAccessKey*",
+              region: "*your awsRegion *"
+            }
+          );
+          const params = {
+            //Bucket: environment.bucketName,
+            Key: path+ "/" + fileName
+            Body: file
+          };
+          bucket.upload(params,async(err,data)=>{
+                 if(data){
+                      console.log("Video uploaded")
+                   }
+                   if(err){
+                      console.log("Video uploaded failed")
+                   }
+             })
+        })
+      }*/
 };
 
 export default RecordingsController;
