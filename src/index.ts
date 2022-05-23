@@ -22,7 +22,7 @@ import RecordingsController from './controllers/RecordingsController';
 import ClientController from './controllers/ClientController';
 import UserConfigController from './controllers/UserConfigurations';
 import PopulateTablesController from './controllers/PopulateTablesController';
-
+import fs from 'fs';
 
 
 const app = new Server({
@@ -45,8 +45,11 @@ const app = new Server({
         UserConfigController.getInstance(),
         PopulateTablesController.getInstance()
     ],
-    env: NODE_ENV
+    env: NODE_ENV,
+    privateKey: fs.readFileSync('/sslcert/privatekey.pem',{encoding:'utf8'}),
+    certificate: fs.readFileSync('/sslcert/server.crt',{encoding:'utf8'})
 });
+
 
 //Extending the Request interface from the Express module
 declare global{

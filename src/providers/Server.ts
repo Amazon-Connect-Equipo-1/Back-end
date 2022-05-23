@@ -10,9 +10,11 @@ Last modification date: 29/04/2022
 Program that handles the server, controllers and middlewares of the project
 */
 
+
 import express, { Response } from 'express';
 import AbstractController from '../controllers/AbstractController';
 import db from '../models';
+import https from 'https';
 
 class Server{
     /*
@@ -23,14 +25,18 @@ class Server{
     private app: express.Application;
     private port: number;
     private env: string;
+    private credentials: any;
+    private httpsServer: any;
 
     //Constructor
-    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string}){
+    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string;privateKey:any;certificate:any}){
         this.app = express();
+        this.credentials = {key: appInit.privateKey, cert: appInit.certificate}
         this.port = appInit.port;
         this.env = appInit.env;
         this.loadMiddlewares(appInit.middlewares);
         this.routes(appInit.controllers);
+        this.httpsServer = https.createServer(this.credentials,this.app)
     }
 
     //Methods
@@ -88,6 +94,7 @@ class Server{
             //Running the server
             console.log(`Server:Running @'http://localhost:${this.port}'`);
         });
+        this.httpsServer.listen(443,()=>console.log("Running HTTPS"))
     }
 }
 
