@@ -106,15 +106,23 @@ class ClientController extends AbstractController{
     }
 
     private async clientLogin(req:Request, res:Response){
+        const encryption = new cryptoService();
         try{
             let result = await db["Client"].findAll({
                 where: {
                     email: req.body.email,
-                    password: req.body.password
                 }
             });
 
-            if(result.length > 0){
+            //Dencrypting the password
+            const cipher_data = {
+                iv: result[0].password.split('$')[0],
+                content: result[0].password.split('$')[1]
+            };
+
+            const password = encryption.dencrypt(cipher_data);
+
+            if(result.length > 0 && password === req.body.password){
                 res.status(200).send({message: "Logged in", body: result[0]});
             }else{
                 res.status(404).send({message: "Incorrect email or password"});
@@ -140,7 +148,7 @@ class ClientController extends AbstractController{
                 phone_number: req.body.phone_number,
                 client_pin: hashedPin
             });
-            
+
             console.log("Client registered");
             res.status(200).send({message: "Client registered", body: register});
         }catch(error:any){

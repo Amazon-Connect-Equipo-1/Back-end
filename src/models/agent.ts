@@ -96,11 +96,11 @@ module.exports = (sequelize:any, DataTypes:any) => {
     },
     rating: {
       type: DataTypes.DECIMAL(2, 1),
-      defaultValue: 0.00,
+      defaultValue: 0.0,
       allowNull: false
     },
     status: {
-      //Possible status: Inactive, Active, in-call
+      //Possible status: Inactive, Active, In-call
       type: DataTypes.STRING,
       defaultValue: "Inactive",
       allowNull: false

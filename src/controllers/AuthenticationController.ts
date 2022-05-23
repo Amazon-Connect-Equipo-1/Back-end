@@ -86,7 +86,7 @@ class AuthenticationController extends AbstractController{
             );
 
             console.log("Agent created");
-            res.status(201).send({message: 'Agent signed up', body: req.body});
+            res.status(201).send({message: 'Agent signed up', body: {super_id: super_id, name: name, pasword: hashedPassword, email: email, phone_number: phone_number}});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
@@ -127,7 +127,7 @@ class AuthenticationController extends AbstractController{
                 email: email,
                 is_quality: role
             });
-            
+
             await UserConfigModel.create(
                 {
                 userId: req.body.manager_id,
@@ -139,7 +139,7 @@ class AuthenticationController extends AbstractController{
             );
 
             console.log("Admin created");
-            res.status(201).send({message: 'Admin signed up', body: req.body});
+            res.status(201).send({message: 'Admin signed up', body: {name: name, password: hashedPassword, email: email, role: role, phone_number: phone_number}});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }

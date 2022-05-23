@@ -224,7 +224,7 @@ class ManagerController extends AbstractController{
     private async postCreateAgents(req:Request, res:Response){
         const encryption = new cryptoService();
         try{
-            //Hashing managers's password
+            //Hashing manager's password
             var hashedPasswordObject = encryption.encrypt(req.body.password);
             var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
 
@@ -335,7 +335,7 @@ class ManagerController extends AbstractController{
         const cipher_data = {
             iv: Buffer.from(query_data[0], 'hex'), 
             content: Buffer.from(query_data[1], 'hex'),
-        }
+        };
 
         const token = encryption.dencrypt(cipher_data);
 
@@ -350,7 +350,7 @@ class ManagerController extends AbstractController{
             //Obtaining timestamp related to the token
             const timestamp = token.split("$")[1];
             if(Date.now() - parseInt(timestamp) < 300000){
-                //If token is still valid the password changes *CHANGE PASSWORD IN COGNITO TOO*
+                //If token is still valid the password changes *CHANGE PASSWORD IN COGNITO TOO encrypt password again*
                 await db["Agent"].update({password: "WebiWabo", security_token: null}, {
                     where: {
                         security_token: token

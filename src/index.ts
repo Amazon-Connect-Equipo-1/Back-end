@@ -21,6 +21,7 @@ import cors from 'cors';
 import RecordingsController from './controllers/RecordingsController';
 import ClientController from './controllers/ClientController';
 import UserConfigController from './controllers/UserConfigurations';
+import PopulateTablesController from './controllers/PopulateTablesController';
 
 
 
@@ -41,7 +42,8 @@ const app = new Server({
         ThirdPartyServicesController.getInstance(),
         AuthenticationController.getInstance(),
         ClientController.getInstance(),
-        UserConfigController.getInstance()
+        UserConfigController.getInstance(),
+        PopulateTablesController.getInstance()
     ],
     env: NODE_ENV
 });

@@ -30,7 +30,7 @@ const RecordingsModel = dynamodb.define('recordings', {
         satisfaction: Joi.number(),
         recordingDate: Joi.date(),
         tags: Joi.array(),
-        recordingData: Joi.array()
+        recordingData: Joi.object()
     },
     tableName: `Recordings${PREFIX_TABLE}`,
     indexes: [

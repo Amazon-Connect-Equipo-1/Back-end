@@ -14,7 +14,6 @@ Program that defines the controller for the Agent, its routes and functionalitie
 import AbstractController from './AbstractController';
 import {Request, Response} from 'express';
 import db from '../models';
-import crypto from 'crypto';
 import fetch from 'node-fetch';
 import { checkSchema } from 'express-validator';
 import cryptoService from '../services/cryptoService';
@@ -34,7 +33,7 @@ class AgentController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'agentForgotPassword'|'agentResetPassword'|'acceptFeedback'){
+    protected validateBody(type:|'agentForgotPassword'|/*'agentResetPassword'|*/'acceptFeedback'){
         switch(type){
             case 'agentForgotPassword':
                 return checkSchema({
@@ -44,7 +43,7 @@ class AgentController extends AbstractController{
                         }
                     }
                 });
-            case 'agentResetPassword': 
+            /*case 'agentResetPassword': 
                 return checkSchema({
                     token: {
                         isString: {
@@ -62,7 +61,7 @@ class AgentController extends AbstractController{
                             errorMessage: 'Must be at least 8 characters long'
                         }
                     }
-                });
+                });*/
             case 'acceptFeedback':
                 return checkSchema({
                     comment_id: {
@@ -80,7 +79,7 @@ class AgentController extends AbstractController{
         this.router.post('/createAgents', this.postCreateAgents.bind(this)); */ 
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
         this.router.post('/agentForgotPassword', this.authMiddleware.verifyToken, this.validateBody('agentForgotPassword'), this.handleErrors, this.postAgentForgotPassword.bind(this));
-        this.router.get('/agentResetPassword', this.authMiddleware.verifyToken, this.validateBody('agentResetPassword'), this.handleErrors, this.getAgentResetPassword.bind(this));  
+        this.router.get('/agentResetPassword', this.authMiddleware.verifyToken, /*this.validateBody('agentResetPassword'),*/ this.handleErrors, this.getAgentResetPassword.bind(this));  
         this.router.post('/acceptFeedback', this.authMiddleware.verifyToken, this.validateBody('acceptFeedback'), this.handleErrors, this.acceptFeedback.bind(this)); 
         this.router.get('/getFeedback', this.authMiddleware.verifyToken, this.handleErrors, this.getFeedback.bind(this)); 
     }
@@ -192,7 +191,7 @@ class AgentController extends AbstractController{
          const cipher_data = {
              iv: Buffer.from(query_data[0], 'hex'), 
              content: Buffer.from(query_data[1], 'hex'),
-         }
+         };
  
          const token = encryption.dencrypt(cipher_data);
 
