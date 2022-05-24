@@ -89,9 +89,10 @@ class ClientController extends AbstractController{
                         },
                         isLength: {
                             options: {
+                                min: 4,
                                 max: 4
                             },
-                            errorMessage: 'Pin must be 4 characters long'
+                            errorMessage: 'Pin must be only 4 characters long'
                         }
                     }
                 });
@@ -109,20 +110,17 @@ class ClientController extends AbstractController{
         const encryption = new cryptoService();
         try{
             let result = await db["Client"].findAll({
+                attributes: ["password"],
                 where: {
                     email: req.body.email,
                 }
             });
 
             //Dencrypting the password
-            const cipher_data = {
-                iv: result[0].password.split('$')[0],
-                content: result[0].password.split('$')[1]
-            };
+            const password = result[0].password;
 
-            const password = encryption.dencrypt(cipher_data);
 
-            if(result.length > 0 && password === req.body.password){
+            if(result.length > 0 && password === encryption.hash(req.body.password)){
                 res.status(200).send({message: "Logged in", body: result[0]});
             }else{
                 res.status(404).send({message: "Incorrect email or password"});
@@ -136,10 +134,9 @@ class ClientController extends AbstractController{
         const encryption = new cryptoService();
         try{
             //Hashing client's password and pin
-            var hashedPasswordObject = encryption.encrypt(req.body.password);
-            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
-            var hashedPinObject = encryption.encrypt(req.body.client_pin);
-            var hashedPin = hashedPinObject.iv + "$" + hashedPinObject.content;
+            console.log(req.body.password);
+            var hashedPassword = encryption.hash(req.body.password);
+            var hashedPin = encryption.hash(req.body.client_pin);
 
             let register = await db["Client"].create({
                 client_name: req.body.client_name,

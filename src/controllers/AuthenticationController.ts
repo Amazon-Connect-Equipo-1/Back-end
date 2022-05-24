@@ -35,6 +35,9 @@ class AuthenticationController extends AbstractController{
         this.router.post('/signupAgent', this.validateBody('signupAgent'), this.handleErrors, this.signupAgent.bind(this));
         this.router.post('/signupManager', this.validateBody('signupManager'), this.handleErrors, this.signupManager.bind(this));
         this.router.post('/signin', this.validateBody('signin'), this.handleErrors, this.signin.bind(this));
+        this.router.post('/signout', this.validateBody('signout'), this.handleErrors, this.signout.bind(this));
+        this.router.post('/forgotPassword', this.validateBody('forgotPassword'), this.handleErrors, this.forgotPassword.bind(this));
+        this.router.post('/confirmPassword', this.validateBody('confirmPassword'), this.handleErrors, this.confirmPassword.bind(this));
         this.router.post('/verify', this.validateBody('verify'), this.handleErrors, this.verify.bind(this));
         this.router.get('/readUsers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.getReadUsers.bind(this));
     }
@@ -63,8 +66,7 @@ class AuthenticationController extends AbstractController{
             console.log('Cognito user created!', user);
 
             //Hashing managers's password
-            var hashedPasswordObject = encryption.encrypt(password);
-            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+            var hashedPassword = encryption.hash(password);
 
             //Save user in RDS database
             await db["Agent"].create({
@@ -116,8 +118,7 @@ class AuthenticationController extends AbstractController{
             console.log('Cognito user created!', user);
 
             //Hashing managers's password
-            var hashedPasswordObject = encryption.encrypt(password);
-            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+            var hashedPassword = encryption.hash(password);
 
             //Save user in RDS database
             await db["Manager"].create({
@@ -199,6 +200,92 @@ class AuthenticationController extends AbstractController{
         }
     }
 
+    private async signout(req:Request, res:Response){
+        const token = req.token
+        const email = req.body.email
+
+        try{
+            await this.cognitoService.signOut(token);
+
+            let agentResult =  await db["Agent"].findAll({
+                where: {
+                    email: email
+                }
+            });
+
+            if(agentResult.length > 0){
+                await db["Agent"].update({status: "Inactive"}, {
+                    where: {
+                        email: email
+                    }
+                });
+            }
+
+            res.status(200).send(`User ${email} signed out`);
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async forgotPassword(req:Request, res:Response){
+        const {email} = req.body;
+
+        try{
+            await this.cognitoService.forgotPassword(email);
+
+            res.status(200).send({message: `Password resetting email sent to ${email}`});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async confirmPassword(req:Request, res:Response){
+        const encryption = new cryptoService();
+        const {email, confirmationCode, password} = req.body;
+
+        try{
+            await this.cognitoService.confirmForgotPassword(email, confirmationCode, password);
+
+            let agent = await db["Agent"].findAll({
+                where: {
+                    email: email
+                }
+            });
+
+            let manager = await db["Manager"].findAll({
+                where: {
+                    email: email
+                }
+            })
+
+            if(agent.length > 0){
+                const hashedPassword = encryption.hash(password);
+
+                await db["Agent"].update({password: hashedPassword}, {
+                    where: {
+                        email: email
+                    }
+                });
+
+                res.status(200).send({message: `Agent ${email} password changed`});
+            }else if(manager.length > 0){
+                const hashedPassword = encryption.hash(password);
+
+                await db["Manager"].update({password: hashedPassword}, {
+                    where: {
+                        email: email
+                    }
+                });
+
+                res.status(200).send({message: `Manager ${email} password changed`});
+            }else{
+                res.status(404).send({code: 'UserNotFound', message: 'User not found in the database'});
+            }
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
     private async getReadUsers(req:Request, res:Response){
         try{
             //Deploy users
@@ -213,7 +300,7 @@ class AuthenticationController extends AbstractController{
         }
     }
 
-    protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'){
+    protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'){
         switch(type){
             case 'signupAgent':
                 return checkSchema({
@@ -307,7 +394,7 @@ class AuthenticationController extends AbstractController{
 							},
 							errorMessage: 'Must be at least 8 characters',
 						},
-					},
+					}
                 });
             case 'verify':
                 return checkSchema({
@@ -328,8 +415,48 @@ class AuthenticationController extends AbstractController{
                             },
                             errorMessage: 'Must be between 6 and 8 characters',
                         },
-                    },
+                    }
                 });
+            case 'signout':
+                return checkSchema({
+                    email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    }
+                });
+            case 'forgotPassword': 
+                return checkSchema({
+                    email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    }
+                });
+            case 'confirmPassword':
+                return checkSchema({
+                    email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    },
+                    confirmationCode: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    },
+                    password: {
+                        isString: {
+							errorMessage: 'Must be a string',
+						},
+						isLength: {
+							options: {
+								min: 8,
+							},
+							errorMessage: 'Must be at least 8 characters',
+						},
+                    }
+                })
         }
     }
 }

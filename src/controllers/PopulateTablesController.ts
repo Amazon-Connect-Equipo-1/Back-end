@@ -654,7 +654,7 @@ class PopulateTablesController extends AbstractController{
                 await db["Comments"].create(comment);
             }
 
-            for(const recording of recording_data){
+            /*for(const recording of recording_data){
                 await RecordingsModel.create(recording, {overwrite: false});
             }
 
@@ -664,7 +664,7 @@ class PopulateTablesController extends AbstractController{
 
             for(const user_config of user_config_data){
                 await UserConfigModel.create(user_config, {overwrite: false});
-            }
+            }*/
 
             res.status(200).send({message: 'Data registered'});
         }catch(error:any){
