@@ -3,9 +3,11 @@ Server.ts
 Author:
 - Israel Sánchez Miranda
 - Erick Hernández Silva
+- Erick Alberto Bustos Cruz
+- Liam Garay Monroy
 
 Creation date: 28/04/2022
-Last modification date: 29/04/2022
+Last modification date: 24/05/2022
 
 Program that handles the server, controllers and middlewares of the project
 */
@@ -92,9 +94,9 @@ class Server{
         await this.databases();
         this.app.listen(this.port, () => {
             //Running the server
-            console.log(`Server:Running @'http://localhost:${this.port}'`);
+            console.log(`Server: Running @'http://localhost:${this.port}'`);
         });
-        this.httpsServer.listen(443,()=>console.log("Running HTTPS"))
+        this.httpsServer.listen(443,()=>console.log(`Server HTTPS: Running @'https://localhost:443'`))
     }
 }
 

@@ -3,9 +3,11 @@ index.ts
 Author:
 - Israel Sánchez Miranda
 - Erick Hernández Silva
+- Erick Alberto Bustos Cruz
+- Liam Garay Monroy
 
 Creation date: 28/04/2022
-Last modification date: 20/05/2022
+Last modification date: 24/05/2022
 
 Program that creates the Server and initializes it
 */
@@ -46,8 +48,8 @@ const app = new Server({
         PopulateTablesController.getInstance()
     ],
     env: NODE_ENV,
-    privateKey: fs.readFileSync('/sslcert/privatekey.pem',{encoding:'utf8'}),
-    certificate: fs.readFileSync('/sslcert/server.crt',{encoding:'utf8'})
+    privateKey: fs.readFileSync('dist/sslcert/privatekey.pem',{encoding:'utf8'}),
+    certificate: fs.readFileSync('dist/sslcert/server.crt',{encoding:'utf8'})
 });
 
 
