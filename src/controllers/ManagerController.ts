@@ -17,8 +17,7 @@ import db from '../models/index';
 import RecordingsModel from '../modelsNoSQL/recordings';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
 import fetch from 'node-fetch';
-import crypto from 'crypto';
-import { body, checkSchema } from 'express-validator';
+import { checkSchema } from 'express-validator';
 import cryptoService from '../services/cryptoService';
 
 class ManagerController extends AbstractController{
@@ -36,7 +35,7 @@ class ManagerController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createManager'|'createAgent'|'managerForgotPassword'|'managerResetPassword'|'postComment'){
+    protected validateBody(type:|'createManager'|'createAgent'|'postComment'){
         switch(type){
             case 'createManager':
                 return checkSchema({
@@ -121,33 +120,6 @@ class ManagerController extends AbstractController{
                         }
                     }
                 });
-            case 'managerForgotPassword': 
-                return checkSchema({
-                    email: {
-                        isEmail: {
-                            errorMessage: 'Must be a valid email'
-                        }
-                    }
-                });
-            case 'managerResetPassword':
-                return checkSchema({
-                    token: {
-                        isString: {
-                            errorMessage: 'Invalid token. Token is not a string'
-                        }
-                    },
-                    password: {
-                        isString: {
-                            errorMessage: 'Password must be a string'
-                        },
-                        isLength: {
-                            options: {
-                                min: 8
-                            },
-                            errorMessage: 'Must be at least 8 characters long'
-                        }
-                    }
-                });
             case 'postComment': 
                 return checkSchema({
                     super_id: {
@@ -180,8 +152,7 @@ class ManagerController extends AbstractController{
         this.router.post('/createAgents', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.validateBody('createAgent'), this.handleErrors, this.postCreateAgents.bind(this));
         this.router.get('/agentList', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.agentList.bind(this)); 
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
-        this.router.post('/managerForgotPassword', this.authMiddleware.verifyToken, this.validateBody('managerForgotPassword'), this.handleErrors, this.postManagerForgotPassword.bind(this));
-        this.router.get('/managerResetPassword', this.authMiddleware.verifyToken, this.validateBody('managerResetPassword'), this.handleErrors, this.getManagerResetPassword.bind(this));  //* 
+        this.router.get('/getProfileManager', this.authMiddleware.verifyToken, this.handleErrors, this.getManagerProfile.bind(this));
         this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));
         this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
         this.router.get('/agentRecordings', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.showAgentRecordings.bind(this));
@@ -194,8 +165,7 @@ class ManagerController extends AbstractController{
         const encryption = new cryptoService();
         try{
             //Hashing managers's password
-            var hashedPasswordObject = encryption.encrypt(req.body.password);
-            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+            var hashedPassword = encryption.hash(req.body.password);
 
             await db["Manager"].create({
                 manager_id: req.body.manager_id,
@@ -225,8 +195,7 @@ class ManagerController extends AbstractController{
         const encryption = new cryptoService();
         try{
             //Hashing manager's password
-            var hashedPasswordObject = encryption.encrypt(req.body.password);
-            var hashedPassword = hashedPasswordObject.iv + "$" + hashedPasswordObject.content;
+            var hashedPassword = encryption.hash(req.body.password);
 
             await db["Agent"].create({
                 agent_id: req.body.agent_id,
@@ -285,86 +254,26 @@ class ManagerController extends AbstractController{
         }
     }
 
-    private async postManagerForgotPassword(req:Request, res:Response){
-        //Encription service
-        const encryption = new cryptoService();
-
-        //Creating and encrypting the token
-        var token = req.body.email + "$" + Date.now();
-        var encryptedToken = encryption.encrypt(token);
-        
-        //Updating the token at the database
-        await db["Agent"].update({security_token: token}, {
-            where: {
-                email: req.body.email
-            }
-        });
-         
-        //Building the message
-        const message = "Click the following link to reset your password:"
-        const link = "http://localhost:8080/agent/agentResetPassword?token=" + encryptedToken.iv + "$" + encryptedToken.content;
-
-        //Payload to fetch emailMessaging API
-        const payload ={
-            "recipient": "israelsanchez0109@outlook.com",  //For testing, when deployed it will be req.body.email
-            "message": message,
-            "link": link,
-            "subject": "Request to change your password."
-        }
-         console.log(payload);
+    private async getManagerProfile(req:Request, res:Response){
         try{
-            await fetch('https://y63tjetjmb.execute-api.us-west-2.amazonaws.com/default/emailMessaging', {
-                method: 'POST',
-                body: JSON.stringify(payload)
+            let result:any = await db["Manager"].findAll({
+                where: {
+                    email: req.query.email?.toString()
+                },
+                raw: true
             });
-            res.status(200).send("Password resseting email sent!");
+            if(result.length > 0){
+                console.log(result);
+                res.status(200).send(result);
+            }else{
+                console.log(`No manger with email: ${req.body.email} found`);
+                res.status(500).send(console.log(`No manager with email: ${req.body.email} found`));
+            }
         }catch(err:any){
             console.log(err);
-            res.status(500).send("Error sending the mail");
+            res.status(500).send("Error retrieving agent data")
         }
-    }
-
-    private async getManagerResetPassword(req:Request, res:Response){
-        //Encrypting service
-        const encryption = new cryptoService();
-
-        //Parsing data within the token query
-        var query_data:any = req.query.token?.toString().split("$");
-
-        //Encrypted token and its keys to be dencrypted
-        const cipher_data = {
-            iv: Buffer.from(query_data[0], 'hex'), 
-            content: Buffer.from(query_data[1], 'hex'),
-        };
-
-        const token = encryption.dencrypt(cipher_data);
-
-        const query_result = await db["Agent"].findAll({
-            where: {
-                security_token: token
-            }, 
-            raw: true
-        });
-
-        if(query_result.length > 0){
-            //Obtaining timestamp related to the token
-            const timestamp = token.split("$")[1];
-            if(Date.now() - parseInt(timestamp) < 300000){
-                //If token is still valid the password changes *CHANGE PASSWORD IN COGNITO TOO encrypt password again*
-                await db["Agent"].update({password: "WebiWabo", security_token: null}, {
-                    where: {
-                        security_token: token
-                    }
-                });
-                res.status(200).send("Password changed succesfully!");
-            } else {
-                //If time exceeds 5 min the token expired
-                res.status(500).send("Requested token has expired.");
-            }
-        }else{
-            res.status(500).send("Invalid token.")
-        }
-    }
+    }    
 
     private async showRecording(req:Request, res:Response){
         var recording_id:any = req.query.recording_id?.toString();
@@ -394,7 +303,6 @@ class ManagerController extends AbstractController{
     }
 
     private async showTopRecordings(req:Request, res:Response){
-        //Falta sortear el arreglo xd
         var result = [];
         try {
             const recordings = await RecordingsModel
@@ -456,6 +364,7 @@ class ManagerController extends AbstractController{
     }
 
     private async filterRecordings(req:Request, res:Response){
+        //Check how to send more videos after clicking a button
         var body_tags = req.body.tags
         var result = [];
         try{

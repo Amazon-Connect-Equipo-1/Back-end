@@ -86,6 +86,55 @@ class CognitoService{
         };
         return await this.cognitoIdentity.initiateAuth(params).promise();
     }
+
+    public async changePassword(accessToken:string, previousPassword:string, newPassword:string){
+        const params = {
+            AccessToken: accessToken,
+            PreviousPassword: previousPassword,
+            ProposedPassword: newPassword
+        }
+
+        console.log(params);
+
+        return this.cognitoIdentity.changePassword(params, function(err, data){
+            if(err){
+                console.log(err, err.stack);
+            }else{
+                console.log(data);
+            }
+        });
+    }
+
+    public async signOut(accessToken:string){
+        const params = {
+            AccessToken: accessToken
+        }
+
+       return await this.cognitoIdentity.globalSignOut(params).promise();
+    }
+
+    public async forgotPassword(email:string){
+        const params = {
+            ClientId: this.clientId,
+            Username: email,
+            SecretHash: this.hashSecret(email)
+        }
+
+        return await this.cognitoIdentity.forgotPassword(params).promise();
+    }
+
+    public async confirmForgotPassword(email:string, confirmationCode:string, password:string){
+        console.log(confirmationCode);
+        const params = {
+            ClientId: this.clientId,
+            ConfirmationCode: confirmationCode,
+            Password: password, 
+            Username: email,
+            SecretHash: this.hashSecret(email)
+        }
+
+        return await this.cognitoIdentity.confirmForgotPassword(params).promise();
+    }
 }
 
 export default CognitoService;
