@@ -152,7 +152,7 @@ class ManagerController extends AbstractController{
         this.router.post('/createAgents', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.validateBody('createAgent'), this.handleErrors, this.postCreateAgents.bind(this));
         this.router.get('/agentList', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.agentList.bind(this)); 
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
-        this.router.get('/getProfileManager', this.authMiddleware.verifyToken, this.handleErrors, this.getManagerProfile.bind(this));
+        this.router.get('/managerProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getManagerProfile.bind(this));
         this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));
         this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
         this.router.get('/agentRecordings', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.showAgentRecordings.bind(this));
@@ -264,10 +264,10 @@ class ManagerController extends AbstractController{
             });
             if(result.length > 0){
                 console.log(result);
-                res.status(200).send(result);
+                res.status(200).send(result[0]);
             }else{
                 console.log(`No manger with email: ${req.body.email} found`);
-                res.status(500).send(console.log(`No manager with email: ${req.body.email} found`));
+                res.status(500).send({message: `No manager with email: ${req.body.email} found`});
             }
         }catch(err:any){
             console.log(err);

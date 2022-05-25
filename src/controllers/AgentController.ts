@@ -64,7 +64,7 @@ class AgentController extends AbstractController{
             });
             if(result.length > 0){
                 console.log(result);
-                res.status(200).send(result);
+                res.status(200).send(result[0]);
             }else{
                 console.log(`No agent with email: ${req.body.email} found`);
                 res.status(500).send(console.log(`No agent with email: ${req.body.email} found`));
