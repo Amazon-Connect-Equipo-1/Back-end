@@ -25,19 +25,19 @@ class Server{
     */
 
     //Attributes
-    private app: express.Application;
-    private port: number;
-    private httpsPort: number;
-    private env: string;
-    private credentials: any;
-    private httpsServer: any;
+    private app:express.Application;
+    private port:number;
+    private httpsPort:number ;
+    private env:string;
+    private credentials:any;
+    private httpsServer:any;
 
     //Constructor
-    constructor(appInit:{port:number;httpsPort:number;middlewares:any[];controllers:AbstractController[];env:string;privateKey:any;certificate:any}){
+    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string;privateKey:any;certificate:any}){
         this.app = express();
         this.credentials = {key: appInit.privateKey, cert: appInit.certificate}
         this.port = appInit.port;
-        this.httpsPort = appInit.httpsPort;
+        this.httpsPort = HTTPS_PORT;
         this.env = appInit.env;
         this.loadMiddlewares(appInit.middlewares);
         this.routes(appInit.controllers);
