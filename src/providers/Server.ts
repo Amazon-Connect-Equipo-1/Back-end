@@ -99,7 +99,7 @@ class Server{
             //Running the server
             console.log(`Server: Running @'http://localhost:${this.port}'`);
         });
-        this.httpsServer.listen(this.port, () => {
+        this.httpsServer.listen(this.httpsPort, () => {
             //Runing https server
             console.log(`Server HTTPS: Running @'https://localhost:${this.httpsPort}'`);
         });

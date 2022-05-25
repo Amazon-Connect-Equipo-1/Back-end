@@ -320,8 +320,10 @@ class ManagerController extends AbstractController{
                     },
                     raw: true
                 });
-
-                result.push({agent_name: data[0].name, recording_data: recording.attrs});
+                
+                if(data.length > 0){
+                    result.push({agent_name: data[0].name, recording_data: recording.attrs});
+                }
             }
 
            result = result.sort((sat1, sat2) => {

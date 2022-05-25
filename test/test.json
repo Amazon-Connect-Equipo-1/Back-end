@@ -1,0 +1,76 @@
+{
+    "agent_name": "Thomas Muller",
+    "agent_email": "mullt@hotmial.com",
+    "recordings": [
+      {
+        "videoRecording": "http://link.com",
+        "RecordingId": "7a7108c9-9ab3-43ed-8f34-7cc49fa49130",
+        "createdAt": "2022-05-23T02:07:07.284Z",
+        "keystrokeClickRecording": "http://link.com",
+        "recordingDate": "2022-05-06T00:00:00.000Z",
+        "satisfaction": 4,
+        "recordingData": {
+          "CustomerInterruptions": 1,
+          "AgentInterruptions": 0,
+          "GraphCustomerSentimentOverall": {
+            "NEGATIVE": 50,
+            "POSITIVE": 16.666666666666668,
+            "NEUTRAL": 33.333333333333336
+          },
+          "NonTalkTimeSeconds": 3,
+          "OverallAgentSentiment": -1.9,
+          "GraphCustomerSentimentByQuarter": [
+            0,
+            -1,
+            1.2,
+            2
+          ],
+          "OverallCustomerSentiment": -1.2
+        },
+        "superId": "1jns88u4-89w3-uu6r-908y-8ais90lsiey4",
+        "agentId": "07691d44-61d7-4272-bca0-cad5c4a48f4b",
+        "thumbnail": "http://thumb.com",
+        "duration": 30,
+        "tags": [
+          "lost-card",
+          "c-neutral-to-positive",
+          "problem-solved"
+        ],
+        "processedRecording": "http://link.com"
+      },
+      {
+        "videoRecording": "http://link.com",
+        "RecordingId": "e58c56f1-e9f2-486d-ad36-d082ebace5ae",
+        "createdAt": "2022-05-23T02:07:10.492Z",
+        "keystrokeClickRecording": "http://link.com",
+        "recordingDate": "2022-05-23T00:00:00.000Z",
+        "agentId": "07691d44-61d7-4272-bca0-cad5c4a48f4b",
+        "thumbnail": "http://thumb.com",
+        "duration": 25,
+        "satisfaction": 4,
+        "recordingData": {
+          "CustomerInterruptions": 0,
+          "AgentInterruptions": 30,
+          "GraphCustomerSentimentOverall": {
+            "NEGATIVE": 0,
+            "POSITIVE": 46,
+            "NEUTRAL": 54
+          },
+          "NonTalkTimeSeconds": 12,
+          "OverallAgentSentiment": 1.2,
+          "GraphCustomerSentimentByQuarter": [
+            0.5,
+            0,
+            1.2,
+            2.3
+          ],
+          "OverallCustomerSentiment": 2
+        },
+        "tags": [
+          "card-declined",
+          "c-entire-call-positive",
+          "problem-not-solved"
+        ]
+      }
+    ]
+  }
