@@ -17,6 +17,7 @@ import express, { Response } from 'express';
 import AbstractController from '../controllers/AbstractController';
 import db from '../models';
 import https from 'https';
+import { HTTPS_PORT } from '../config';
 
 class Server{
     /*
@@ -26,15 +27,17 @@ class Server{
     //Attributes
     private app: express.Application;
     private port: number;
+    private httpsPort: number;
     private env: string;
     private credentials: any;
     private httpsServer: any;
 
     //Constructor
-    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string;privateKey:any;certificate:any}){
+    constructor(appInit:{port:number;httpsPort:number;middlewares:any[];controllers:AbstractController[];env:string;privateKey:any;certificate:any}){
         this.app = express();
         this.credentials = {key: appInit.privateKey, cert: appInit.certificate}
         this.port = appInit.port;
+        this.httpsPort = appInit.httpsPort;
         this.env = appInit.env;
         this.loadMiddlewares(appInit.middlewares);
         this.routes(appInit.controllers);
@@ -96,7 +99,10 @@ class Server{
             //Running the server
             console.log(`Server: Running @'http://localhost:${this.port}'`);
         });
-        this.httpsServer.listen(443,()=>console.log(`Server HTTPS: Running @'https://localhost:443'`))
+        this.httpsServer.listen(this.port, () => {
+            //Runing https server
+            console.log(`Server HTTPS: Running @'https://localhost:${this.httpsPort}'`);
+        });
     }
 }
 

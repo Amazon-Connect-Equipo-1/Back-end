@@ -10,6 +10,7 @@ Index that defines all the sensitive and confidential data within the project
 */
 
 export const PORT:number = process.env.PORT ? + process.env.PORT: 8080;
+export const HTTPS_PORT:number = process.env.HTTPS_PORT ? + process.env.HTTPS_PORT: 8080;
 export const NODE_ENV:string = process.env.NODE_ENV ? process.env.NODE_ENV as string : 'development';
 export const DB_NAME = process.env.DB_NAME ? process.env.DB_NAME : 'test';
 export const DB_DIALECT = process.env.DB_DIALECT ? process.env.DB_DIALECT : 'mysql';
