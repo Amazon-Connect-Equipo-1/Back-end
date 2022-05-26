@@ -35,7 +35,7 @@ class ManagerController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createManager'|'createAgent'|'postComment'){
+    protected validateBody(type:|'createManager'|'createAgent'|'postComment'|'filterRecordings'){
         switch(type){
             case 'createManager':
                 return checkSchema({
@@ -143,6 +143,14 @@ class ManagerController extends AbstractController{
                         }
                     }
                 });
+            case 'filterRecordings':
+                return checkSchema({
+                    tags: {
+                        isArray: {
+                            errorMessage: 'Tags must be an array'
+                        }
+                    }
+                });
         }
     }
 
@@ -156,7 +164,7 @@ class ManagerController extends AbstractController{
         this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));
         this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
         this.router.get('/agentRecordings', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.showAgentRecordings.bind(this));
-        this.router.post('/filterRecordings', this.filterRecordings.bind(this));
+        this.router.post('/filterRecordings', this.authMiddleware.verifyToken, this.validateBody('filterRecordings'), this.handleErrors, this.filterRecordings.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
     }
 
