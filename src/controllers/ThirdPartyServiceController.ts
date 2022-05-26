@@ -52,7 +52,7 @@ class ThirdPartyServicesController extends AbstractController{
                 });
             case 'sendService': 
                 return checkSchema({
-                    serivce: {
+                    service: {
                         isString: {
                             errorMessage: 'Must be a string'
                         }
