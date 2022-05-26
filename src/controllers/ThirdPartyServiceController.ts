@@ -89,11 +89,11 @@ class ThirdPartyServicesController extends AbstractController{
         }else if(req.body.service === "Oxxo"){
             message = `Here's your service data, ${req.body.service_data.client}:<br/>Oxxo address to retire your money:<br/>Street ${req.body.service_data.oxxo_address.street}, ${req.body.service_data.oxxo_address.colony}, ${req.body.service_data.oxxo_address.state}, ${req.body.service_data.oxxo_address.country}, ${req.body.service_data.oxxo_address.zip_code}.<br/>You will retire $${req.body.service_data.quantity} from your account ${req.body.service_data.account_number} with the reference ${req.body.service_data.reference} and the token ${req.body.service_data.security_token}.`;
         }else if(req.body.service === "Report"){
-            message = `Here's your service data, ${req.body.service_data.client}:<br/>You placed a report with the following description:<br/>${req.body.service_data.client_statement}.<br/>The statement was reported at ${req.body.service_data.client_location}. ${req.body.service_data.client_location_reference} at ${req.body.service_data.timestamp}.<br/>Your report will continue its process with the folio ${req.body.service_data.folio}, you will be contacted by your email (${req.body.service_data.client_email}) to continue the process.`;
+            message = `Here's your service data, ${req.body.service_data.client}:<br/>You placed a report with the following description:<br/>${req.body.service_data.client_statement}.<br/>The statement was reported at ${req.body.service_data.client_location}. ${req.body.service_data.client_location_reference} at ${req.body.service_data.timestamp}.<br/>Your report will continue its process with the folio ${req.body.service_data.folio}, you will be contacted by your email (${req.body.service_data.email}) to continue the process.`;
         }
 
         const payload ={
-            "recipient": req.body.service_data.client_email,  //For testing, when deployed it will be req.body.email
+            "recipient": req.body.service_data.email,  //For testing, when deployed it will be req.body.email
             "message": message,
             "subject": `Your ${req.body.service} information.`
         };
