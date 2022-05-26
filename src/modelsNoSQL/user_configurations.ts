@@ -36,7 +36,7 @@ const UserConfigModel = dynamodb.define('user_configurations', {
     ]
 });
 
-/*dynamodb.createTables((err:any) => {
+dynamodb.createTables((err:any) => {
     /*
     Function that creates the tables or raises an error
 
@@ -44,13 +44,13 @@ const UserConfigModel = dynamodb.define('user_configurations', {
     err - the error that may be raised during the creation of the table
     Returns:
     Returns the error raised if ocurred
-    *//*
+    */
     if(err){
         //If an error ocurrs the system will notify it
         return console.log('Error creating tables', err);
     }
     //If no error ocurrs the system will create the tables and notify it
     console.log('Table User Configurations created succesfully');
-});*/
+});
 
 export default UserConfigModel;
