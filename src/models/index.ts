@@ -8,7 +8,7 @@ const env = process.env.NODE_ENV || 'development';
 const db:any = {};
 
 let sequelize:any;
-if(env === 'development'){
+if(env === 'development' || env === 'production'){
   sequelize = new Sequelize(config.development.database, config.development.username, config.development.password,{
     dialect: config.development.dialect,
     host: config.development.host,
