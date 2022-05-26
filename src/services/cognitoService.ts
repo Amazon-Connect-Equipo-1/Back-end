@@ -87,24 +87,6 @@ class CognitoService{
         return await this.cognitoIdentity.initiateAuth(params).promise();
     }
 
-    public async changePassword(accessToken:string, previousPassword:string, newPassword:string){
-        const params = {
-            AccessToken: accessToken,
-            PreviousPassword: previousPassword,
-            ProposedPassword: newPassword
-        }
-
-        console.log(params);
-
-        return this.cognitoIdentity.changePassword(params, function(err, data){
-            if(err){
-                console.log(err, err.stack);
-            }else{
-                console.log(data);
-            }
-        });
-    }
-
     public async signOut(accessToken:string){
         const params = {
             AccessToken: accessToken
@@ -134,6 +116,30 @@ class CognitoService{
         }
 
         return await this.cognitoIdentity.confirmForgotPassword(params).promise();
+    }
+
+    public async refreshToken(refreshToken:string){
+        const params = {
+            AuthFlow: 'RFRESH_TOKEN_AUTH',
+            ClientId: this.clientId,
+            AuthParameters: {
+                REFRESH_TOKEN: refreshToken,
+                SECRET_HASH: this.secretHash
+            }
+        };
+        return await this.cognitoIdentity.initiateAuth(params).promise();
+    }
+
+    public async getUserEmail(token:string){
+        const params = {
+            AccessToken: token,
+        };
+        const user = await this.cognitoIdentity.getUser(params).promise();
+        const userEmail = user.UserAttributes.find((ua) => ua.Name === 'email');
+        if(userEmail){
+            return userEmail.Value as string;
+        }
+        return 'undefined';
     }
 }
 

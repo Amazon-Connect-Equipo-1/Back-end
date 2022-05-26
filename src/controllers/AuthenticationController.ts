@@ -40,6 +40,8 @@ class AuthenticationController extends AbstractController{
         this.router.post('/confirmPassword', this.validateBody('confirmPassword'), this.handleErrors, this.confirmPassword.bind(this));
         this.router.post('/verify', this.validateBody('verify'), this.handleErrors, this.verify.bind(this));
         this.router.get('/readUsers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.getReadUsers.bind(this));
+        this.router.post('/refreshToken', this.validateBody('refreshToken'), this.handleErrors, this.refreshToken.bind(this));
+        this.router.get('/getUserEmail', this.authMiddleware.verifyToken, this.handleErrors, this.getUserEmail.bind(this));
     }
 
     private async signupAgent(req:Request, res:Response){
@@ -300,7 +302,29 @@ class AuthenticationController extends AbstractController{
         }
     }
 
-    protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'){
+    private async refreshToken(req:Request, res:Response){
+        const refreshToken = req.body.refresh_token;
+
+        try{
+            let tokens = await this.cognitoService.refreshToken(refreshToken);
+            res.status(200).send(tokens.AuthenticationResult);
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async getUserEmail(req:Request, res:Response){
+        const token = req.token;
+
+        try {
+            let userEmail = await this.cognitoService.getUserEmail(token);
+            res.status(200).send({user_email: userEmail}); 
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'|'refreshToken'){
         switch(type){
             case 'signupAgent':
                 return checkSchema({
@@ -456,7 +480,15 @@ class AuthenticationController extends AbstractController{
 							errorMessage: 'Must be at least 8 characters',
 						},
                     }
-                })
+                });
+            case 'refreshToken':
+                return checkSchema({
+                    refreshToken: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    }
+                });
         }
     }
 }
