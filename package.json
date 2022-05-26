@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node -r dotenv/config dist/index.js",
     "dev:js": "nodemon -r dotenv/config dist/index.js",
-    "app": "tsc && pm2 start dist/index.js --name backend"
+    "app": "tsc && pm2 start -r dotenv/config dist/index.js --name backend"
   },
   "repository": {
     "type": "git",
