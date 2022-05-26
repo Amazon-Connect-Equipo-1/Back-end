@@ -428,7 +428,7 @@ class AuthenticationController extends AbstractController{
                             errorMessage: 'Must be a valid email',
                         },
                     },
-                    token: {
+                    code: {
                         isString: {
                             errorMessage: 'Must be a string',
                         },
