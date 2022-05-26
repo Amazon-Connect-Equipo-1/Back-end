@@ -8,7 +8,7 @@ Last modification date: 15/05/2022
 
 Program that handles the written tutorials
 */
-import { Request, Response } from 'express';
+/*import { Request, Response } from 'express';
 import AbstractController from './AbstractController';
 import fetch from "node-fetch";
 import axios from 'axios';
@@ -53,4 +53,4 @@ class WrittenTutorialsController extends AbstractController{
     
 };
 
-export default WrittenTutorialsController;
+export default WrittenTutorialsController;*/
