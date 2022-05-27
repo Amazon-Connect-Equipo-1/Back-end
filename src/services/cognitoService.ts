@@ -118,17 +118,18 @@ class CognitoService{
         return await this.cognitoIdentity.confirmForgotPassword(params).promise();
     }
 
-    public async refreshToken(refreshToken:string){
-        const params = {
-            AuthFlow: 'RFRESH_TOKEN_AUTH',
-            ClientId: this.clientId,
-            AuthParameters: {
-                REFRESH_TOKEN: refreshToken,
-                SECRET_HASH: this.secretHash
-            }
-        };
-        return await this.cognitoIdentity.initiateAuth(params).promise();
-    }
+    public async refreshToken(refreshToken:string) {
+		const params = {
+			AuthFlow: 'REFRESH_TOKEN_AUTH',
+			ClientId: this.clientId,
+			AuthParameters: {
+				REFRESH_TOKEN: refreshToken,
+				SECRET_HASH: this.secretHash
+			}
+		};
+		return await this.cognitoIdentity.initiateAuth(params).promise();
+	}
+
 
     public async getUserEmail(token:string){
         const params = {

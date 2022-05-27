@@ -223,7 +223,7 @@ class AuthenticationController extends AbstractController{
                 });
             }
 
-            res.status(200).send(`User ${email} signed out`);
+            res.status(200).send({message: `User ${email} signed out`});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
@@ -243,10 +243,10 @@ class AuthenticationController extends AbstractController{
 
     private async confirmPassword(req:Request, res:Response){
         const encryption = new cryptoService();
-        const {email, confirmationCode, password} = req.body;
+        const {email, confirmation_code, password} = req.body;
 
         try{
-            await this.cognitoService.confirmForgotPassword(email, confirmationCode, password);
+            await this.cognitoService.confirmForgotPassword(email, confirmation_code, password);
 
             let agent = await db["Agent"].findAll({
                 where: {
@@ -464,7 +464,7 @@ class AuthenticationController extends AbstractController{
                             errorMessage: 'Must be a valid email'
                         }
                     },
-                    confirmationCode: {
+                    confirmation_code: {
                         isString: {
                             errorMessage: 'Must be a string'
                         }
@@ -483,7 +483,7 @@ class AuthenticationController extends AbstractController{
                 });
             case 'refreshToken':
                 return checkSchema({
-                    refreshToken: {
+                    refresh_token: {
                         isString: {
                             errorMessage: 'Must be a string'
                         }

@@ -131,7 +131,7 @@ class ThirdPartyServicesController extends AbstractController{
                     console.log(response.data);
                     //Store in noSQL database
                     const object = {
-                        "callId": req.body.callId,
+                        "callId": req.body.call_id,
                         "service": service,
                         "serviceData": req.body.service_data
                     }
