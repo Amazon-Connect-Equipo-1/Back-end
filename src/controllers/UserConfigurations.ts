@@ -55,8 +55,8 @@ class UserConfigController extends AbstractController{
     //Methods
     protected initRoutes():void {
         //Routes fot his controller
-        this.router.get('/getUserConfig', this.getUserConfig.bind(this));
-        this.router.post('/updateUserConfig', this.postUserConfig.bind(this));
+        this.router.get('/getUserConfig', this.authMiddleware.verifyToken, this.handleErrors, this.getUserConfig.bind(this));
+        this.router.post('/updateUserConfig', this.authMiddleware.verifyToken, this.handleErrors, this.postUserConfig.bind(this));
     }
 
     private async getUserConfig(req:Request, res:Response){
@@ -68,7 +68,7 @@ class UserConfigController extends AbstractController{
                 .exec()
                 .promise();
 
-            res.status(200).send({user_id: user_id, user_configuration: config[0].Items[0]});
+            res.status(200).send(config[0].Items[0]);
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
