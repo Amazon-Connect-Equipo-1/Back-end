@@ -88,7 +88,7 @@ class AuthenticationController extends AbstractController{
 
             await UserConfigModel.create(
                 {
-                userId: req.body.manager_id,
+                userId: user.UserSub,
                 color: "Dark",
                 textSize: "medium",
                 language: "EN"
@@ -140,7 +140,7 @@ class AuthenticationController extends AbstractController{
 
             await UserConfigModel.create(
                 {
-                userId: req.body.manager_id,
+                userId: user.UserSub,
                 color: "Dark",
                 textSize: "medium",
                 language: "EN"
