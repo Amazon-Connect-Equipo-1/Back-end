@@ -414,14 +414,13 @@ class ManagerController extends AbstractController{
             });
 
             for(const recording of recordings){
-                console.log(recording.dataValues);
                 let dynamo_recording = await RecordingsModel
-                    .query(recording)
+                    .query(recording.dataValues.call_id)
                     .exec()
                     .promise();
                 
-                console.log(dynamo_recording);
-                result.push(dynamo_recording);
+                console.log(recording.dataValues.call_id);
+                result.push(dynamo_recording[0].Items[0]);
             }
 
             res.status(200).send({recordings: result})

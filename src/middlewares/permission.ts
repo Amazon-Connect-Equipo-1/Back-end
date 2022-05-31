@@ -24,7 +24,7 @@ export default class PermissionMiddleware{
                 }, 
                 raw: true
             });
-            if(user.length > 0){
+            if(user.length > 0 && !user[0].is_quality){
                 next();
             } else {
                 res.status(401).send({code: 'UserNotAdminException', message: 'The logged account is not an administrator'});
