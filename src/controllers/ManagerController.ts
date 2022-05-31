@@ -42,9 +42,6 @@ class ManagerController extends AbstractController{
                     manager_id: {
                         isString: {
                             errorMessage: 'Must be a string'
-                        },
-                        isAlphanumeric: {
-                            errorMessage: 'Manager ID must be alphanumeric'
                         }
                     },
                     manager_name: {
@@ -81,9 +78,6 @@ class ManagerController extends AbstractController{
                     agent_id: {
                         isString: {
                             errorMessage: 'Must be a string'
-                        },
-                        isAlphanumeric: {
-                            errorMessage: 'Manager ID must be alphanumeric'
                         }
                     },
                     super_id: {
@@ -165,6 +159,7 @@ class ManagerController extends AbstractController{
         this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
         this.router.get('/agentRecordings', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.showAgentRecordings.bind(this));
         this.router.post('/filterRecordings', this.authMiddleware.verifyToken, this.validateBody('filterRecordings'), this.handleErrors, this.filterRecordings.bind(this));
+        this.router.post('/showRecordingsByDate', this.authMiddleware.verifyToken, this.handleErrors, this.showRecordingsByDate.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
     }
 
@@ -192,10 +187,9 @@ class ManagerController extends AbstractController{
                 {overwrite: false}
             );
             console.log("Manager registered");
-            res.status(200).send("Manager registered")
-        }catch(err:any){
-            console.log(err);
-            res.status(500).send("Error")
+            res.status(200).send({message: "Manager registered"});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
         }
     }
 
@@ -210,7 +204,7 @@ class ManagerController extends AbstractController{
                 super_id: req.body.super_id,
                 name: req.body.name,
                 password: hashedPassword,
-                email: req.body.email,
+                email: req.body.email
             });
 
             await UserConfigModel.create(
@@ -224,10 +218,9 @@ class ManagerController extends AbstractController{
             );
 
             console.log("Agent registered");
-            res.status(200).send("Agent registered")
-        }catch(err:any){
-            console.log(err);
-            res.status(500).send("Error")
+            res.status(200).send({message: "Agent registered"});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
         }
     }
 
@@ -405,6 +398,36 @@ class ManagerController extends AbstractController{
             res.status(200).send({recordings: result});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async showRecordingsByDate(req:Request, res:Response){
+        const {order} = req.body //true for ascendent order, false for descendent
+        const result = [];
+
+        try{
+            let recordings = await db["Calls"].findAll({
+                attributes: ["call_id"],
+                order: [
+                    ['date', order]
+                ]
+            });
+
+            for(const recording of recordings){
+                console.log(recording.dataValues);
+                let dynamo_recording = await RecordingsModel
+                    .query(recording)
+                    .exec()
+                    .promise();
+                
+                console.log(dynamo_recording);
+                result.push(dynamo_recording);
+            }
+
+            res.status(200).send({recordings: result})
+
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message})
         }
     }
 

@@ -43,12 +43,6 @@ const RecordingsModel = dynamodb.define('recordings', {
             hashKey: 'agentId',
             name: 'agentId',
             type: 'global'
-        },
-        {
-            hashKey: 'RecordingId',
-            rangeKey: 'satisfaction',
-            name: 'topRecording',
-            type: 'global'
         }
     ]
 });
