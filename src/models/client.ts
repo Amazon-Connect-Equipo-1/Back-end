@@ -41,10 +41,6 @@ module.exports = (sequelize:any, DataTypes:any) => {
       Method called by the index.ts program in the models folder
       that creates and implements all the relationships the table Client has
       */
-      Client.hasMany(models.Chat, {
-        foreignKey: 'client_id'
-      });
-
       Client.hasMany(models.Calls, {
         foreignKey: 'client_id'
       });

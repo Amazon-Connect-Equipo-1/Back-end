@@ -15,6 +15,7 @@ import AuthMiddleware from '../middlewares/authorization';
 import PermissionMiddleware from '../middlewares/permission';
 import ValidationErrorMiddleware from '../middlewares/validationError';
 import CognitoService from '../services/cognitoService';
+import ConnectService from '../services/connectService';
 
 export default abstract class AbstractController{
     /*
@@ -30,6 +31,7 @@ export default abstract class AbstractController{
     protected authMiddleware = AuthMiddleware.getInstance();
     protected permissionMiddleware = PermissionMiddleware.getInstance();
     protected cognitoService = CognitoService.getInstance();
+    protected connectService = ConnectService.getInstance();
 
     //Getters
     public get prefix(): string {

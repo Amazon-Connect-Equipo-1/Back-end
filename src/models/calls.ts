@@ -19,9 +19,8 @@ interface CallAttributes{
   time_start: string,
   time_finish: string,
   duration: number,
-  satisfaction: number,
-  date: string,
-  comments: string
+  problem_solved: boolean,
+  date: string
 };
 
 module.exports = (sequelize:any, DataTypes:any) => {
@@ -37,9 +36,8 @@ module.exports = (sequelize:any, DataTypes:any) => {
     time_start!: string;
     time_finish!: string;
     duration!: number;
-    satisfaction!: number;
+    problem_solved!: boolean;
     date!: string;
-    comments!: string;
     
     //Methods
     static associate(models:any) {
@@ -88,18 +86,14 @@ module.exports = (sequelize:any, DataTypes:any) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    satisfaction: {
-      type: DataTypes.INTEGER,
+    problem_solved: {
+      type: DataTypes.BOOLEAN,
       allowNull: true
     },
     date: {
       type: DataTypes.DATE,
       defaultValue: sequelize.fn("now"),
       allowNull: false
-    },
-    comments: {
-      type: DataTypes.TEXT,
-      allowNull: true
     }
   }, {
     sequelize,

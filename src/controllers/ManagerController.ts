@@ -16,7 +16,7 @@ import {Request, Response} from 'express';
 import db from '../models/index';
 import RecordingsModel from '../modelsNoSQL/recordings';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
-import fetch from 'node-fetch';
+import sequelize from 'sequelize';
 import { checkSchema } from 'express-validator';
 import cryptoService from '../services/cryptoService';
 
@@ -436,6 +436,26 @@ class ManagerController extends AbstractController{
 
             let agent_email = await db["Agent"].findAll({
                 attributes: ['email'],
+                where: {
+                    agent_id: req.body.agent_id
+                }
+            });
+
+            //Calculate and update the rating of the agent
+            let comments = await db["Comments"].findAll({
+                attributes: [
+                    sequelize.fn('sum', sequelize.col('rating')),
+                    sequelize.fn('count', sequelize.col('rating'))
+                ],
+                where: {
+                    agent_id: req.body.agent_id
+                },
+                raw: true
+            });
+
+            const rating = comments[0]['sum(`rating`)'] / comments[0]['count(`rating`)'];
+
+            await db["Agent"].update({rating: rating.toFixed(1)}, {
                 where: {
                     agent_id: req.body.agent_id
                 }

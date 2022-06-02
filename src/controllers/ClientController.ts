@@ -134,7 +134,6 @@ class ClientController extends AbstractController{
         const encryption = new cryptoService();
         try{
             //Hashing client's password and pin
-            console.log(req.body.password);
             var hashedPassword = encryption.hash(req.body.password);
             var hashedPin = encryption.hash(req.body.client_pin);
 

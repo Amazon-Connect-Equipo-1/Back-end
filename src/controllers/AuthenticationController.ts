@@ -42,6 +42,11 @@ class AuthenticationController extends AbstractController{
         this.router.get('/readUsers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.getReadUsers.bind(this));
         this.router.post('/refreshToken', this.validateBody('refreshToken'), this.handleErrors, this.refreshToken.bind(this));
         this.router.get('/getUserEmail', this.authMiddleware.verifyToken, this.handleErrors, this.getUserEmail.bind(this));
+        this.router.get('/test', this.test.bind(this));
+    }
+
+    private async test(req:Request, res:Response){
+        res.status(200).send({message: "EL LAIM XD"});
     }
 
     private async signupAgent(req:Request, res:Response){
@@ -50,6 +55,10 @@ class AuthenticationController extends AbstractController{
         const encryption = new cryptoService();
 
         try{
+            //Create a Connect user
+            const c_user = await this.connectService.createUser(email, "Agent", name.split(" ").join(""), password, name.split(" ")[0], name.split(" ")[1]);
+            console.log('Connect user created!', c_user);
+
             //Create Cognito user
             const user = await this.cognitoService.signUpUser(email, password, [
                 {
@@ -79,8 +88,8 @@ class AuthenticationController extends AbstractController{
 
             //Save user in RDS database
             await db["Agent"].create({
-                agent_id: user.UserSub,
-                super_id: super_id.dataValues.manager_id,
+                agent_id: c_user.UserId,
+                super_id: super_id[0].dataValues.manager_id,
                 name: name,
                 password: hashedPassword,
                 email: email
@@ -88,7 +97,7 @@ class AuthenticationController extends AbstractController{
 
             await UserConfigModel.create(
                 {
-                userId: user.UserSub,
+                userId: c_user.UserId,
                 color: "Dark",
                 textSize: "medium",
                 language: "EN"
@@ -97,18 +106,27 @@ class AuthenticationController extends AbstractController{
             );
 
             console.log("Agent created");
-            res.status(201).send({message: 'Agent signed up', body: {super_id: super_id, name: name, pasword: hashedPassword, email: email, phone_number: phone_number}});
+            res.status(201).send({message: 'Agent signed up', body: {super_id: super_id[0].dataValues.manager_id, name: name, pasword: hashedPassword, email: email, phone_number: phone_number}});
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async signupManager(req:Request, res:Response){
-        /*Verify if make different route for agent signup or add value here*/
         const{name, password, email, role, phone_number} = req.body;
         const encryption = new cryptoService();
+        var role_name = "";
+
+        if(role){
+            role_name = "QualityAnalyst";
+        }else{
+            role_name = "Manager"
+        }
 
         try{
+            const c_user = await this.connectService.createUser(email, role_name, name.split(" ").join(""), password, name.split(" ")[0], name.split(" ")[1]);
+            console.log('Connect user created!', c_user)
+
             //Create Cognito user
             const user = await this.cognitoService.signUpUser(email, password, [
                 {
@@ -131,7 +149,7 @@ class AuthenticationController extends AbstractController{
 
             //Save user in RDS database
             await db["Manager"].create({
-                manager_id: user.UserSub,
+                manager_id: c_user.UserId,
                 manager_name: name, 
                 password: hashedPassword,
                 email: email,
@@ -140,7 +158,7 @@ class AuthenticationController extends AbstractController{
 
             await UserConfigModel.create(
                 {
-                userId: user.UserSub,
+                userId: c_user.UserId,
                 color: "Dark",
                 textSize: "medium",
                 language: "EN"
@@ -286,7 +304,7 @@ class AuthenticationController extends AbstractController{
                     }
                 });
 
-                res.status(200).send({message: `Manager ${email} password changed`});
+                res.status(200).send({message: `Manager ${email} password changed, Cognito and Connect passwords aren't linked, to change your Connect password follow this tutorial: https://docs.aws.amazon.com/connect/latest/adminguide/password-reset.html#password-reset-aws`});
             }else{
                 res.status(404).send({code: 'UserNotFound', message: 'User not found in the database'});
             }
@@ -364,9 +382,9 @@ class AuthenticationController extends AbstractController{
                             errorMessage: 'Must be between 2 and 40 characters long'
                         }
                     },
-                    super_id: {
-                        isString:{
-                            errorMessage: 'Must be a string'
+                    super_email: {
+                        isEmail:{
+                            errorMessage: 'Must be a valid email'
                         }
                     }
                 });
