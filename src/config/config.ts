@@ -1,10 +1,11 @@
 /*
 config.ts
-Author:
+Authors:
 - Israel Sánchez Miranda
+- David Rodríguez Fragoso
 
 Creation date: 28/04/2022
-Last modification date: 28/04/2022
+Last modification date: 19/05/2022
 
 Program that stores all of the credentials related to AWS and the RDS database
 */

@@ -1,15 +1,17 @@
 /*
 AbstractController.ts
-Author:
+Authors:
 - Israel Sánchez Miranda
 - Erick Hernández Silva
+- David Rodríguez Fragoso
 
 Creation date: 28/04/2022
-Last modification date: 20/05/2022
+Last modification date: 01/06/2022
 
 Class that stores the abstract implementation of the controllers
 */
 
+//Libraries that will be used
 import { Router } from 'express';
 import AuthMiddleware from '../middlewares/authorization';
 import PermissionMiddleware from '../middlewares/permission';

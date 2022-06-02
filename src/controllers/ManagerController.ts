@@ -1,23 +1,25 @@
 /*
 ManagerController.ts
-Author:
+Authors:
 - Israel Sánchez Miranda
 - Erick Hernández Silva
 - Ariadna Huesca Coronado
+- David Rodríguez Fragoso
 
 Creation date: 03/05/2022
-Last modification date: 03/05/2022
+Last modification date: 01/06/2022
 
 Program that defines the controller for the Manager, its routes and functionalities
 */
 
-import AbstractController from './AbstractController';
+//Libraries that will be used
+import { checkSchema } from 'express-validator';
 import {Request, Response} from 'express';
+import sequelize from 'sequelize';
 import db from '../models/index';
 import RecordingsModel from '../modelsNoSQL/recordings';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
-import sequelize from 'sequelize';
-import { checkSchema } from 'express-validator';
+import AbstractController from './AbstractController';
 import cryptoService from '../services/cryptoService';
 
 class ManagerController extends AbstractController{
@@ -156,20 +158,30 @@ class ManagerController extends AbstractController{
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
         this.router.get('/managerProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getManagerProfile.bind(this));
         this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));
-        this.router.get('/topRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showTopRecordings.bind(this));
         this.router.get('/agentRecordings', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.showAgentRecordings.bind(this));
         this.router.post('/filterRecordings', this.authMiddleware.verifyToken, this.validateBody('filterRecordings'), this.handleErrors, this.filterRecordings.bind(this));
-        this.router.post('/showRecordingsByDate', this.authMiddleware.verifyToken, this.handleErrors, this.showRecordingsByDate.bind(this));
+        this.router.post('/showLastRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showLastRecordings.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
     }
 
     //Controllers
     private async postCreateManagers(req:Request, res:Response){
+        /*
+        Lets managers create more managers, route used only for testing
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const encryption = new cryptoService();
+
         try{
             //Hashing managers's password
             var hashedPassword = encryption.hash(req.body.password);
 
+            //Registering manager in RDS
             await db["Manager"].create({
                 manager_id: req.body.manager_id,
                 manager_name: req.body.manager_name,
@@ -177,6 +189,8 @@ class ManagerController extends AbstractController{
                 email: req.body.email,
                 is_quality: req.body.is_quality
             });
+
+            //Registering manager's configurations in DynamoDB
             await UserConfigModel.create(
                 {
                 userId: req.body.manager_id,
@@ -186,19 +200,31 @@ class ManagerController extends AbstractController{
                 },
                 {overwrite: false}
             );
+
             console.log("Manager registered");
             res.status(200).send({message: "Manager registered"});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async postCreateAgents(req:Request, res:Response){
+        /*
+        Lets managers create more agents, route used only for testing
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const encryption = new cryptoService();
         try{
             //Hashing manager's password
             var hashedPassword = encryption.hash(req.body.password);
 
+            //Registering the agent in RDS
             await db["Agent"].create({
                 agent_id: req.body.agent_id,
                 super_id: req.body.super_id,
@@ -207,6 +233,7 @@ class ManagerController extends AbstractController{
                 email: req.body.email
             });
 
+            //Registering agent's configuration in DynamoDB
             await UserConfigModel.create(
                 {
                 userId: req.body.agent_id,
@@ -220,63 +247,111 @@ class ManagerController extends AbstractController{
             console.log("Agent registered");
             res.status(200).send({message: "Agent registered"});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async agentList(req:Request, res:Response){
-        //Check if show only manager's agents or all agents
+        /*
+        Method that returns a list of all the agents registered in our app
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         try{
+            //Retrieving all the agents
             let agents = await db["Agent"].findAll();
             res.status(200).send({agents: agents});
         }catch(error:any){
+            //If an exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async getAgentProfile(req:Request, res:Response){
+        /*
+        Method that returns the profile of an agent given his email as query parameter
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         try{
+            //Finding the agent by his email
             let result:any = await db["Agent"].findAll({
                 where: {
                     email: req.query.email?.toString()
                 },
                 raw: true
             });
+
             if(result.length > 0){
+                //If agent was found, return it
                 console.log(result);
                 res.status(200).send(result);
             }else{
+                //If not, return an agent not found exception
                 console.log(`No agent with email: ${req.body.email} found`);
-                res.status(500).send(console.log(`No agent with email: ${req.body.email} found`));
+                res.status(500).send({message: `No agent with email: ${req.body.email} found`});
             }
         }catch(err:any){
+            //If exception occurs inform
             console.log(err);
-            res.status(500).send("Error retrieving agent data")
+            res.status(500).send({code: err.code, message: err.message});
         }
     }
 
     private async getManagerProfile(req:Request, res:Response){
+        /*
+        Method that returns a manager profile by it email given as a query parameter
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         try{
+            //Finding the manager
             let result:any = await db["Manager"].findAll({
                 where: {
                     email: req.query.email?.toString()
                 },
                 raw: true
             });
+
             if(result.length > 0){
+                //If manager was found, return it
                 console.log(result);
                 res.status(200).send(result[0]);
             }else{
+                //If not, return a manager not found exception
                 console.log(`No manger with email: ${req.body.email} found`);
                 res.status(500).send({message: `No manager with email: ${req.body.email} found`});
             }
         }catch(err:any){
+            //If an exception occurs inform
             console.log(err);
-            res.status(500).send("Error retrieving agent data")
+            res.status(500).send({code: err.code, message: err.message});
         }
     }    
 
     private async showRecording(req:Request, res:Response){
+        /*
+        Method that returns all the information of a recording given its ID as a query parameter
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         var recording_id:any = req.query.recording_id?.toString();
 
         try{
@@ -287,109 +362,87 @@ class ManagerController extends AbstractController{
                 .exec()
                 .promise();
             
-            //Obtaining RDS call data
+            //Obtaining RDS Agent data
             const call_data = await db["Agent"].findAll({
-                attributes: ["name", "email"],
+                attributes: ["email"],
                 where: {
                     agent_id: recording[0].Items[0].attrs.agentId
                 },
                 raw: true
             });
                   
-            res.status(200).send({agent: call_data[0].name, agent_email: call_data[0].email, recording: recording[0].Items[0]});
+            res.status(200).send({agent_email: call_data[0].email, recording: recording[0].Items[0]});
         }catch(error:any){
+            //If an exception occurs inform
             console.log(error);
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
-    private async showTopRecordings(req:Request, res:Response){
-        var result = [];
-        try {
-            const recordings = await RecordingsModel
-                .scan()
-                .attributes(["recordingDate", "thumbnail", "tags", "agentId", "RecordingId", "satisfaction"])
-                .limit(50)
-                .exec()
-                .promise();
-            
-            for(const recording of recordings[0].Items){
-                var data = await db["Agent"].findAll({
-                    attributes: ["name"],
-                    where: {
-                        agent_id: recording.attrs.agentId
-                    },
-                    raw: true
-                });
-                
-                if(data.length > 0){
-                    result.push({agent_name: data[0].name, recording_data: recording.attrs});
-                }
-            }
-
-           result = result.sort((sat1, sat2) => {
-                if(sat1.recording_data.satisfaction > sat2.recording_data.satisfaction){
-                    return -1;
-                } 
-                if(sat1.recording_data.satisfaction < sat2.recording_data.satisfaction){
-                    return 1;
-                }
-                return 0;
-            });
-
-            res.status(200).send({recordings: result});
-        }catch(error:any){
-            res.status(500).send({code: error.code, message: error.message});
-        }
-    }
-
     private async showAgentRecordings(req:Request, res:Response){
+        /*
+        Method that returns all the records of an agent given his email by query parameter
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         var email = req.query.email?.toString();
+
         try {
+            //Finding agent's ID in RDS
             let agent_id = await db["Agent"].findAll({
-                attributes: ["agent_id", "name"],
+                attributes: ["agent_id"],
                 where: {
                     email: email
                 },
                 raw: true
             });
     
+            //Using agent's ID to find all his recordings
             const agent_recordings = await RecordingsModel
                 .query(agent_id[0].agent_id)
                 .usingIndex('agentId')
                 .exec()
                 .promise();
             
-            res.status(200).send({agent_name: agent_id[0].name, agent_email: email, recordings: agent_recordings[0].Items});
+            res.status(200).send({agent_email: email, recordings: agent_recordings[0].Items});
         }catch(error:any){
+            //If an exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async filterRecordings(req:Request, res:Response){
-        //Check how to send more videos after clicking a button
+        /*
+        Method that returns a list of videos that match the given filters
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         var body_tags = req.body.tags
         var result = [];
+
         try{
+            //Obtaining the first 50 videos
             const recordings = await RecordingsModel
                 .scan()
-                .attributes(["recordingDate", "thumbnail", "tags", "agentId", "RecordingId", "satisfaction"])
+                .attributes(["recordingDate", "thumbnail", "tags", "agentId", "agentName", "RecordingId"])
                 .limit(50)
                 .exec()
                 .promise();
 
             for(const recording of recordings[0].Items){
                 for(const tag of recording.attrs.tags){
+                    //Finding if the video tags include the tags specified by the filter
                     if(body_tags.includes(tag)){
-                        var data = await db["Agent"].findAll({
-                            attributes: ["name"],
-                            where: {
-                                agent_id: recording.attrs.agentId
-                            },
-                            raw: true
-                        });
-
-                        result.push({agent_name: data[0].name, recording_data: recording.attrs});
+                        //If tags match, push the corresponding recording to the array
+                        result.push({recording_data: recording.attrs});
                         break;
                     }
                 }
@@ -397,15 +450,26 @@ class ManagerController extends AbstractController{
 
             res.status(200).send({recordings: result});
         }catch(error:any){
+            //If an exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
-    private async showRecordingsByDate(req:Request, res:Response){
-        const {order} = req.body //true for ascendent order, false for descendent
+    private async showLastRecordings(req:Request, res:Response){
+        /*
+        Method that returns the last recordings made in ascendent or descendent order
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
+        const {order} = req.body //ASC for ascendent order, DESC for descendent
         const result = [];
 
         try{
+            //Retrieving call ID's ordered by date ascendent or descendent
             let recordings = await db["Calls"].findAll({
                 attributes: ["call_id"],
                 order: [
@@ -414,26 +478,39 @@ class ManagerController extends AbstractController{
             });
 
             for(const recording of recordings){
+                //Retrieving the corresponding recordings using their ID's
                 let dynamo_recording = await RecordingsModel
                     .query(recording.dataValues.call_id)
                     .exec()
                     .promise();
                 
-                console.log(recording.dataValues.call_id);
+                //Pushing the recordings to a final array
                 result.push(dynamo_recording[0].Items[0]);
             }
 
             res.status(200).send({recordings: result})
 
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message})
         }
     }
 
     private async postComment(req:Request, res:Response){
+        /*
+        Method that lets managers post comments to agents
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         try{
+            //Register the comment in the database            
             await db["Comments"].create(req.body);
 
+            //Obtain agent's email using his ID
             let agent_email = await db["Agent"].findAll({
                 attributes: ['email'],
                 where: {
@@ -441,7 +518,7 @@ class ManagerController extends AbstractController{
                 }
             });
 
-            //Calculate and update the rating of the agent
+            //Calculate and update the new rating of the agent
             let comments = await db["Comments"].findAll({
                 attributes: [
                     sequelize.fn('sum', sequelize.col('rating')),
@@ -463,6 +540,7 @@ class ManagerController extends AbstractController{
 
             res.status(200).send({message: `Comment posted to ${agent_email[0].email}`});
         }catch(error:any){
+            //If an exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }

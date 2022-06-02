@@ -7,23 +7,19 @@ Author:
 - Liam Garay Monroy
 
 Creation date: 28/04/2022
-Last modification date: 24/05/2022
+Last modification date: 01/06/2022
 
 Program that handles the server, controllers and middlewares of the project
 */
 
-
-import express, { Response } from 'express';
-import AbstractController from '../controllers/AbstractController';
-import db from '../models';
-import https from 'https';
+//Libraries that will be used
 import { HTTPS_PORT } from '../config';
+import express, { Response } from 'express';
+import https from 'https';
+import db from '../models';
+import AbstractController from '../controllers/AbstractController';
 
 class Server{
-    /*
-    Class that defines and handles the server methods
-    */
-
     //Attributes
     private app:express.Application;
     private port:number;

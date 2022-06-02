@@ -7,24 +7,24 @@ Author:
 - Liam Garay Monroy
 
 Creation date: 28/04/2022
-Last modification date: 24/05/2022
+Last modification date: 02/06/2022
 
 Program that creates the Server and initializes it
 */
 
+//Libraries that will be used
+import { PORT, NODE_ENV } from './config';
+import express from 'express';
+import cors from 'cors';
+import fs from 'fs';
 import Server from './providers/Server';
 import AgentController from './controllers/AgentController';
 import ManagerController from './controllers/ManagerController';
 import ThirdPartyServicesController from './controllers/ThirdPartyServiceController';
 import AuthenticationController from './controllers/AuthenticationController';
-import { PORT, NODE_ENV } from './config';
-import express from 'express';
-import cors from 'cors';
-import RecordingsController from './controllers/RecordingsController';
+import KeyClickController from './controllers/KeyClickController';
 import ClientController from './controllers/ClientController';
 import UserConfigController from './controllers/UserConfigurations';
-import fs from 'fs';
-
 
 const app = new Server({
     //Parameters of the server
@@ -38,7 +38,7 @@ const app = new Server({
     controllers: [
         //Controllers that will be loaded
         AgentController.getInstance(),
-        RecordingsController.getInstance(),
+        KeyClickController.getInstance(),
         ManagerController.getInstance(),
         ThirdPartyServicesController.getInstance(),
         AuthenticationController.getInstance(),
@@ -46,10 +46,10 @@ const app = new Server({
         UserConfigController.getInstance(),
     ],
     env: NODE_ENV,
+    //Reading the certificates and keys
     privateKey: fs.readFileSync('dist/sslcert/privatekey.pem',{encoding:'utf8'}),
     certificate: fs.readFileSync('dist/sslcert/server.crt',{encoding:'utf8'})
 });
-
 
 //Extending the Request interface from the Express module
 declare global{
@@ -60,7 +60,6 @@ declare global{
         }
     }
 }
-
 
 //Initializing the server
 app.init();

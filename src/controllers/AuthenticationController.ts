@@ -1,20 +1,23 @@
 /*
 AuthenticationController.ts
-Author:
+Authors:
 - Israel Sánchez Miranda
+- David Rodríguez Fragoso
 
 Creation date: 28/04/2022
-Last modification date: 01/05/2022
+Last modification date: 01/06/2022
 
 Program that handles the Authentication methods for every user (Agent, Quality agent and Administrators)
 */
 
-import { Request, Response } from 'express';
+//Libraries that will be used
 import { checkSchema } from 'express-validator';
-import AbstractController from './AbstractController';
-import cryptoService from '../services/cryptoService';
+import { Request, Response } from 'express';
 import db from '../models';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
+import AbstractController from './AbstractController';
+import cryptoService from '../services/cryptoService';
+
 
 class AuthenticationController extends AbstractController{
     //Singleton
@@ -23,13 +26,15 @@ class AuthenticationController extends AbstractController{
     //Getter
     public static getInstance():AbstractController{
         if(this.instance){
+            //If instance is already created 
             return this.instance;
         }
+        //If instance is not created we create it
         this.instance = new AuthenticationController("auth");
         return this.instance;
     }
 
-    //Methods
+    //Route configuration
     protected initRoutes():void {
         //Routes fot his controller
         this.router.post('/signupAgent', this.validateBody('signupAgent'), this.handleErrors, this.signupAgent.bind(this));
@@ -45,12 +50,21 @@ class AuthenticationController extends AbstractController{
         this.router.get('/test', this.test.bind(this));
     }
 
+    //Controllers
     private async test(req:Request, res:Response){
         res.status(200).send({message: "EL LAIM XD"});
     }
 
     private async signupAgent(req:Request, res:Response){
-        /*Verify if make different route for agent signup or add value here*/
+        /*
+        Method that lets an agent to sign up in our application
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const{super_email, name, password, email, phone_number} = req.body;
         const encryption = new cryptoService();
 
@@ -76,6 +90,7 @@ class AuthenticationController extends AbstractController{
             ]);
             console.log('Cognito user created!', user);
 
+            //Find the user's manager
             const super_id = await db["Manager"].findAll({
                 attributes: ["manager_id"],
                 where: {
@@ -83,7 +98,7 @@ class AuthenticationController extends AbstractController{
                 }
             });
 
-            //Hashing managers's password
+            //Hashing user's password
             var hashedPassword = encryption.hash(password);
 
             //Save user in RDS database
@@ -95,6 +110,7 @@ class AuthenticationController extends AbstractController{
                 email: email
             });
 
+            //Save user's default configurations in DynamoDB
             await UserConfigModel.create(
                 {
                 userId: c_user.UserId,
@@ -108,15 +124,26 @@ class AuthenticationController extends AbstractController{
             console.log("Agent created");
             res.status(201).send({message: 'Agent signed up', body: {super_id: super_id[0].dataValues.manager_id, name: name, pasword: hashedPassword, email: email, phone_number: phone_number}});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async signupManager(req:Request, res:Response){
+        /*
+        Method that lets a manager to sign up in our application
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const{name, password, email, role, phone_number} = req.body;
         const encryption = new cryptoService();
         var role_name = "";
 
+        //Assign a role to the manager depending on the parameter sent
         if(role){
             role_name = "QualityAnalyst";
         }else{
@@ -124,6 +151,7 @@ class AuthenticationController extends AbstractController{
         }
 
         try{
+            //Create a Connect user
             const c_user = await this.connectService.createUser(email, role_name, name.split(" ").join(""), password, name.split(" ")[0], name.split(" ")[1]);
             console.log('Connect user created!', c_user)
 
@@ -156,6 +184,7 @@ class AuthenticationController extends AbstractController{
                 is_quality: role
             });
 
+            //Save user's configurations in DynamoDB
             await UserConfigModel.create(
                 {
                 userId: c_user.UserId,
@@ -169,28 +198,51 @@ class AuthenticationController extends AbstractController{
             console.log("Admin created");
             res.status(201).send({message: 'Admin signed up', body: {name: name, password: hashedPassword, email: email, role: role, phone_number: phone_number}});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async verify(req:Request, res:Response){
+        /*
+        Method that lets a user (agent, manager or quality analyst) to verify his email to formaly register in our app
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const {email, code} = req.body;
+
         try{
+            //Verify user using Cognito
             await this.cognitoService.verifyUser(email, code);
-            //await this.emailService.emailNotificationSignUp(email,email);
+
             return res.status(200).send({message: `User ${email} verified`});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async signin(req:Request, res:Response){
+        /*
+        Method that lets a user (agent, manager or quality analyst) to sign in our app
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const {email, password} = req.body;
         var role:string;
+
         try{
+            //Sign user in using Cognito
             const login = await this.cognitoService.signInUser(email, password);
             
-            //const userDB = await UserModel.query(email).usingIndex('EmailIndex').exec().promise()
             //Updating agent's status
             let agentResult =  await db["Agent"].findAll({
                 where: {
@@ -199,11 +251,13 @@ class AuthenticationController extends AbstractController{
             });
 
             if(agentResult.length > 0){
+                //If user is found in the agent database change his status and send the corresponding information
                 await db["Agent"].update({status: "Active"}, {
                     where: {
                         email: email
                     }
                 });
+
                 role = "Agent";
                 res.status(200).send({...login.AuthenticationResult, role: role, body: agentResult[0]});
             }
@@ -213,27 +267,43 @@ class AuthenticationController extends AbstractController{
                     email: email
                 }
             });
+
             if(managerResult.length > 0 && managerResult[0].is_quality){
+                //If user found in Manager table and user is a quality analyst send the corresponding information
                 role = "Quality-agent";
                 res.status(200).send({...login.AuthenticationResult, role: role, body: agentResult[0]});
             }else if(managerResult.length > 0){
+                //If user is just a manager send the corresponding information
                 role = "Admin";
                 res.status(200).send({...login.AuthenticationResult, role: role, body: agentResult[0]});
             }else{
+                //If user wasn't found inform
                 res.status(404).send({code: 'UserNotFound', message: 'User not found in the database'});
             }
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async signout(req:Request, res:Response){
+        /*
+        Method that lets an agent to sign out from our app
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const token = req.token
         const email = req.body.email
 
         try{
+            //Sign out using Cognito
             await this.cognitoService.signOut(token);
 
+            //Find if current user is an agent
             let agentResult =  await db["Agent"].findAll({
                 where: {
                     email: email
@@ -241,6 +311,7 @@ class AuthenticationController extends AbstractController{
             });
 
             if(agentResult.length > 0){
+                //If user is an agent changehis status 
                 await db["Agent"].update({status: "Inactive"}, {
                     where: {
                         email: email
@@ -250,29 +321,52 @@ class AuthenticationController extends AbstractController{
 
             res.status(200).send({message: `User ${email} signed out`});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async forgotPassword(req:Request, res:Response){
+        /*
+        Method that sends an email to a user (agent, manager or quality analyst) if they forgot their password to reset it
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const {email} = req.body;
 
         try{
+            //Send password resetting email using Cognito
             await this.cognitoService.forgotPassword(email);
 
             res.status(200).send({message: `Password resetting email sent to ${email}`});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async confirmPassword(req:Request, res:Response){
+        /*
+        Method that lets a user (agent, manager or quality analyst) to change and confirm their password using the code sent on an email
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const encryption = new cryptoService();
         const {email, confirmation_code, password} = req.body;
 
         try{
+            //Confirm new password using Cognito
             await this.cognitoService.confirmForgotPassword(email, confirmation_code, password);
 
+            //Find out if user is agent or manager
             let agent = await db["Agent"].findAll({
                 where: {
                     email: email
@@ -285,9 +379,11 @@ class AuthenticationController extends AbstractController{
                 }
             })
 
-            if(agent.length > 0){
-                const hashedPassword = encryption.hash(password);
+            //Hashing the password
+            const hashedPassword = encryption.hash(password);
 
+            if(agent.length > 0){
+                //If user is agent update the corresponding tuple
                 await db["Agent"].update({password: hashedPassword}, {
                     where: {
                         email: email
@@ -296,8 +392,7 @@ class AuthenticationController extends AbstractController{
 
                 res.status(200).send({message: `Agent ${email} password changed`});
             }else if(manager.length > 0){
-                const hashedPassword = encryption.hash(password);
-
+                //If user is manager update the corresponding tuple
                 await db["Manager"].update({password: hashedPassword}, {
                     where: {
                         email: email
@@ -306,49 +401,84 @@ class AuthenticationController extends AbstractController{
 
                 res.status(200).send({message: `Manager ${email} password changed, Cognito and Connect passwords aren't linked, to change your Connect password follow this tutorial: https://docs.aws.amazon.com/connect/latest/adminguide/password-reset.html#password-reset-aws`});
             }else{
+                //If user wasn't found inform
                 res.status(404).send({code: 'UserNotFound', message: 'User not found in the database'});
             }
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async getReadUsers(req:Request, res:Response){
+        /*
+        Method that returns a list of all the users (agents, managers and quality analysts) signed in our app
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         try{
             //Deploy users
             let agents = await db["Agent"].findAll();
-            console.log(agents)
             let managers = await db["Manager"].findAll();
-
 
             res.status(200).send({agents: agents, managers: managers});
         }catch(error:any){
+            //If an exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async refreshToken(req:Request, res:Response){
+        /*
+        Method that uses a user's refresh token to update the access tokens
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const refreshToken = req.body.refresh_token;
 
         try{
+            //Update tokens using Cognito
             let tokens = await this.cognitoService.refreshToken(refreshToken);
+
             res.status(200).send(tokens.AuthenticationResult);
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async getUserEmail(req:Request, res:Response){
+        /*
+        Method that return the active user's email address
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const token = req.token;
 
         try {
+            //Obtaining the user's email address using Cognito
             let userEmail = await this.cognitoService.getUserEmail(token);
+
             res.status(200).send({user_email: userEmail}); 
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
+    //Body validation
     protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'|'refreshToken'){
         switch(type){
             case 'signupAgent':

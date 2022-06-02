@@ -10,9 +10,10 @@ Last modification date: 17/05/2022
 Program that defines the noSQL table User Configurations model and its relationships
 */
 
+//Libraries that will be used
+import { PREFIX_TABLE } from '../config';
 import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
-import { PREFIX_TABLE } from '../config';
 
 //Model of the User Configurations table
 const UserConfigModel = dynamodb.define('user_configurations', {

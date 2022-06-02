@@ -4,14 +4,15 @@ Author:
 - Israel Sánchez Miranda
 
 Creation date: 28/04/2022
-Last modification date: 01/05/2022
+Last modification date: 01/06/2022
 
 Program that defines the noSQL table Recordings model and its relationships
 */
 
+//Libraries that will be used
+import { PREFIX_TABLE } from '../config';
 import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
-import { PREFIX_TABLE } from '../config';
 
 //Model of the Recordings table
 const RecordingsModel = dynamodb.define('recordings', {

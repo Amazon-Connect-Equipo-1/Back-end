@@ -9,6 +9,7 @@ Last modification date: 01/05/2022
 Program that defines the table Agent model and its relationships
 */
 
+//Libraries that will be used
 import { Model, UUIDV4 } from 'sequelize';
 
 //Interface that defines the attributes a register in the table Agent needs

@@ -9,6 +9,7 @@ Last modification date: 01/05/2022
 Program that defines the table Comments model and its relationships
 */
 
+//Libraries that will be used
 import { Model } from 'sequelize';
 
 //Interface that defines the attributes a register in the table Comments needs

@@ -9,9 +9,10 @@ Last modification date: 01/05/2022
 Program that defines the noSQL table Third Party Services model and its relationships
 */
 
+//Libraries that will be used
+import { PREFIX_TABLE } from '../config';
 import dynamodb from '../services/dynamoService';
 import Joi from 'joi';
-import { PREFIX_TABLE } from '../config';
 
 //Model of the THird Party Services table
 const ThirdPartyServicesModel = dynamodb.define('third_party_services', {

@@ -1,10 +1,11 @@
 /*
 index.ts
-Author:
+Authors:
 - Israel Sánchez Miranda
+- David Rodríguez Fragoso
 
 Creation date: 28/04/2022
-Last modification date: 29/04/2022
+Last modification date: 01/06/2022
 
 Index that defines all the sensitive and confidential data within the project
 */
