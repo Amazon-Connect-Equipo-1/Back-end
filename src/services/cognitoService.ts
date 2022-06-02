@@ -10,7 +10,7 @@ Program that handles all the services cognito offers
 */
 
 //Libraries that will be used
-import { COGNITO_APP_CLIENT_ID, COGNITO_APP_SECRET_HASH, AWS_REGION } from '../config';
+import { COGNITO_APP_CLIENT_ID, COGNITO_APP_SECRET_HASH, AWS_REGION, COGNITO_USER_POOL_ID } from '../config';
 
 import AWS from 'aws-sdk';
 import crypto from 'crypto';
@@ -25,6 +25,7 @@ class CognitoService{
     //Attributes for connecting the app to cognito
     private clientId = COGNITO_APP_CLIENT_ID;
     private secretHash = COGNITO_APP_SECRET_HASH;
+    private userPoolId = COGNITO_USER_POOL_ID;
 
     //Singleton
     private static instance: CognitoService;
@@ -218,7 +219,7 @@ class CognitoService{
         User's email or undefined if it wasn't found
         */
         const params = {
-            AccessToken: token,
+            AccessToken: token
         };
 
         const user = await this.cognitoIdentity.getUser(params).promise();
@@ -226,7 +227,7 @@ class CognitoService{
         if(userEmail){
             return userEmail.Value as string;
         }
-        
+
         return 'undefined';
     }
 }

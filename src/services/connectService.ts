@@ -57,7 +57,7 @@ class ConnectService {
                 LastName: lastname
             },
             Password: password
-        }
+        };
 
         return await this.connectIdentity.createUser(params).promise();
     }

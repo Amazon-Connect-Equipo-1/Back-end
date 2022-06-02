@@ -477,9 +477,8 @@ class AuthenticationController extends AbstractController{
             res.status(500).send({code: error.code, message: error.message});
         }
     }
-
     //Body validation
-    protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'|'refreshToken'){
+    protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'|'refreshToken'|'deleteUser'){
         switch(type){
             case 'signupAgent':
                 return checkSchema({
@@ -639,6 +638,14 @@ class AuthenticationController extends AbstractController{
             case 'refreshToken':
                 return checkSchema({
                     refresh_token: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    }
+                });
+            case 'deleteUser': 
+                return checkSchema({
+                    id: {
                         isString: {
                             errorMessage: 'Must be a string'
                         }

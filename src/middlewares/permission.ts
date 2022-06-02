@@ -11,9 +11,11 @@ Program that handles all the permissions within the app
 
 //Libraries that will be used
 import { Response, Request, NextFunction } from 'express';
+import CognitoService from '../services/cognitoService';
 import db from '../models';
 
 export default class PermissionMiddleware{
+
     //Singleton
     private static instance: PermissionMiddleware;
 
@@ -42,9 +44,11 @@ export default class PermissionMiddleware{
         */
         try{
             //Search for the user in the Manager table
+            const cognitoService = CognitoService.getInstance();
+            const user_email = await cognitoService.getUserEmail(req.token);
             const user = await db["Manager"].findAll({
                 where: {
-                    manager_id: req.user
+                    email: user_email
                 }, 
                 raw: true
             });
@@ -74,9 +78,11 @@ export default class PermissionMiddleware{
         */
         try{
             //Search for the user in the Manager table
+            const cognitoService = CognitoService.getInstance();
+            const user_email = await cognitoService.getUserEmail(req.token);
             const user = await db["Manager"].findAll({
                 where: {
-                    manager_id: req.user
+                    manager_id: user_email
                 },
                 raw: true
             });

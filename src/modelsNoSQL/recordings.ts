@@ -28,7 +28,7 @@ const RecordingsModel = dynamodb.define('recordings', {
         thumbnail: Joi.string(),
         initialTimeStamp: Joi.string(),
         disconnectTimeStamp: Joi.string(),
-        duration: Joi.number(),
+        duration: Joi.string(),
         tags: Joi.array(),
         recordingData: Joi.object()
     },

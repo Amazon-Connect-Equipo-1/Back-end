@@ -19,7 +19,7 @@ interface CallAttributes{
   client_id: string,
   time_start: string,
   time_finish: string,
-  duration: number,
+  duration: string,
   problem_solved: boolean,
   date: string
 };
@@ -36,7 +36,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
     client_id!: string;
     time_start!: string;
     time_finish!: string;
-    duration!: number;
+    duration!: string;
     problem_solved!: boolean;
     date!: string;
     
@@ -84,7 +84,7 @@ module.exports = (sequelize:any, DataTypes:any) => {
       allowNull: true
     },
     duration: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true
     },
     problem_solved: {
