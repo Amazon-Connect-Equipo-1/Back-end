@@ -23,7 +23,7 @@ const UserConfigModel = dynamodb.define('user_configurations', {
         //Table attributes
         UserConfigId: dynamodb.types.uuid(),
         userId: Joi.string(),
-        color: Joi.string(), //May have dark|light|protanopia|deuteranopia|tritanopia|protanomaly|deuteranomaly|tritanomaly as values
+        color: Joi.string(), //May have dark|light|dark_protanopia|dark_deuteranopia|dark_tritanopia|dark_protanomaly|dark_deuteranomaly|dark_tritanomaly as values
         textSize: Joi.string(), //May have small|medium|big as values
         language: Joi.string(), //May have EN|ES as values
     },

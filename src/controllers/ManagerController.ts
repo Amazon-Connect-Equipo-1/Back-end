@@ -37,7 +37,7 @@ class ManagerController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createManager'|'createAgent'|'postComment'|'filterRecordings'){
+    protected validateBody(type:|'createManager'|'createAgent'|'postComment'|'filterRecordings'|'updateProfilePicture'){
         switch(type){
             case 'createManager':
                 return checkSchema({
@@ -147,6 +147,14 @@ class ManagerController extends AbstractController{
                         }
                     }
                 });
+            case 'updateProfilePicture':
+                return checkSchema({
+                    profile_picture: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    }
+                });
         }
     }
 
@@ -162,6 +170,7 @@ class ManagerController extends AbstractController{
         this.router.post('/filterRecordings', this.authMiddleware.verifyToken, this.validateBody('filterRecordings'), this.handleErrors, this.filterRecordings.bind(this));
         this.router.post('/showLastRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showLastRecordings.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
+        this.router.post('/updateProfilePicture', this.authMiddleware.verifyToken, this.validateBody('updateProfilePicture'), this.handleErrors, this.updateProfilePicture.bind(this));
     }
 
     //Controllers
@@ -541,6 +550,22 @@ class ManagerController extends AbstractController{
             res.status(200).send({message: `Comment posted to ${agent_email[0].email}`});
         }catch(error:any){
             //If an exception occurs inform
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async updateProfilePicture(req:Request, res:Response){
+        const {user_id, profile_picture} = req.body
+
+        try{
+            await db["Manager"].update({profile_picture: profile_picture}, {
+                where: {
+                    agent_id: user_id
+                }
+            });
+
+            res.status(200).send({message: "Profile picture updated!"});
+        }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
     }

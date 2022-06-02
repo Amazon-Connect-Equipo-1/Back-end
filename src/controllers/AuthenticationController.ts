@@ -114,9 +114,9 @@ class AuthenticationController extends AbstractController{
             await UserConfigModel.create(
                 {
                 userId: c_user.UserId,
-                color: "Dark",
+                color: "dark",
                 textSize: "medium",
-                language: "EN"
+                language: "en"
                 },
                 {overwrite: false}
             );
@@ -188,9 +188,9 @@ class AuthenticationController extends AbstractController{
             await UserConfigModel.create(
                 {
                 userId: c_user.UserId,
-                color: "Dark",
+                color: "dark",
                 textSize: "medium",
-                language: "EN"
+                language: "en"
                 },
                 {overwrite: false}
             );

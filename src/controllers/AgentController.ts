@@ -34,13 +34,21 @@ class AgentController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:'acceptFeedback'){
+    protected validateBody(type:|'acceptFeedback'|'updateProfilePicture'){
         switch(type){
             case 'acceptFeedback':
                 return checkSchema({
                     comment_id: {
                         isString: {
                             errorMessage: 'Comment ID must be a string'
+                        }
+                    }
+                });
+            case 'updateProfilePicture':
+                return checkSchema({
+                    profile_picture: {
+                        isString: {
+                            errorMessage: 'Must be a string'
                         }
                     }
                 });
@@ -51,7 +59,8 @@ class AgentController extends AbstractController{
     protected initRoutes(): void { 
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
         this.router.post('/acceptFeedback', this.authMiddleware.verifyToken, this.validateBody('acceptFeedback'), this.handleErrors, this.acceptFeedback.bind(this)); 
-        this.router.get('/getFeedback', this.authMiddleware.verifyToken, this.handleErrors, this.getFeedback.bind(this)); 
+        this.router.get('/getFeedback', this.authMiddleware.verifyToken, this.handleErrors, this.getFeedback.bind(this));
+        this.router.post('/updateProfilePicture', this.authMiddleware.verifyToken, this.validateBody('updateProfilePicture'), this.handleErrors, this.updateProfilePicture.bind(this)); 
     }
 
     //Controllers
@@ -146,6 +155,22 @@ class AgentController extends AbstractController{
             res.status(200).send({agent_name: agent[0].name, agent_email: email, comments: feedback});
         }catch(error:any){
             //If exception occurs inform
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async updateProfilePicture(req:Request, res:Response){
+        const {user_id, profile_picture} = req.body
+
+        try{
+            await db["Agent"].update({profile_picture: profile_picture}, {
+                where: {
+                    agent_id: user_id
+                }
+            });
+
+            res.status(200).send({message: "Profile picture updated!"});
+        }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
     }
