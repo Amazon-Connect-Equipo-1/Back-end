@@ -65,7 +65,8 @@ class AgentController extends AbstractController{
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
         this.router.post('/acceptFeedback', this.authMiddleware.verifyToken, this.validateBody('acceptFeedback'), this.handleErrors, this.acceptFeedback.bind(this)); 
         this.router.get('/getFeedback', this.authMiddleware.verifyToken, this.handleErrors, this.getFeedback.bind(this));
-        this.router.post('/updateProfilePicture', this.authMiddleware.verifyToken, this.validateBody('updateProfilePicture'), this.handleErrors, this.updateProfilePicture.bind(this)); 
+        this.router.post('/updateProfilePicture', this.authMiddleware.verifyToken, this.validateBody('updateProfilePicture'), this.handleErrors, this.updateProfilePicture.bind(this));
+        this.router.post('/updateAgentStatus', this.authMiddleware.verifyToken, this.handleErrors, this.updateAgentStatus.bind(this)); 
     }
 
     //Controllers
@@ -187,6 +188,22 @@ class AgentController extends AbstractController{
             res.status(200).send({message: "Profile picture updated!"});
         }catch(error:any){
             //If exception occurs inform
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async updateAgentStatus(req:Request, res:Response){
+        const {agent_id, status} = req.body;
+
+        try{
+         await db["Agent"].update({status: status}, {
+             where: {
+                 agent_id: agent_id
+             }
+         });
+
+         res.status(200).send({message: "Agent status updated"});
+        }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }
     }
