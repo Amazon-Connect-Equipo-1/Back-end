@@ -472,6 +472,7 @@ class AuthenticationController extends AbstractController{
             res.status(500).send({code: error.code, message: error.message});
         }
     }
+    
     //Body validation
     protected validateBody(type:|'signupAgent'|'signupManager'|'signin'|'verify'|'signout'|'forgotPassword'|'confirmPassword'|'refreshToken'|'deleteUser'){
         switch(type){

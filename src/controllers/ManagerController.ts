@@ -569,9 +569,19 @@ class ManagerController extends AbstractController{
     }
 
     private async updateProfilePicture(req:Request, res:Response){
+        /*
+        Method that lets a Manager update his profile picture
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const {user_email, profile_picture} = req.body
 
         try{
+            //Update the profile picture of the manager in the database
             await db["Manager"].update({profile_picture: profile_picture}, {
                 where: {
                     agent_id: user_email
@@ -580,11 +590,21 @@ class ManagerController extends AbstractController{
 
             res.status(200).send({message: "Profile picture updated!"});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
 
     private async filterRecordingsByDate(req:Request, res:Response){
+        /*
+        Method that lets a Manager to filter recordings by date and agent
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const user_email = req.body.email;
         const date = req.body.date
         

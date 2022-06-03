@@ -165,9 +165,19 @@ class AgentController extends AbstractController{
     }
 
     private async updateProfilePicture(req:Request, res:Response){
+        /*
+        Method that lets an Agent update his profile picture
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const {user_email, profile_picture} = req.body
 
         try{
+            //Update the profile_picture of the agent in the database
             await db["Agent"].update({profile_picture: profile_picture}, {
                 where: {
                     agent_id: user_email
@@ -176,6 +186,7 @@ class AgentController extends AbstractController{
 
             res.status(200).send({message: "Profile picture updated!"});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
