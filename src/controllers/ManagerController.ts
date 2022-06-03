@@ -37,7 +37,7 @@ class ManagerController extends AbstractController{
     }
 
     //Body validation
-    protected validateBody(type:|'createManager'|'createAgent'|'postComment'|'filterRecordings'|'updateProfilePicture'){
+    protected validateBody(type:|'createManager'|'createAgent'|'postComment'|'filterRecordings'|'updateProfilePicture'|'filterByDate'){
         switch(type){
             case 'createManager':
                 return checkSchema({
@@ -149,7 +149,20 @@ class ManagerController extends AbstractController{
                 });
             case 'updateProfilePicture':
                 return checkSchema({
+                    user_email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    },
                     profile_picture: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
+                    }
+                });
+            case 'filterByDate':
+                return checkSchema({
+                    date: {
                         isString: {
                             errorMessage: 'Must be a string'
                         }
@@ -171,6 +184,7 @@ class ManagerController extends AbstractController{
         this.router.post('/showLastRecordings', this.authMiddleware.verifyToken, this.handleErrors, this.showLastRecordings.bind(this));
         this.router.post('/postComment', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsQuality, this.validateBody('postComment'), this.handleErrors, this.postComment.bind(this));
         this.router.post('/updateProfilePicture', this.authMiddleware.verifyToken, this.validateBody('updateProfilePicture'), this.handleErrors, this.updateProfilePicture.bind(this));
+        this.router.post('/filterRecordingsByDate', this.authMiddleware.verifyToken, this.validateBody('filterByDate'), this.handleErrors, this.filterRecordingsByDate.bind(this));
     }
 
     //Controllers
@@ -555,16 +569,31 @@ class ManagerController extends AbstractController{
     }
 
     private async updateProfilePicture(req:Request, res:Response){
-        const {user_id, profile_picture} = req.body
+        const {user_email, profile_picture} = req.body
 
         try{
             await db["Manager"].update({profile_picture: profile_picture}, {
                 where: {
-                    agent_id: user_id
+                    agent_id: user_email
                 }
             });
 
             res.status(200).send({message: "Profile picture updated!"});
+        }catch(error:any){
+            res.status(500).send({code: error.code, message: error.message});
+        }
+    }
+
+    private async filterRecordingsByDate(req:Request, res:Response){
+        const user_email = req.body.email;
+        const date = req.body.date
+        
+        try{
+            if(user_email){
+                //Filtrar por fecha e Email
+            }else{
+                //filtrar solo por fecha
+            }
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});
         }

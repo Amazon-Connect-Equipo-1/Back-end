@@ -46,6 +46,11 @@ class AgentController extends AbstractController{
                 });
             case 'updateProfilePicture':
                 return checkSchema({
+                    user_email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
+                        }
+                    },
                     profile_picture: {
                         isString: {
                             errorMessage: 'Must be a string'
@@ -160,12 +165,12 @@ class AgentController extends AbstractController{
     }
 
     private async updateProfilePicture(req:Request, res:Response){
-        const {user_id, profile_picture} = req.body
+        const {user_email, profile_picture} = req.body
 
         try{
             await db["Agent"].update({profile_picture: profile_picture}, {
                 where: {
-                    agent_id: user_id
+                    agent_id: user_email
                 }
             });
 

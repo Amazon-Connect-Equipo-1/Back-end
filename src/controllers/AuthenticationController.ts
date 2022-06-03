@@ -47,14 +47,9 @@ class AuthenticationController extends AbstractController{
         this.router.get('/readUsers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.getReadUsers.bind(this));
         this.router.post('/refreshToken', this.validateBody('refreshToken'), this.handleErrors, this.refreshToken.bind(this));
         this.router.get('/getUserEmail', this.authMiddleware.verifyToken, this.handleErrors, this.getUserEmail.bind(this));
-        this.router.get('/test', this.test.bind(this));
     }
 
     //Controllers
-    private async test(req:Request, res:Response){
-        res.status(200).send({message: "EL LAIM XD"});
-    }
-
     private async signupAgent(req:Request, res:Response){
         /*
         Method that lets an agent to sign up in our application

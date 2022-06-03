@@ -223,6 +223,7 @@ class CognitoService{
         };
 
         const user = await this.cognitoIdentity.getUser(params).promise();
+        console.log(user.UserAttributes);
         const userEmail = user.UserAttributes.find((ua) => ua.Name === 'email');
         if(userEmail){
             return userEmail.Value as string;
