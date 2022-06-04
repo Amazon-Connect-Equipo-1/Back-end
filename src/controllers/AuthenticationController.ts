@@ -60,7 +60,7 @@ class AuthenticationController extends AbstractController{
         Returns:
         res - status and response of the route
         */
-        const{super_email, name, password, email, phone_number} = req.body;
+        const{super_email, name, password, email, phone_number, profile_picture} = req.body;
         const encryption = new cryptoService();
 
         try{
@@ -102,7 +102,8 @@ class AuthenticationController extends AbstractController{
                 super_id: super_id[0].dataValues.manager_id,
                 name: name,
                 password: hashedPassword,
-                email: email
+                email: email,
+                profile_picture: profile_picture
             });
 
             //Save user's default configurations in DynamoDB
@@ -134,7 +135,7 @@ class AuthenticationController extends AbstractController{
         Returns:
         res - status and response of the route
         */
-        const{name, password, email, role, phone_number} = req.body;
+        const{name, password, email, role, phone_number, profile_picture} = req.body;
         const encryption = new cryptoService();
         var role_name = "";
 
@@ -176,7 +177,8 @@ class AuthenticationController extends AbstractController{
                 manager_name: name, 
                 password: hashedPassword,
                 email: email,
-                is_quality: role
+                is_quality: role,
+                profile_picture: profile_picture
             });
 
             //Save user's configurations in DynamoDB
@@ -511,6 +513,11 @@ class AuthenticationController extends AbstractController{
                         isEmail:{
                             errorMessage: 'Must be a valid email'
                         }
+                    },
+                    profile_picture: {
+                        isString: {
+                            errorMessage: 'Must be a string'
+                        }
                     }
                 });
             case 'signupManager':
@@ -547,6 +554,11 @@ class AuthenticationController extends AbstractController{
                     role:{
                         isBoolean: {
                             errorMessage: 'Must be boolean'
+                        }
+                    },
+                    profile_picture:{
+                        isString: {
+                            errorMessage: 'Must be a string'
                         }
                     }
                 });

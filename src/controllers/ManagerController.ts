@@ -15,7 +15,7 @@ Program that defines the controller for the Manager, its routes and functionalit
 //Libraries that will be used
 import { checkSchema } from 'express-validator';
 import {Request, Response} from 'express';
-import sequelize, { DataTypes } from 'sequelize';
+import sequelize from 'sequelize';
 import db from '../models/index';
 import RecordingsModel from '../modelsNoSQL/recordings';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
