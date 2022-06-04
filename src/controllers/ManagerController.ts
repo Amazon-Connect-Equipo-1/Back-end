@@ -15,7 +15,7 @@ Program that defines the controller for the Manager, its routes and functionalit
 //Libraries that will be used
 import { checkSchema } from 'express-validator';
 import {Request, Response} from 'express';
-import sequelize from 'sequelize';
+import sequelize, { DataTypes } from 'sequelize';
 import db from '../models/index';
 import RecordingsModel from '../modelsNoSQL/recordings';
 import UserConfigModel from '../modelsNoSQL/user_configurations';
@@ -605,14 +605,58 @@ class ManagerController extends AbstractController{
         Returns:
         res - status and response of the route
         */
-        const user_email = req.body.email;
+        const user_email = req.body.user_email;
         const date = req.body.date
+        var result = []
         
         try{
             if(user_email){
-                //Filtrar por fecha e Email
+                //Filtering calls by date
+                const call_ids = await db["Calls"].findAll({
+                    attributes: ["call_id"],
+                    include: [
+                        {
+                            model: db["Agent"],
+                            required: true
+                        }
+                    ],
+                    where: {
+                        "$Agent.email$": user_email,
+                        date: date
+                    }
+                });
+
+                //Obtaining every recording from that date
+                for(const call_id of call_ids){
+                    let dynamo_recording = await RecordingsModel
+                        .query(call_id.dataValues.call_id)
+                        .exec()
+                        .promise();
+                    
+                    result.push(dynamo_recording[0].Items[0]);
+                }
+
+                res.status(200).send({recording: result});
             }else{
-                //filtrar solo por fecha
+                //Filtering calls by date
+                const call_ids = await db["Calls"].findAll({
+                    attributes: ["call_id"],
+                    where: {
+                        date: date
+                    }
+                });
+
+                //Obtaining every recording from that date
+                for(const call_id of call_ids){
+                    let dynamo_recording = await RecordingsModel
+                        .query(call_id.dataValues.call_id)
+                        .exec()
+                        .promise();
+                    
+                    result.push(dynamo_recording[0].Items[0]);
+                }
+
+                res.status(200).send({recordings: result});
             }
         }catch(error:any){
             res.status(500).send({code: error.code, message: error.message});

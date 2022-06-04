@@ -193,17 +193,28 @@ class AgentController extends AbstractController{
     }
 
     private async updateAgentStatus(req:Request, res:Response){
+        /*
+        Method that updates the status of an Agent
+
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
         const {agent_id, status} = req.body;
 
         try{
-         await db["Agent"].update({status: status}, {
-             where: {
-                 agent_id: agent_id
-             }
-         });
+            //Updating the status of the agent
+            await db["Agent"].update({status: status}, {
+                where: {
+                    agent_id: agent_id
+                }
+            });
 
-         res.status(200).send({message: "Agent status updated"});
+            res.status(200).send({message: "Agent status updated"});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
     }
