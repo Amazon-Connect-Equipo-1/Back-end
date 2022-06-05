@@ -305,11 +305,13 @@ class ManagerController extends AbstractController{
         Returns:
         res - status and response of the route
         */
+        const email = req.query.email?.toString();
+
         try{
             //Finding the agent by his email
             let result:any = await db["Agent"].findAll({
                 where: {
-                    email: req.query.email?.toString()
+                    email: email
                 },
                 raw: true
             });
@@ -320,8 +322,8 @@ class ManagerController extends AbstractController{
                 res.status(200).send(result);
             }else{
                 //If not, return an agent not found exception
-                console.log(`No agent with email: ${req.body.email} found`);
-                res.status(500).send({message: `No agent with email: ${req.body.email} found`});
+                console.log(`No agent with email: ${email} found`);
+                res.status(500).send({message: `No agent with email: ${email} found`});
             }
         }catch(err:any){
             //If exception occurs inform
@@ -461,12 +463,14 @@ class ManagerController extends AbstractController{
                 .promise();
 
             for(const recording of recordings[0].Items){
-                for(const tag of recording.attrs.tags){
-                    //Finding if the video tags include the tags specified by the filter
-                    if(body_tags.includes(tag)){
-                        //If tags match, push the corresponding recording to the array
-                        result.push({recording_data: recording.attrs});
-                        break;
+                if(recording.attrs.tags){
+                    for(const tag of recording.attrs.tags){
+                        //Finding if the video tags include the tags specified by the filter
+                        if(body_tags.includes(tag)){
+                            //If tags match, push the corresponding recording to the array
+                            result.push({recording_data: recording.attrs});
+                            break;
+                        }
                     }
                 }
             }

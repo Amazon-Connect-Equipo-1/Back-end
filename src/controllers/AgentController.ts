@@ -80,11 +80,13 @@ class AgentController extends AbstractController{
         Returns:
         res - status and response of the route
         */
+        const email = req.query.email?.toString();
+
         try{
             //Finding the agent profile
             let result:any = await db["Agent"].findAll({
                 where: {
-                    email: req.query.email?.toString()
+                    email: email
                 },
                 raw: true
             });
@@ -95,8 +97,8 @@ class AgentController extends AbstractController{
                 res.status(200).send(result[0]);
             }else{
                 //If not return an agent not found exception
-                console.log(`No agent with email: ${req.body.email} found`);
-                res.status(500).send({message: `No agent with email: ${req.body.email} found`});
+                console.log(`No agent with email: ${email} found`);
+                res.status(500).send({message: `No agent with email: ${email} found`});
             }
         }catch(err:any){
             //If exception occurs inform 

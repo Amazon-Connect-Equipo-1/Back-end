@@ -18,6 +18,7 @@ import PermissionMiddleware from '../middlewares/permission';
 import ValidationErrorMiddleware from '../middlewares/validationError';
 import CognitoService from '../services/cognitoService';
 import ConnectService from '../services/connectService';
+import S3Service from '../services/s3Service';
 
 export default abstract class AbstractController{
     /*
@@ -34,6 +35,7 @@ export default abstract class AbstractController{
     protected permissionMiddleware = PermissionMiddleware.getInstance();
     protected cognitoService = CognitoService.getInstance();
     protected connectService = ConnectService.getInstance();
+    protected s3Service = S3Service.getInstance();
 
     //Getters
     public get prefix(): string {
