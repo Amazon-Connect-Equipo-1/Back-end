@@ -588,7 +588,7 @@ class ManagerController extends AbstractController{
             //Update the profile picture of the manager in the database
             await db["Manager"].update({profile_picture: profile_picture}, {
                 where: {
-                    agent_id: user_email
+                    email: user_email
                 }
             });
 

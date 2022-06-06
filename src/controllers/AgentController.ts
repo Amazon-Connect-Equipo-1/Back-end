@@ -183,7 +183,7 @@ class AgentController extends AbstractController{
             //Update the profile_picture of the agent in the database
             await db["Agent"].update({profile_picture: profile_picture}, {
                 where: {
-                    agent_id: user_email
+                    email: user_email
                 }
             });
 
