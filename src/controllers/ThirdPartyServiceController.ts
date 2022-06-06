@@ -120,7 +120,7 @@ class ThirdPartyServicesController extends AbstractController{
 
         try{
             //Making a post method to email messaging API
-            await fetch('https://y63tjetjmb.execute-api.us-west-2.amazonaws.com/default/emailMessaging', {
+            await fetch('https://1q24bha2hj.execute-api.us-west-2.amazonaws.com/default/emailMessagingNode', {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });

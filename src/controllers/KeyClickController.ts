@@ -14,8 +14,9 @@ Program that defines the controller for the Recordings, its routes and functiona
 //Libraries that will be used
 import { checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
-import AbstractController from './AbstractController';
 import { S3_CLICK_KEY_BUCKET } from '../config';
+import KeyClickModel from '../modelsNoSQL/key_click_recordings';
+import AbstractController from './AbstractController';
 import fs from 'fs';
 import path from 'path';
 
@@ -109,7 +110,32 @@ class KeyClickController extends AbstractController{
             const object = fs.readFileSync(`${path.dirname(s3_key)}/${s3_key}`);
 
             await this.s3Service.putObject(S3_CLICK_KEY_BUCKET, s3_key, object);
-            
+
+            const result = await KeyClickModel
+                .query(agent_id)
+                .usingIndex('agentId')
+                .exec()
+                .promise();
+
+            if(result[0].Count > 0){
+                var recording_arr = result[0].Items[0].attrs.keyRecordings;
+
+                recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
+
+                await KeyClickModel.update({
+                    KeyClickRecordingId: result[0].Items[0].attrs.KeyClickRecordingId,
+                    keyRecordings: recording_arr
+                });
+            }else{
+                const db_object = {
+                    "agentId": agent_id,
+                    "keyRecordings": [`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`],
+                    "clickRecordings": []
+                }
+    
+                await KeyClickModel.create(db_object);
+            }
+
             res.status(200).send({message: `writing ${key} ${agent_id} on a document`});
         }catch(error:any){
            //If exception occurs inform
@@ -149,6 +175,31 @@ class KeyClickController extends AbstractController{
             const object = fs.readFileSync(`${path.dirname(s3_key)}/${s3_key}`);
 
             await this.s3Service.putObject(S3_CLICK_KEY_BUCKET, s3_key, object);
+
+            const result = await KeyClickModel
+                .query(agent_id)
+                .usingIndex('agentId')
+                .exec()
+                .promise();
+
+            if(result[0].Count > 0){
+                var recording_arr = result[0].Items[0].attrs.clickRecordings;
+
+                recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
+
+                await KeyClickModel.update({
+                    KeyClickRecordingId: result[0].Items[0].attrs.KeyClickRecordingId,
+                    clickRecordings: recording_arr
+                });
+            }else{
+                const db_object = {
+                    "agentId": agent_id,
+                    "keyRecordings": [],
+                    "clickRecordings": [`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`]
+                }
+    
+                await KeyClickModel.create(db_object);
+            }
             
             res.status(200).send({message: `writing ${button} ${agent_id} on a document`});
         }catch(error:any){
@@ -159,16 +210,16 @@ class KeyClickController extends AbstractController{
 
     private async deleteObjects(req:Request, res:Response){
         try{
-            for(const object of this.file_stack){
+            this.file_stack.forEach (object => {
                 console.log(object);
+
                 fs.unlink(`${path.dirname(object)}/${object}`, function(err){
                     if(err){
                         throw err;
                     }
                 });
-
-                this.file_stack.splice(this.file_stack.indexOf(object), 1);
-            }
+            });
+            this.file_stack = [];
 
             res.status(200).send({message: `All files deleted ${this.file_stack}`});
         }catch(error:any){
