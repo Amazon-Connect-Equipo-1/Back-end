@@ -82,7 +82,7 @@ export default class PermissionMiddleware{
             const user_email = await cognitoService.getUserEmail(req.token);
             const user = await db["Manager"].findAll({
                 where: {
-                    manager_id: user_email
+                    email: user_email
                 },
                 raw: true
             });

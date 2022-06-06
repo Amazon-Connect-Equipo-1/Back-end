@@ -123,9 +123,9 @@ class ManagerController extends AbstractController{
                             errorMessage: 'Must be a string'
                         }
                     },
-                    agent_id: {
-                        isString: {
-                            errorMessage: 'Must be a string'
+                    agent_email: {
+                        isEmail: {
+                            errorMessage: 'Must be a valid email'
                         }
                     },
                     comment: {
@@ -533,16 +533,23 @@ class ManagerController extends AbstractController{
         Returns:
         res - status and response of the route
         */
-        try{
-            //Register the comment in the database            
-            await db["Comments"].create(req.body);
+        const {super_id, agent_email, comment, rating} = req.body;
 
-            //Obtain agent's email using his ID
-            let agent_email = await db["Agent"].findAll({
-                attributes: ['email'],
+        try{
+            //Obtain agent's ID using his email
+            let agent_id = await db["Agent"].findAll({
+                attributes: ["agent_id"],
                 where: {
-                    agent_id: req.body.agent_id
+                    email: req.body.agent_email
                 }
+            });
+
+            //Register the comment in the database            
+            await db["Comments"].create({
+                super_id: super_id,
+                agent_id: agent_id[0].agent_id,
+                comment: comment,
+                rating: rating
             });
 
             //Calculate and update the new rating of the agent
@@ -552,20 +559,20 @@ class ManagerController extends AbstractController{
                     sequelize.fn('count', sequelize.col('rating'))
                 ],
                 where: {
-                    agent_id: req.body.agent_id
+                    agent_id: agent_id[0].agent_id
                 },
                 raw: true
             });
 
-            const rating = comments[0]['sum(`rating`)'] / comments[0]['count(`rating`)'];
+            const new_rating = comments[0]['sum(`rating`)'] / comments[0]['count(`rating`)'];
 
-            await db["Agent"].update({rating: rating.toFixed(1)}, {
+            await db["Agent"].update({rating: new_rating.toFixed(1)}, {
                 where: {
-                    agent_id: req.body.agent_id
+                    agent_id: agent_id[0].agent_id
                 }
             });
 
-            res.status(200).send({message: `Comment posted to ${agent_email[0].email}`});
+            res.status(200).send({message: `Comment posted to ${agent_email}`});
         }catch(error:any){
             //If an exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
