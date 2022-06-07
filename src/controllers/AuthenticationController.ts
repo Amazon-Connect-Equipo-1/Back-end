@@ -96,6 +96,8 @@ class AuthenticationController extends AbstractController{
             //Hashing user's password
             var hashedPassword = encryption.hash(password);
 
+            const image_id = profile_picture.split('/')[5];
+
             //Save user in RDS database
             await db["Agent"].create({
                 agent_id: c_user.UserId,
@@ -103,7 +105,7 @@ class AuthenticationController extends AbstractController{
                 name: name,
                 password: hashedPassword,
                 email: email,
-                profile_picture: profile_picture
+                profile_picture: `https://drive.google.com/uc?export=view&id=${image_id}`
             });
 
             //Save user's default configurations in DynamoDB
@@ -171,6 +173,8 @@ class AuthenticationController extends AbstractController{
             //Hashing managers's password
             var hashedPassword = encryption.hash(password);
 
+            const image_id = profile_picture.split('/')[5];
+
             //Save user in RDS database
             await db["Manager"].create({
                 manager_id: c_user.UserId,
@@ -178,7 +182,7 @@ class AuthenticationController extends AbstractController{
                 password: hashedPassword,
                 email: email,
                 is_quality: role,
-                profile_picture: profile_picture
+                profile_picture: `https://drive.google.com/uc?export=view&id=${image_id}`
             });
 
             //Save user's configurations in DynamoDB

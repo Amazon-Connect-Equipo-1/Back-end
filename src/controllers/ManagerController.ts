@@ -592,8 +592,10 @@ class ManagerController extends AbstractController{
         const {user_email, profile_picture} = req.body
 
         try{
+            const image_id = profile_picture.split('/')[5];
+
             //Update the profile picture of the manager in the database
-            await db["Manager"].update({profile_picture: profile_picture}, {
+            await db["Manager"].update({profile_picture: `https://drive.google.com/uc?export=view&id=${image_id}`}, {
                 where: {
                     email: user_email
                 }
