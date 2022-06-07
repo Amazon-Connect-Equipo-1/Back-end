@@ -24,15 +24,48 @@
     -[3.2 Log in a client](#32-log-in-a-client)
 
   -[4. Key-Click Recording routes](#4-keyclickcontrollerts)
+    -[4.1 Add a keystroke done by an agent](#41-add-a-keystroke-done-by-an-agent)
+    -[4.2 Add a click done by an agent](#42-add-a-click-done-by-an-agent)
+    -[4.3 Delete all the files created by the controller](#43-delete-all-the-files-created-by-the-controller)
 
   -[5. Manager routes](#5-managercontrollerts)
+    -[5.1 List all agents in the system and its attributes](#51-list-all-agents-in-the-system-and-its-attributes)
+    -[5.2 Get agent profile](#52-get-agent-profile)
+    -[5.3 Get manager profile](#53-get-manager-profile)
+    -[5.4 Show a specific recording](#54-show-a-specific-recording)
+    -[5.5 Show recordings of an agent](#55-show-recordings-of-an-agent)
+    -[5.6 Show recordings filtered by tags](#56-show-recordings-filtered-by-tags)
+    -[5.7 Show newest recordings](#57-show-newest-recordings)
+    -[5.8 Show newest or oldest recordings](#58-show-newest-or-oldest-recordings)
+    -[5.9 Post comments to an agent](#59-post-comments-to-an-agent)
+    -[5.10 Update manager's profile picture](#510-update-managers-profile-picture)
 
   -[6. Third-Party-Services routes](#6-thirdpartyservicescontrollerts)
+    -[6.1 Ask for a Thirs Party Service](#61-ask-for-a-thirs-party-service)
+    -[6.2 Send Third Party Service via e-mail](#62-send-third-party-service-via-e-mail)
 
   -[7. User Configuration routes](#7-userconfigurationsts)
+    -[7.1 Get user's configuration](#71-get-users-configuration)
+    -[7.2 Update user's configuration](#72-update-users-configuration)
 
 # 1. AgentController.ts
   ## 1.1 Get agent profile
+  
+  This route lets you get all the data of a specific agent.
+  
+  -**endpoint**: `/agent/agentProfile`
+  -**method**: `POST`
+  -**body**:
+  ```json
+  {
+	"email": "name@server.com",
+	"password": "MYP4sw4rd$",
+	"name": "Rob",
+	"last_name": "Mc Donalds",
+	"birthdate": "1990-10-23"
+  }
+  ```
+
   ## 1.2 Get agent's feedback
   ## 1.3 Accept agent's feedback
   ## 1.4 Update agent's profile picture
@@ -56,9 +89,25 @@
 
 # 4. KeyClickController.ts
   ## 4.1 Add a keystroke done by an agent
+  ## 4.2 Add a click done by an agent
+  ## 4.3 Delete all the files created by the controller
 
 # 5. ManagerController.ts
+  ## 5.1 List all agents in the system and its attributes
+  ## 5.2 Get agent profile
+  ## 5.3 Get manager profile
+  ## 5.4 Show a specific recording 
+  ## 5.5 Show recordings of an agent
+  ## 5.6 Show recordings filtered by tags
+  ## 5.7 Show newest recordings
+  ## 5.8 Show newest or oldest recordings
+  ## 5.9 Post comments to an agent
+  ## 5.10 Update manager's profile picture
 
 # 6. ThirdPartyServicesController.ts
+  ## 6.1 Ask for a Thirs Party Service
+  ## 6.2 Send Third Party Service via e-mail
 
 # 7. UserConfigurations.ts
+  ## 7.1 Get user's configuration
+  ## 7.2 Update user's configuration
