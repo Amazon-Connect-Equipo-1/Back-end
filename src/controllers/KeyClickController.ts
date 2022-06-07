@@ -125,11 +125,8 @@ class KeyClickController extends AbstractController{
                 .exec()
                 .promise();
 
-            console.log(s3_key);
-
             //If agent is already registered just modify the array of keystroke recordings
-            console.log(result[0].Items[0].attrs.clickRecordings.indexOf(s3_key));
-            if(result[0].Count > 0 && result[0].Items[0].attrs.keyRecordings.indexOf(s3_key) === -1){
+            if(result[0].Count > 0 && result[0].Items[0].attrs.keyRecordings.indexOf(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`) === -1){
                 var recording_arr = result[0].Items[0].attrs.keyRecordings;
 
                 recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
@@ -203,11 +200,8 @@ class KeyClickController extends AbstractController{
                 .exec()
                 .promise();
 
-            console.log(s3_key);
-
             //If agent is already registered just modify the array of keystroke recordings
-            console.log(result[0].Items[0].attrs.clickRecordings.indexOf(s3_key));
-            if(result[0].Count > 0 && result[0].Items[0].attrs.clickRecordings.indexOf(s3_key) === -1){
+            if(result[0].Count > 0 && result[0].Items[0].attrs.clickRecordings.indexOf(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`) === -1){
                 var recording_arr = result[0].Items[0].attrs.clickRecordings;
 
                 recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
