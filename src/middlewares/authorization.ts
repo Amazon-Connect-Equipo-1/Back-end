@@ -122,7 +122,6 @@ class AuthMiddleware{
 				});
 			});
 
-			console.log(Object.keys(pems));
 		}catch(error:any){
 			//If exception occurs inform
 			console.log('Auth Middleware getAWSCognitoPems() error', error);

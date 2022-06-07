@@ -175,7 +175,7 @@ class ManagerController extends AbstractController{
     protected initRoutes(): void {
         this.router.post('/createManagers', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.validateBody('createManager'), this.handleErrors, this.postCreateManagers.bind(this));  
         this.router.post('/createAgents', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.validateBody('createAgent'), this.handleErrors, this.postCreateAgents.bind(this));
-        this.router.get('/agentList', this.authMiddleware.verifyToken, this.permissionMiddleware.checkIsAdmin, this.handleErrors, this.agentList.bind(this)); 
+        this.router.get('/agentList', this.authMiddleware.verifyToken, this.handleErrors, this.agentList.bind(this)); 
         this.router.get('/agentProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getAgentProfile.bind(this));
         this.router.get('/managerProfile', this.authMiddleware.verifyToken, this.handleErrors, this.getManagerProfile.bind(this));
         this.router.get('/showRecording', this.authMiddleware.verifyToken, this.handleErrors, this.showRecording.bind(this));

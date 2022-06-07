@@ -125,10 +125,11 @@ class KeyClickController extends AbstractController{
                 .exec()
                 .promise();
 
-            console.log(result);
+            console.log(s3_key);
 
             //If agent is already registered just modify the array of keystroke recordings
-            if(result[0].Count > 0 && result[0].Items[0].attrs.clickRecordings.indexOf(s3_key) === -1){
+            console.log(result[0].Items[0].attrs.clickRecordings.indexOf(s3_key));
+            if(result[0].Count > 0 && result[0].Items[0].attrs.keyRecordings.indexOf(s3_key) === -1){
                 var recording_arr = result[0].Items[0].attrs.keyRecordings;
 
                 recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
@@ -137,7 +138,7 @@ class KeyClickController extends AbstractController{
                     KeyClickRecordingId: result[0].Items[0].attrs.KeyClickRecordingId,
                     keyRecordings: recording_arr
                 });
-            }else{
+            }else if(result[0].Count === 0){
                 //If agent isn't registered create a new tuple with its data
                 const db_object = {
                     "agentId": agent_id,
@@ -202,9 +203,10 @@ class KeyClickController extends AbstractController{
                 .exec()
                 .promise();
 
-            console.log(result);
+            console.log(s3_key);
 
             //If agent is already registered just modify the array of keystroke recordings
+            console.log(result[0].Items[0].attrs.clickRecordings.indexOf(s3_key));
             if(result[0].Count > 0 && result[0].Items[0].attrs.clickRecordings.indexOf(s3_key) === -1){
                 var recording_arr = result[0].Items[0].attrs.clickRecordings;
 
@@ -214,7 +216,7 @@ class KeyClickController extends AbstractController{
                     KeyClickRecordingId: result[0].Items[0].attrs.KeyClickRecordingId,
                     clickRecordings: recording_arr
                 });
-            }else{
+            }else if(result[0].Count === 0){
                 //If agent isn't registered create a new tuple with its data
                 const db_object = {
                     "agentId": agent_id,
