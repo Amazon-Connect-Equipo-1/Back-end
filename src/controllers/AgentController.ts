@@ -66,7 +66,7 @@ class AgentController extends AbstractController{
         this.router.post('/acceptFeedback', this.authMiddleware.verifyToken, this.validateBody('acceptFeedback'), this.handleErrors, this.acceptFeedback.bind(this)); 
         this.router.get('/getFeedback', this.authMiddleware.verifyToken, this.handleErrors, this.getFeedback.bind(this));
         this.router.post('/updateProfilePicture', this.authMiddleware.verifyToken, this.validateBody('updateProfilePicture'), this.handleErrors, this.updateProfilePicture.bind(this));
-        this.router.post('/updateAgentStatus', this.authMiddleware.verifyToken, this.handleErrors, this.updateAgentStatus.bind(this)); 
+        this.router.post('/updateAgentStatus', this.authMiddleware.verifyToken, this.handleErrors, this.updateAgentStatus.bind(this));  
     }
 
     //Controllers

@@ -22,7 +22,7 @@ const RecordingsModel = dynamodb.define('recordings', {
         //Table attributes
         RecordingId: Joi.string(), //Call ID from models/calls.ts
         videoRecording: Joi.string(),
-        keystrokeClickRecording: Joi.string(),
+        processedRecording: Joi.string(),
         agentName: Joi.string(),
         agentId: Joi.string(),
         thumbnail: Joi.string(),

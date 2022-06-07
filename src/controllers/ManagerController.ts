@@ -430,6 +430,7 @@ class ManagerController extends AbstractController{
             const agent_recordings = await RecordingsModel
                 .query(agent_id[0].agent_id)
                 .usingIndex('agentId')
+                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
                 .exec()
                 .promise();
             
@@ -457,7 +458,7 @@ class ManagerController extends AbstractController{
             //Obtaining the first 50 videos
             const recordings = await RecordingsModel
                 .scan()
-                .attributes(["recordingDate", "thumbnail", "tags", "agentId", "agentName", "RecordingId"])
+                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
                 .limit(50)
                 .exec()
                 .promise();
@@ -501,13 +502,15 @@ class ManagerController extends AbstractController{
                 attributes: ["call_id"],
                 order: [
                     ['date', order]
-                ]
+                ],
+                limit: 50
             });
 
             for(const recording of recordings){
                 //Retrieving the corresponding recordings using their ID's
                 let dynamo_recording = await RecordingsModel
                     .query(recording.dataValues.call_id)
+                    .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
                     .exec()
                     .promise();
                 
@@ -516,7 +519,6 @@ class ManagerController extends AbstractController{
             }
 
             res.status(200).send({recordings: result})
-
         }catch(error:any){
             //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message})
@@ -643,13 +645,14 @@ class ManagerController extends AbstractController{
                 for(const call_id of call_ids){
                     let dynamo_recording = await RecordingsModel
                         .query(call_id.dataValues.call_id)
+                        .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
                         .exec()
                         .promise();
                     
                     result.push(dynamo_recording[0].Items[0]);
                 }
 
-                res.status(200).send({recording: result});
+                res.status(200).send({recordings: result});
             }else{
                 //Filtering calls by date
                 const call_ids = await db["Calls"].findAll({
@@ -663,6 +666,7 @@ class ManagerController extends AbstractController{
                 for(const call_id of call_ids){
                     let dynamo_recording = await RecordingsModel
                         .query(call_id.dataValues.call_id)
+                        .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
                         .exec()
                         .promise();
                     

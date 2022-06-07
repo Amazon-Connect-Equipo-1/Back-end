@@ -89,12 +89,16 @@ class KeyClickController extends AbstractController{
         res - status and response of the route
         */
         try{
+            //Obtaining keystrokes and agent id
             const key:string = req.body.key;
             const agent_id:string = req.body.agent_id;
             const date = new Date();
             const key_date = `${date.getFullYear()}-${(date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))}-${(date.getDate() < 10 ? "0" + date.getDate() : date.getDate())}`;
+            
+            //Generating the s3 key
             const s3_key:string = `${agent_id}-keystroke-${key_date}.txt`;
 
+            //Creating a file with the keystrokes
             fs.appendFile(s3_key, `${key}   ${agent_id}\n`, function(err) {
                 if(err){
                     throw err;
@@ -102,21 +106,26 @@ class KeyClickController extends AbstractController{
                 console.log("File saved");
             });
 
+            //If file is new then append to file_stack
             if(this.file_stack.indexOf(s3_key) === -1){
                 this.file_stack.push(s3_key);
                 console.log(this.file_stack);
             }
 
+            //Create an object that reads the new file created
             const object = fs.readFileSync(`${path.dirname(s3_key)}/${s3_key}`);
 
+            //Upload file to S3
             await this.s3Service.putObject(S3_CLICK_KEY_BUCKET, s3_key, object);
 
+            //Consult dynamodb
             const result = await KeyClickModel
                 .query(agent_id)
                 .usingIndex('agentId')
                 .exec()
                 .promise();
 
+            //If agent is already registered just modify the array of keystroke recordings
             if(result[0].Count > 0){
                 var recording_arr = result[0].Items[0].attrs.keyRecordings;
 
@@ -127,6 +136,7 @@ class KeyClickController extends AbstractController{
                     keyRecordings: recording_arr
                 });
             }else{
+                //If agent isn't registered create a new tuple with its data
                 const db_object = {
                     "agentId": agent_id,
                     "keyRecordings": [`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`],
@@ -144,7 +154,6 @@ class KeyClickController extends AbstractController{
     }
 
     private async postAddClick(req:Request, res:Response){
-
         /*
         Method that registers the clicks made by an agent
 
@@ -155,12 +164,16 @@ class KeyClickController extends AbstractController{
         res - status and response of the route
         */
         try{
+            //Obtaining the clicks and agent id 
             const button:string = req.body.key;
             const agent_id:string = req.body.agent_id;
             const date = new Date();
             const button_date = `${date.getFullYear()}-${(date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))}-${(date.getDate() < 10 ? "0" + date.getDate() : date.getDate())}`;
-            const s3_key:string = `${agent_id}-keystroke-${button_date}.txt`;
+            
+            //Generating an s3 key 
+            const s3_key:string = `${agent_id}-click-${button_date}.txt`;
 
+            //Creating a file with the clicks 
             fs.appendFile(s3_key, `${button}   ${agent_id}\n`, function(err) {
                 if(err){
                     throw err;
@@ -168,20 +181,25 @@ class KeyClickController extends AbstractController{
                 console.log("File saved");
             });
 
+            //If file is new then append to file_stack 
             if(this.file_stack.indexOf(s3_key) === -1){
                 this.file_stack.push(s3_key);
             }
 
+            //Create an object that reads the new file created 
             const object = fs.readFileSync(`${path.dirname(s3_key)}/${s3_key}`);
 
+            //Upload file to S3
             await this.s3Service.putObject(S3_CLICK_KEY_BUCKET, s3_key, object);
 
+            //Consult dynamodb
             const result = await KeyClickModel
                 .query(agent_id)
                 .usingIndex('agentId')
                 .exec()
                 .promise();
 
+            //If agent is already registered just modify the array of keystroke recordings
             if(result[0].Count > 0){
                 var recording_arr = result[0].Items[0].attrs.clickRecordings;
 
@@ -192,6 +210,7 @@ class KeyClickController extends AbstractController{
                     clickRecordings: recording_arr
                 });
             }else{
+                //If agent isn't registered create a new tuple with its data
                 const db_object = {
                     "agentId": agent_id,
                     "keyRecordings": [],
@@ -209,23 +228,34 @@ class KeyClickController extends AbstractController{
     }
 
     private async deleteObjects(req:Request, res:Response){
-        try{
-            this.file_stack.forEach (object => {
-                console.log(object);
+        /*
+        Method that deletes all local files created by this controller
 
+        Parameters:
+        req - request sent to the route
+        res - response the route will give
+        Returns:
+        res - status and response of the route
+        */
+        try{
+            //Iterate over file_stack
+            this.file_stack.forEach (object => {
+                //Delete the file
                 fs.unlink(`${path.dirname(object)}/${object}`, function(err){
                     if(err){
                         throw err;
                     }
                 });
             });
+
+            //Reset file_stack
             this.file_stack = [];
 
             res.status(200).send({message: `All files deleted ${this.file_stack}`});
         }catch(error:any){
+            //If exception occurs inform
             res.status(500).send({code: error.code, message: error.message});
         }
-
     }
 };
 
