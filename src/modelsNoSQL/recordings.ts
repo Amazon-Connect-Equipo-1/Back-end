@@ -30,7 +30,8 @@ const RecordingsModel = dynamodb.define('recordings', {
         disconnectTimeStamp: Joi.string(),
         duration: Joi.string(),
         tags: Joi.array(),
-        recordingData: Joi.object()
+        recordingData: Joi.object(),
+        subtitles: Joi.string()
     },
     tableName: `Recordings${PREFIX_TABLE}`,
     indexes: [

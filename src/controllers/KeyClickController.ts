@@ -125,8 +125,10 @@ class KeyClickController extends AbstractController{
                 .exec()
                 .promise();
 
+            console.log(result);
+
             //If agent is already registered just modify the array of keystroke recordings
-            if(result[0].Count > 0){
+            if(result[0].Count > 0 && result[0].Items[0].attrs.clickRecordings.indexOf(s3_key) === -1){
                 var recording_arr = result[0].Items[0].attrs.keyRecordings;
 
                 recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
@@ -140,7 +142,7 @@ class KeyClickController extends AbstractController{
                 const db_object = {
                     "agentId": agent_id,
                     "keyRecordings": [`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`],
-                    "clickRecordings": []
+                    "clickRecordings": [" "]
                 }
     
                 await KeyClickModel.create(db_object);
@@ -165,7 +167,7 @@ class KeyClickController extends AbstractController{
         */
         try{
             //Obtaining the clicks and agent id 
-            const button:string = req.body.key;
+            const button:string = req.body.button;
             const agent_id:string = req.body.agent_id;
             const date = new Date();
             const button_date = `${date.getFullYear()}-${(date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))}-${(date.getDate() < 10 ? "0" + date.getDate() : date.getDate())}`;
@@ -184,6 +186,7 @@ class KeyClickController extends AbstractController{
             //If file is new then append to file_stack 
             if(this.file_stack.indexOf(s3_key) === -1){
                 this.file_stack.push(s3_key);
+                console.log(this.file_stack);
             }
 
             //Create an object that reads the new file created 
@@ -199,8 +202,10 @@ class KeyClickController extends AbstractController{
                 .exec()
                 .promise();
 
+            console.log(result);
+
             //If agent is already registered just modify the array of keystroke recordings
-            if(result[0].Count > 0){
+            if(result[0].Count > 0 && result[0].Items[0].attrs.clickRecordings.indexOf(s3_key) === -1){
                 var recording_arr = result[0].Items[0].attrs.clickRecordings;
 
                 recording_arr.push(`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`);
@@ -213,7 +218,7 @@ class KeyClickController extends AbstractController{
                 //If agent isn't registered create a new tuple with its data
                 const db_object = {
                     "agentId": agent_id,
-                    "keyRecordings": [],
+                    "keyRecordings": [" "],
                     "clickRecordings": [`https://click-keystroke-recording.s3.us-west-2.amazonaws.com/${s3_key}`]
                 }
     

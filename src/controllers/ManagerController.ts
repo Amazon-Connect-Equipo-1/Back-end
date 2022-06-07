@@ -430,7 +430,7 @@ class ManagerController extends AbstractController{
             const agent_recordings = await RecordingsModel
                 .query(agent_id[0].agent_id)
                 .usingIndex('agentId')
-                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
+                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
                 .exec()
                 .promise();
             
@@ -458,7 +458,7 @@ class ManagerController extends AbstractController{
             //Obtaining the first 50 videos
             const recordings = await RecordingsModel
                 .scan()
-                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
+                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
                 .limit(50)
                 .exec()
                 .promise();
@@ -510,7 +510,7 @@ class ManagerController extends AbstractController{
                 //Retrieving the corresponding recordings using their ID's
                 let dynamo_recording = await RecordingsModel
                     .query(recording.dataValues.call_id)
-                    .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
+                    .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
                     .exec()
                     .promise();
                 
@@ -645,7 +645,7 @@ class ManagerController extends AbstractController{
                 for(const call_id of call_ids){
                     let dynamo_recording = await RecordingsModel
                         .query(call_id.dataValues.call_id)
-                        .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
+                        .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
                         .exec()
                         .promise();
                     
@@ -666,7 +666,7 @@ class ManagerController extends AbstractController{
                 for(const call_id of call_ids){
                     let dynamo_recording = await RecordingsModel
                         .query(call_id.dataValues.call_id)
-                        .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags"])
+                        .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
                         .exec()
                         .promise();
                     
