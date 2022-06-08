@@ -297,7 +297,7 @@ class AuthenticationController extends AbstractController{
         Returns:
         res - status and response of the route
         */
-        const token = req.token
+        const token = req.get('authorization')?.split(" ")[1];
         const email = req.body.email
 
         try{

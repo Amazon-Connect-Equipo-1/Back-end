@@ -131,7 +131,7 @@ class CognitoService{
         return await this.cognitoIdentity.initiateAuth(params).promise();
     }
 
-    public async signOut(accessToken:string){
+    public async signOut(accessToken:any){
         /*
         Method that signs out user with Cognito
 
