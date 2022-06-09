@@ -451,26 +451,59 @@ class ManagerController extends AbstractController{
         Returns:
         res - status and response of the route
         */
+        const user_email = req.body.user_email;
         var body_tags = req.body.tags
         var result = [];
 
         try{
-            //Obtaining the first 50 videos
-            const recordings = await RecordingsModel
-                .scan()
-                .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
-                .limit(50)
-                .exec()
-                .promise();
+            if(user_email){
+                //Filtering calls by date
+                const user_id = await db["Agent"].findAll({
+                    attributes: ["agent_id"],
+                    where: {
+                        email: user_email 
+                    }
+                });
 
-            for(const recording of recordings[0].Items){
-                if(recording.attrs.tags){
-                    for(const tag of recording.attrs.tags){
-                        //Finding if the video tags include the tags specified by the filter
-                        if(body_tags.includes(tag)){
-                            //If tags match, push the corresponding recording to the array
-                            result.push({recording_data: recording.attrs});
-                            break;
+                //Obtaining the first 50 videos
+                const recordings = await RecordingsModel
+                    .query(user_id[0].dataValues.agent_id)
+                    .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
+                    .usingIndex('agentId')
+                    .limit(50)
+                    .exec()
+                    .promise();
+
+                for(const recording of recordings[0].Items){
+                    if(recording.attrs.tags){
+                        for(const tag of recording.attrs.tags){
+                            //Finding if the video tags include the tags specified by the filter
+                            if(body_tags.includes(tag)){
+                                //If tags match, push the corresponding recording to the array
+                                result.push({recording_data: recording.attrs});
+                                break;
+                            }
+                        }
+                    }
+                }    
+            }else{
+                //Obtaining the first 50 videos
+                const recordings = await RecordingsModel
+                    .scan()
+                    .attributes(["RecordingId", "agentId", "agentName", "initialTimestamp", "thumbnail", "tags", "subtitles"])
+                    .limit(50)
+                    .exec()
+                    .promise();
+
+                for(const recording of recordings[0].Items){
+                    if(recording.attrs.tags){
+                        for(const tag of recording.attrs.tags){
+                            //Finding if the video tags include the tags specified by the filter
+                            if(body_tags.includes(tag)){
+                                //If tags match, push the corresponding recording to the array
+                                result.push({recording_data: recording.attrs});
+                                break;
+                            }
                         }
                     }
                 }
