@@ -279,8 +279,95 @@
 
 # 3. ClientController.ts
   ## 3.1 Register a client 
-  ## 3.2 Log in a client
+  - **Endpoint**: `/client/clientLogin`
+  - **Method**: `POST`
+  - **Body**: 
+    ```json
+    {
+      "client_name": "Client name",
+      "password": "My_P4ssw0rD!",
+      "email": "client@email.com",
+      "phone_number": "+525516768922",
+      "client_pin": "3312"
+    }
+    ```
+  - **Validations**:
+    - **Body validations:**
+        | Field        | Validation                               |
+        | ------------ | ---------------------------------------- |
+        | client_name  | Must be a string                         |
+        | client_name  | Must be between 2 and 40 characters long |
+        | password     | Password must be a string                |
+        | password     | Must be at least 8 characters long       |
+        | email        | Must be a valid email                    |
+        | phone_number | Must be a string                         |
+        | phone_number | Must be a valid phone number             |
+        | client_pin   | Must be a string                         |
+        | client_pin   | Pin must be only 4 characters long       |
+    - **Other validations:**
+      | Field                    | Validation                         |
+      | ------------------------ | ---------------------------------- |
+      | Access token             | Required                           |
+      | Administrator privileges | No administrator privileges needed |
 
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
+
+  - **Response**: `HTTP status 200`
+    ```json
+    {
+     "message": "Agent status updated"
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
+
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
+  ## 3.2 Log in a client
+  - **Endpoint**: `/agent/updateStatus`
+  - **Method**: `POST`
+  - **Body**: 
+    ```json
+    {
+      "agent_id": "8sahdkqwlda-139lfkmslfs-232l-o80sdf",
+      "status": "agent status" //Could be Active, Inactive or In-Call
+    }
+    ```
+  - **Validations**: _No body validation needed_.
+    | Field                    | Validation                         |
+    | ------------------------ | ---------------------------------- |
+    | Access token             | Required                           |
+    | Administrator privileges | No administrator privileges needed |
+
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
+
+  - **Response**: `HTTP status 200`
+    ```json
+    {
+     "message": "Agent status updated"
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
+
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
 # 4. KeyClickController.ts
   ## 4.1 Add a keystroke done by an agent
   ## 4.2 Add a click done by an agent
