@@ -57,35 +57,215 @@
   - **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bannkonect.link/agent/agentProfile?email=agent@bankonnect.link`  
 
   - **Validations**: _No body validation needed_. 
+    | Field                    | Validation                         |
+    | ------------------------ | ---------------------------------- |
+    | Access token             | Required                           |
+    | Administrator privileges | No administrator privileges needed |
 
-| Field                      | Validation                            |
-|----------------------------|---------------------------------------|
-| Access token               | Required                              |
-| Administrator privileges   | No administrator privileges needed    |
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
 
-- **Errors**:
+  - **Response**: `HTTP status 200`
+    ```json
+    {
+      "agent_id": "asdasd-1323-asdgg-3f-3df4",
+      "super_id": "lkjk3m3kl-3-342342fds-32fdsfwl",
+      "name":  "Agent's name",
+      "password": "MyP4ssw0rD!",
+      "email": "agent@bankonnect.link",
+      "profile_picture": "https://profile.com/picture.png",
+      "rating" 4.8,
+      "status": "Active",
+      "calls": 90
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
 
-| Code                     | Message                                        | Http |
-| ------------------------ | ---------------------------------------------- | ---- |
-| UsernameExistsException  | An account with the given email already exists | 500  |
-| InvalidPasswordException | Password did not conform with policy           | 500  |
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
+## 1.2 Get agent's feedback
+  This route lets you get all the feedback an agent has received.
+  
+  - **Endpoint**: `/agent/getFeedback`
+  - **Method**: `GET`
+  - **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/agent/getFeedback?email=agent@bankonnect.link`  
 
-- **Response**: `HTTP status 200`
+  - **Validations**: _No body validation needed_. 
 
-  ## 1.2 Get agent's feedback
-  ```json
-  {
-	"email": "name@server.com",
-	"password": "MYP4sw4rd$",
-	"name": "Rob",
-	"last_name": "Mc Donalds",
-	"birthdate": "1990-10-23"
-  }
-  ```
+    | Field                    | Validation                         |
+    | ------------------------ | ---------------------------------- |
+    | Access token             | Required                           |
+    | Administrator privileges | No administrator privileges needed |
+
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
+
+  - **Response**: `HTTP status 200`
+
+    ```json
+    {
+      "agent_name": "name@server.com",
+      "agent_email": "MYP4sw4rd$",
+      "comments": [
+        {
+          "comment_id": 203492,
+          "super_id": "0asodsajdhda-213eqsdas-31231dsaa-aseds",
+          "comment": "You can improve.",
+          "rating": 3,
+          "date": "2022-06-06 15:13:56"
+        },
+        {
+          "comment_id": 203493,
+          "super_id": "089alksajd80-2dasd22sdas-3dqweopaa-a331ds",
+          "comment": "You are great!",
+          "rating": 5,
+          "date": "2022-06-07 20:01:17"
+        }
+      ]
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
+
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
   ## 1.3 Accept agent's feedback
-  ## 1.4 Update agent's profile picture
-  ## 1.5 Update agent's status
+ - **Endpoint**: `/agent/acceptFeedback`
+  - **Method**: `POST`
+  - **Body**: 
+    ```json
+    {
+      "comment_id": "The id of the comment"
+    }
+    ```
+  - **Validations**:
+    - **Body validations**
+      | Field      | Validation                  |
+      | ---------- | --------------------------- |
+      | comment_id | Comment ID must be a string |
+    - **Other validations** 
+      | Field                    | Validation                         |
+      | ------------------------ | ---------------------------------- |
+      | Access token             | Required                           |
+      | Administrator privileges | No administrator privileges needed |
 
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
+
+  - **Response**: `HTTP status 200`
+    ```json
+    {
+     "message": "Comment 123 has been updated"
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
+
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
+
+  ## 1.4 Update agent's profile picture
+  - **Endpoint**: `/agent/updateProfilePicture`
+  - **Method**: `POST`
+  - **Body**: 
+    ```json
+    {
+      "user_email": "agent@bamkonnect.link",
+      "profile_picture": "http://pp.link/new_pic.png"
+    }
+    ```
+  - **Validations**:
+    - **Body validations**:
+      | Field           | Validation            |
+      | --------------- | --------------------- |
+      | user_email      | Must be a valid email |
+      | profile_picture | Must be a string      |
+    - **Other validations**:
+      | Field                    | Validation                         |
+      | ------------------------ | ---------------------------------- |
+      | Access token             | Required                           |
+      | Administrator privileges | No administrator privileges needed |
+
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
+
+  - **Response**: `HTTP status 200`
+    ```json
+    {
+     "message": "Profile picture updated"
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
+
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
+  ## 1.5 Update agent's status
+  - **Endpoint**: `/agent/updateStatus`
+  - **Method**: `POST`
+  - **Body**: 
+    ```json
+    {
+      "agent_id": "8sahdkqwlda-139lfkmslfs-232l-o80sdf",
+      "status": "agent status" //Could be Active, Inactive or In-Call
+    }
+    ```
+  - **Validations**: _No body validation needed_.
+    | Field                    | Validation                         |
+    | ------------------------ | ---------------------------------- |
+    | Access token             | Required                           |
+    | Administrator privileges | No administrator privileges needed |
+
+  - **Errors**:
+    | Code                     | Message                                        | Http |
+    | ------------------------ | ---------------------------------------------- | ---- |
+    | UsernameExistsException  | An account with the given email already exists | 500  |
+    | InvalidPasswordException | Password did not conform with policy           | 500  |
+    | NoTokenFound             | The token is not present in the request        | 500  |
+
+  - **Response**: `HTTP status 200`
+    ```json
+    {
+     "message": "Agent status updated"
+    }
+    ```
+  - **If an error occurs**: `HTTP status 500`
+
+    ```json
+    {
+      "code": "Error code",
+      "message": "Error message"
+    }
+    ```
 # 2. AuthenticationController.ts
   ## 2.1 Sign up an agent
   ## 2.2 Sign up a manager
@@ -119,7 +299,7 @@
   ## 5.10 Update manager's profile picture
 
 # 6. ThirdPartyServicesController.ts
-  ## 6.1 Ask for a Thirs Party Service
+  ## 6.1 Ask for a Third Party Service
   ## 6.2 Send Third Party Service via e-mail
 
 # 7. UserConfigurations.ts
