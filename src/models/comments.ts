@@ -15,7 +15,7 @@ import { Model } from 'sequelize';
 //Interface that defines the attributes a register in the table Comments needs
 interface CommentAttributes{
   comment_id: number,
-  super_id: string,
+  super_id: string, 
   agent_id: string,
   comment: string,
   rating: number,
