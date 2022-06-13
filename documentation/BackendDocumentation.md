@@ -1311,7 +1311,7 @@ Route that returns all the records of an agent given his email by query paramete
 ## 5.6 Show recordings filtered by tags
 Returns a list of video attributes filtered by an array of tags given.
 
-- **Endpoint**: `/manager/gilterRecordings`
+- **Endpoint**: `/manager/filterRecordings`
 - **Method**: `POST`
 - **Body**: 
 - ```json
@@ -1320,17 +1320,17 @@ Returns a list of video attributes filtered by an array of tags given.
   }
   ```
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1351,12 +1351,264 @@ Returns a list of video attributes filtered by an array of tags given.
   ```
 
 ## 5.7 Show newest recordings
+Route that returns the last recordings made in ascendent or descendent order
+
+- **Endpoint**: `/manager/showLastRecordings`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "order": "Order of the video list" // Could be ASC or DESC
+  }
+  ```
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                     | Message                                        | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "recordings": [
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+      "agent_email": "agent_2@bankonnect.link",
+      "recording": {
+        "RecordingId": "ad2dasdaf-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-ada3rfsa-fadsdw2cdas",
+        "agentName": "Super hyper agent",
+        "tags": [
+          "c-entire-call-positive"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      }
+    ]
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.8 Show newest or oldest recordings
+Route that returns a list of videos that match the given filters
+
+- **Endpoint**: `/manager/filterRecordingsByDate`
+- **Method**: `GET`
+- **Body**: 
+  ```json
+    "user_email": "agent@bankonnect.link",
+    "date": "2022-06-06"
+  ```
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                     | Message                                        | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
+
+- **Response if filtered by email and date**: `HTTP status 200`
+  ```json
+  {
+    "recordings": [
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+     "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      }
+    ]
+  }
+  ```
+  - **Response if filtered only by date**: `HTTP status 200`
+  ```json
+  {
+    "recordings": [
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+     "agent_email": "agent_2@bankonnect.link",
+      "recording": {
+        "RecordingId": "asd23dasd-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdaad32ddasdnucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super hyper agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+      "agent_email": "agent_3@bankonnect.link",
+      "recording": {
+        "RecordingId": "32crwfsd-eccfsfc2rcw-ewdcwecfsd",
+        "agentId": "crwecwr32r-cwdrc2-2crfsda",
+        "agentName": "Super agent",
+        "tags": [
+          "c-entire-call-positive"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      }
+    ]
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.9 Post comments to an agent
+Route that lets managers post comments to agents
+
+- **Endpoint**: `/manager/postComment`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "super_id": "adiaynb38rnfc-2ecfdwscd2wfs-fsdd2xds-d2edw",
+    "agent_email": "agent@bankonnect.link",
+    "comment": "This is a super good comment.",
+    "rating": 5
+  }
+  ```
+- **Validations**:
+  - **Body validations**:
+    | Field       | Validation                                 |
+    | ----------- | ------------------------------------------ |
+    | super_id    | Must be a string                           |
+    | agent_email | Must be a valid email                      |
+    | comment     | Must be a string                           |
+    | rating      | Rating must be numeric and between 1 and 5 |
+  - **Other validations**:
+    | Field                    | Validation                                                      |
+    | ------------------------ | --------------------------------------------------------------- |
+    | Access token             | Required                                                        |
+    | Administrator privileges | No administrator privileges needed                              |
+    | Quality role             | It is required to be a quality agent in order to use this route |
+
+- **Errors**:
+  | Code                     | Message                                        | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "message": "Comment posted to agent@bankonnect.link"
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.10 Update manager's profile picture
+Route that returns the last recordings made in ascendent or descendent order
+
+- **Endpoint**: `/manager/updateProfilePicture`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "user_email": "agent@bankonnect.link",
+    "profile_picture": "http://bankonnect.link/pic.png",
+  }
+  ```
+- **Validations**:
+  - **Body validations**:
+    | Field       | Validation                                 |
+    | ----------- | ------------------------------------------ |
+    | user_email    |Must be a valid email                           |
+    | profile_picture | Must be a string |
+  - **Other validations**:
+    | Field                    | Validation                                                      |
+    | ------------------------ | --------------------------------------------------------------- |
+    | Access token             | Required                                                        |
+    | Administrator privileges | No administrator privileges needed                              |
+
+- **Errors**:
+  | Code                     | Message                                        | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "message": "Profile picture updated"
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
+
 
 # 6. ThirdPartyServicesController.ts
 
