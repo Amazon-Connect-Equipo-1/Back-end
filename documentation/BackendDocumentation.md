@@ -1074,6 +1074,46 @@ Deletes all the files created locally when recording keys and clicks.
 ## 5.5 Show recordings of an agent
 
 ## 5.6 Show recordings filtered by tags
+Returns a list of video attributes filtered by an array of tags given.
+
+- **Endpoint**: `/manager/gilterRecordings`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "tags": []
+  }
+  ```
+- **Validations**:
+  | Field | Validation |
+  | ------------------------ | ---------------------------------- |
+  | Access token | Required |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code | Message | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists | 500 |
+  | InvalidPasswordException | Password did not conform with policy | 500 |
+  | NoTokenFound | The token is not present in the request | 500 |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "UserConfigId": "09sau2uw-odp3-o04o-0p5h-uhr3-0doeu483oep4",
+    "userId": "aisud293o-psop-03pe-8fi0-0d9eiru5peo2",
+    "language": "en", //Can be en(english), es(spanish), fr(french)
+    "textSize": "small", //Can be small, medium, big
+    "color": "light" //Can be dark, light, dark_protanopia, dark_deuteranopia, dark_tritanopia, dark_protanomaly, dark_deuteranomaly, dark_tritanomal
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.7 Show newest recordings
 
