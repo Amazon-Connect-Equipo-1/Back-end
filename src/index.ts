@@ -45,10 +45,9 @@ const app = new Server({
         ClientController.getInstance(),
         UserConfigController.getInstance(),
     ],
-    env: NODE_ENV,
+    env: NODE_ENV 
     //Reading the certificates and keys
-    privateKey: fs.readFileSync('dist/sslcert/privatekey.pem',{encoding:'utf8'}),
-    certificate: fs.readFileSync('dist/sslcert/server.crt',{encoding:'utf8'})
+   
 });
 
 //Extending the Request interface from the Express module
