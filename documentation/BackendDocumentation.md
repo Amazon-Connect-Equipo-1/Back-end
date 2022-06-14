@@ -67,7 +67,7 @@ This route lets you get all the data of a specific agent.
 
 - **Endpoint**: `/agent/agentProfile`
 - **Method**: `GET`
-- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bannkonect.link/agent/agentProfile?email=agent@bankonnect.link`
+- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backend.bannkonect.link/agent/agentProfile?email=agent@bankonnect.link`
 
 - **Validations**: _No body validation needed_.
   | Field                    | Validation                         |
@@ -111,7 +111,7 @@ This route lets you get all the feedback an agent has received.
 
 - **Endpoint**: `/agent/getFeedback`
 - **Method**: `GET`
-- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/agent/getFeedback?email=agent@bankonnect.link`
+- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backend.bankonnect.link/agent/getFeedback?email=agent@bankonnect.link`
 
 - **Validations**: _No body validation needed_.
 
@@ -1124,7 +1124,7 @@ Route that returns the profile of an agent given his email as query parameter
 - **Endpoint**: `/manager/agentProfile`
 - **Method**: `GET`
 - **Body**: Doesn't receive a body because of `GET` method.
-- **Query params**: This route requires to get an email through query params like this example `https://backtest.bankonnect.link/manager/agentProfile?email=agent@bankonnect.link`
+- **Query params**: This route requires to get an email through query params like this example `https://backend.bankonnect.link/manager/agentProfile?email=agent@bankonnect.link`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1165,7 +1165,7 @@ Route that returns a manager profile by it email given as a query parameter
 - **Endpoint**: `/manager/managerProfile`
 - **Method**: `GET`
 - **Body**: Doesn't receive a body because of `GET` method.
-- **Query params**: This route requires to get an email through query params like this example `https://backtest.bankonnect.link/manager/agentProfile?email=manager@bankonnect.link`
+- **Query params**: This route requires to get an email through query params like this example `https://backend.bankonnect.link/manager/agentProfile?email=manager@bankonnect.link`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1204,7 +1204,7 @@ Route that returns a manager profile by it email given as a query parameter
 - **Endpoint**: `/manager/showRecording`
 - **Method**: `GET`
 - **Body**: Doesn't receive a body because of `GET` method.
-- **Query params**: This route requires to get an email through query params like this example `https://backtest.bankonnect.link/manager/showRecording?recording_id=00b5abdf-608c-4ccd-84fb-68fdce8d6423`
+- **Query params**: This route requires to get an email through query params like this example `https://backend.bankonnect.link/manager/showRecording?recording_id=00b5abdf-608c-4ccd-84fb-68fdce8d6423`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1714,7 +1714,7 @@ Obtains the app configurations of a determined user.
 
 - **Endpoint**: `/userConfig/getUserConfig`
 - **Method**: `GET`
-- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
+- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backend.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1754,7 +1754,7 @@ Obtains the app configurations of a determined user.
 
 - **Endpoint**: `/userConfig/getUserConfig`
 - **Method**: `GET`
-- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
+- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backend.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
