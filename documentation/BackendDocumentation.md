@@ -527,6 +527,8 @@ Route that lets a user (agent, manager or quality analyst) to sign in our app
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | NotAuthorizedException   | Incorrect username or password                 | 500  |
+  | UserNotFoundException    | User does not exist.                           | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1076,11 +1078,9 @@ Route that returns a list of all the agents registered in our app
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code         | Message                                 | Http |
+  | ------------ | --------------------------------------- | ---- |
+  | NoTokenFound | The token is not present in the request | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1132,11 +1132,12 @@ Route that returns the profile of an agent given his email as query parameter
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                  | Message                                                     | Http |
+  | --------------------- | ----------------------------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request                     | 500  |
+  | InvalidTokenException | The token is no valid                                       | 500  |
+  | No code               | "WHERE parameter \"email\" has invalid \"undefined\" value" | 500  |
+  | No code               | No agent with email: agent@bankonnect.link found            | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1173,11 +1174,12 @@ Route that returns a manager profile by it email given as a query parameter
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                  | Message                                                     | Http |
+  | --------------------- | ----------------------------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request                     | 500  |
+  | InvalidTokenException | The token is no valid                                       | 500  |
+  | No code               | "WHERE parameter \"email\" has invalid \"undefined\" value" | 500  |
+  | No code               | No manager with email: manager@bankonnect.link found        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1212,11 +1214,13 @@ Route that returns a manager profile by it email given as a query parameter
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                  | Message                                                                                                                        | Http |
+  | --------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---- |
+  | NoTokenFound          | The token is not present in the request                                                                                        | 500  |
+  | InvalidTokenException | The token is no valid                                                                                                          | 500  |
+  | No code               | Cannot read properties of undefined (reading 'attrs')                                                                          | 500  |
+  | ValidationException   | Invalid KeyConditionExpression: An expression attribute value used in expression is not defined; attribute value: :RecordingId | 500  |
+  | InvalidTokenException | The token is no valid                                                                                                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1271,7 +1275,7 @@ Route that returns all the records of an agent given his email by query paramete
 - **Endpoint**: `/manager/agentRecordings`
 - **Method**: `GET`
 - **Body**: Doesn't receive a body because of `GET` method.
-- **Query params**: This route requires to get an email through query params like this example `https://localhost:443/manager/agentRecordings?email=agent@bankonnect.link`
+- **Query params**: This route requires to get an email through query params like this example `https://backtest.bankonnect.link/manager/agentRecordings?email=agent@bankonnect.link`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1279,11 +1283,13 @@ Route that returns all the records of an agent given his email by query paramete
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                    | Message                                                   | Http |
+  | ----------------------- | --------------------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists            | 500  |
+  | NoTokenFound            | The token is not present in the request                   | 500  |
+  | InvalidTokenException   | The token is no valid                                     | 500  |
+  | No code                 | Cannot read properties of undefined (reading 'agent_id')  | 500  |
+  | No code                 | WHERE parameter \"email\" has invalid \"undefined\" value | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1326,11 +1332,12 @@ Returns a list of video attributes filtered by an array of tags given.
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                    | Message                                        | Http |
+  | ----------------------- | ---------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists | 500  |
+  | NoTokenFound            | The token is not present in the request        | 500  |
+  | InvalidTokenException   | The token is no valid                          | 500  |
+  | No code                 | Tags must be an array                          | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1368,11 +1375,13 @@ Route that returns the last recordings made in ascendent or descendent order
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                    | Message                                                              | Http |
+  | ----------------------- | -------------------------------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists                       | 500  |
+  | NoTokenFound            | The token is not present in the request                              | 500  |
+  | InvalidTokenException   | The token is no valid                                                | 500  |
+  | No code                 | Unknown column 'Calls.date`Order of the video list' in 'order clause | 500  |
+  | No code                 | Cannot read properties of undefined (reading '_modelAttribute')      | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1431,6 +1440,9 @@ Route that returns a list of videos that match the given filters
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
+  | No code                  | Date must be a string                          | 422  |
+  | No code                  | Incorrect DATE value: 'Invalid date'           | 500  |
 
 - **Response if filtered by email and date**: `HTTP status 200`
   ```json
@@ -1474,7 +1486,7 @@ Route that returns a list of videos that match the given filters
   {
     "recordings": [
       "agent_email": "agent@bankonnect.link",
-      "recording": {
+      "recording": {InvalidPasswordException
         "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
         "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
         "agentName": "Super great agent",
@@ -1549,6 +1561,8 @@ Route that lets managers post comments to agents
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
+  | UserNotQualityException  | The logged account is not a quality agent      | 401  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1578,22 +1592,26 @@ Route that returns the last recordings made in ascendent or descendent order
   ```
 - **Validations**:
   - **Body validations**:
-    | Field       | Validation                                 |
-    | ----------- | ------------------------------------------ |
-    | user_email    |Must be a valid email                           |
-    | profile_picture | Must be a string |
+    | Field           | Validation            |
+    | --------------- | --------------------- |
+    | user_email      | Must be a valid email |
+    | profile_picture | Must be a string      |
   - **Other validations**:
-    | Field                    | Validation                                                      |
-    | ------------------------ | --------------------------------------------------------------- |
-    | Access token             | Required                                                        |
-    | Administrator privileges | No administrator privileges needed                              |
+    | Field                    | Validation                         |
+    | ------------------------ | ---------------------------------- |
+    | Access token             | Required                           |
+    | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                    | Message                                        | Http |
+  | ----------------------- | ---------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists | 500  |
+  | NoTokenFound            | The token is not present in the request        | 500  |
+  | InvalidTokenException   | The token is no valid                          | 500  |
+  | No code                 | user_email must be a valid email               | 422  |
+  | No code                 | profile_picture must be a string"              | 422  |
+  
+
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1690,6 +1708,7 @@ This route asks for a specified third-party service consutling AWS Lambda API Ga
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1727,6 +1746,7 @@ Obtains the app configurations of a determined user.
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1767,6 +1787,7 @@ Obtains the app configurations of a determined user.
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1808,11 +1829,13 @@ Obtains the app configurations of a determined user.
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                     | Message                                                | Http |
+  | ------------------------ | ------------------------------------------------------ | ---- |
+  | UsernameExistsException  | An account with the given email already exists         | 500  |
+  | InvalidPasswordException | Password did not conform with policy                   | 500  |
+  | InvalidTokenException    | The token is no valid                                  | 500  |
+  | NoTokenFound             | The token is not present in the request                | 500  |
+  | No code                  | "Cannot read properties of undefined (reading 'attrs') | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
