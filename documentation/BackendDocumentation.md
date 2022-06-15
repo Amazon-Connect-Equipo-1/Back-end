@@ -67,7 +67,7 @@ This route lets you get all the data of a specific agent.
 
 - **Endpoint**: `/agent/agentProfile`
 - **Method**: `GET`
-- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bannkonect.link/agent/agentProfile?email=agent@bankonnect.link`
+- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backend.bannkonect.link/agent/agentProfile?email=agent@bankonnect.link`
 
 - **Validations**: _No body validation needed_.
   | Field                    | Validation                         |
@@ -111,7 +111,7 @@ This route lets you get all the feedback an agent has received.
 
 - **Endpoint**: `/agent/getFeedback`
 - **Method**: `GET`
-- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/agent/getFeedback?email=agent@bankonnect.link`
+- **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backend.bankonnect.link/agent/getFeedback?email=agent@bankonnect.link`
 
 - **Validations**: _No body validation needed_.
 
@@ -1060,24 +1060,567 @@ Deletes all the files created locally when recording keys and clicks.
 # 5. ManagerController.ts
 
 ## 5.1 List all agents in the system and its attributes
+Route that returns a list of all the agents registered in our app
 
+- **Endpoint**: `/manager/agentList`
+- **Method**: `GET`
+- **Body**: Doesn't recieve a body because of `GET` method
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code         | Message                                 | Http |
+  | ------------ | --------------------------------------- | ---- |
+  | NoTokenFound | The token is not present in the request | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "agents": [
+      {
+        "agent_id": "k123k1j23-7410-4c71-8975-hj12jk3jl12k",
+        "super_id": "213knl12312ml-844f-416c-8159-n123klj1l241",
+        "name": "Agent name",
+        "password": "cdc604359845df597522b5caad1af29487fb98ea9faaad3b64c41a03446394b3",
+        "email": "agent@bankonnect.link",
+        "profile_picture": "https:bankonnect.link/pic.png",
+        "rating": "5.0",
+        "status": "Inactive",
+        "calls": 0
+      },
+      {
+        "agent_id": "asd2112edas-7asdasd410-4c71-8975-nadsydn98as7d9as",
+        "super_id": "daslmlad89-844f-41asd6c-8159-dkhnasdhais",
+        "name": "Agent name",
+        "password": "ud9asnud9asmdjkjd",
+        "email": "agent@bankonnect.link",
+        "profile_picture": "https:bankonnect.link/pic.png",
+        "rating": "4.0",
+        "status": "Active",
+        "calls": 0
+      }
+    ]
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 ## 5.2 Get agent profile
+Route that returns the profile of an agent given his email as query parameter
 
+- **Endpoint**: `/manager/agentProfile`
+- **Method**: `GET`
+- **Body**: Doesn't receive a body because of `GET` method.
+- **Query params**: This route requires to get an email through query params like this example `https://backend.bankonnect.link/manager/agentProfile?email=agent@bankonnect.link`
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                  | Message                                                     | Http |
+  | --------------------- | ----------------------------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request                     | 500  |
+  | InvalidTokenException | The token is no valid                                       | 500  |
+  | No code               | "WHERE parameter \"email\" has invalid \"undefined\" value" | 500  |
+  | No code               | No agent with email: agent@bankonnect.link found            | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "agent_id": "k123k1j23-7410-4c71-8975-hj12jk3jl12k",
+    "super_id": "213knl12312ml-844f-416c-8159-n123klj1l241",
+    "name": "Agent name",
+    "password": "cdc604359845df597522b5caad1af29487fb98ea9faaad3b64c41a03446394b3",
+    "email": "agent@bankonnect.link",
+    "profile_picture": "https:bankonnect.link/pic.png",
+    "rating": "5.0",
+    "status": "Inactive",
+    "calls": 0
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 ## 5.3 Get manager profile
+Route that returns a manager profile by it email given as a query parameter
+
+- **Endpoint**: `/manager/managerProfile`
+- **Method**: `GET`
+- **Body**: Doesn't receive a body because of `GET` method.
+- **Query params**: This route requires to get an email through query params like this example `https://backend.bankonnect.link/manager/agentProfile?email=manager@bankonnect.link`
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                  | Message                                                     | Http |
+  | --------------------- | ----------------------------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request                     | 500  |
+  | InvalidTokenException | The token is no valid                                       | 500  |
+  | No code               | "WHERE parameter \"email\" has invalid \"undefined\" value" | 500  |
+  | No code               | No manager with email: manager@bankonnect.link found        | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "manager_id": "k123k1j23-7410-4c71-8975-hj12jk3jl12k",
+    "manager_name": "Agent name",
+    "password": "cdc604359845df597522b5caad1af29487fb98ea9faaad3b64c41a03446394b3",
+    "email": "agent@bankonnect.link",
+    "profile_picture": "https:bankonnect.link/pic.png",
+    "is_quality": 0
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.4 Show a specific recording
+Route that returns a manager profile by it email given as a query parameter
+
+- **Endpoint**: `/manager/showRecording`
+- **Method**: `GET`
+- **Body**: Doesn't receive a body because of `GET` method.
+- **Query params**: This route requires to get an email through query params like this example `https://backend.bankonnect.link/manager/showRecording?recording_id=00b5abdf-608c-4ccd-84fb-68fdce8d6423`
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                  | Message                                                                                                                        | Http |
+  | --------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---- |
+  | NoTokenFound          | The token is not present in the request                                                                                        | 500  |
+  | InvalidTokenException | The token is no valid                                                                                                          | 500  |
+  | No code               | Cannot read properties of undefined (reading 'attrs')                                                                          | 500  |
+  | ValidationException   | Invalid KeyConditionExpression: An expression attribute value used in expression is not defined; attribute value: :RecordingId | 500  |
+  | InvalidTokenException | The token is no valid                                                                                                          | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "agent_email": "agent@bankonnect.link",
+    "recording": {
+      "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+      "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+      "agentName": "Super great agent",
+      "disconnectTimestamp": "2022-01-04 19:01:00",
+      "duration":"0:02:00",
+      "initialTimestamp": "2022-08-04 18:59:00",
+      "processedRecording": "https://final-recordings.s3.us-west-.amazonaws.com/videos/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.mp4",
+      "recordingData": {
+        "AgentInterruptions": 0,
+        "CustomerInterruptions": 0,
+        "GraphCustomerSentimentByQuarter": [
+          -1.7,
+          0,
+          -2.5,
+          -1.7
+        ],
+        "GraphCustomerSentimentOverall": {
+          "MIXED": 0,
+          "NEGATIVE": 33.3,
+          "NEUTRAL": 66.6,
+          "POSITIVE": 0
+        },
+        "NonTalkTimeSeconds": 0,
+        "OverallAgentSentiment": 0,
+        "OverallCustomerSentiment": -1.7
+      },
+      "tags": [
+        "c-entire-call-negative"
+      ],
+      "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      "videoRecording": "https://final-recordings.s3.us-west-.amazonaws.com/videos/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.mp4"
+    }
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.5 Show recordings of an agent
+Route that returns all the records of an agent given his email by query parameter
+
+- **Endpoint**: `/manager/agentRecordings`
+- **Method**: `GET`
+- **Body**: Doesn't receive a body because of `GET` method.
+- **Query params**: This route requires to get an email through query params like this example `https://backtest.bankonnect.link/manager/agentRecordings?email=agent@bankonnect.link`
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                    | Message                                                   | Http |
+  | ----------------------- | --------------------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists            | 500  |
+  | NoTokenFound            | The token is not present in the request                   | 500  |
+  | InvalidTokenException   | The token is no valid                                     | 500  |
+  | No code                 | Cannot read properties of undefined (reading 'agent_id')  | 500  |
+  | No code                 | WHERE parameter \"email\" has invalid \"undefined\" value | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "agent_email": "agent@bankonnect.link",
+    "recording": {
+      "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+      "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+      "agentName": "Super great agent",
+      "tags": [
+        "c-entire-call-negative"
+      ],
+      "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+    }
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.6 Show recordings filtered by tags
+Returns a list of video attributes filtered by an array of tags given.
+
+- **Endpoint**: `/manager/filterRecordings`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "tags": []
+  }
+  ```
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                    | Message                                        | Http |
+  | ----------------------- | ---------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists | 500  |
+  | NoTokenFound            | The token is not present in the request        | 500  |
+  | InvalidTokenException   | The token is no valid                          | 500  |
+  | No code                 | Tags must be an array                          | 422  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "UserConfigId": "09sau2uw-odp3-o04o-0p5h-uhr3-0doeu483oep4",
+    "userId": "aisud293o-psop-03pe-8fi0-0d9eiru5peo2",
+    "language": "en", //Can be en(english), es(spanish), fr(french)
+    "textSize": "small", //Can be small, medium, big
+    "color": "light" //Can be dark, light, dark_protanopia, dark_deuteranopia, dark_tritanopia, dark_protanomaly, dark_deuteranomaly, dark_tritanomal
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.7 Show newest recordings
+Route that returns the last recordings made in ascendent or descendent order
+
+- **Endpoint**: `/manager/showLastRecordings`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "order": "Order of the video list" // Could be ASC or DESC
+  }
+  ```
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                    | Message                                                              | Http |
+  | ----------------------- | -------------------------------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists                       | 500  |
+  | NoTokenFound            | The token is not present in the request                              | 500  |
+  | InvalidTokenException   | The token is no valid                                                | 500  |
+  | No code                 | Unknown column 'Calls.date`Order of the video list' in 'order clause | 500  |
+  | No code                 | Cannot read properties of undefined (reading '_modelAttribute')      | 500  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "recordings": [
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+      "agent_email": "agent_2@bankonnect.link",
+      "recording": {
+        "RecordingId": "ad2dasdaf-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-ada3rfsa-fadsdw2cdas",
+        "agentName": "Super hyper agent",
+        "tags": [
+          "c-entire-call-positive"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      }
+    ]
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.8 Show newest or oldest recordings
+Route that returns a list of videos that match the given filters
+
+- **Endpoint**: `/manager/filterRecordingsByDate`
+- **Method**: `GET`
+- **Body**: 
+  ```json
+    "user_email": "agent@bankonnect.link",
+    "date": "2022-06-06"
+  ```
+- **Validations**:
+  | Field                    | Validation                         |
+  | ------------------------ | ---------------------------------- |
+  | Access token             | Required                           |
+  | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                     | Message                                        | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
+  | No code                  | Date must be a string                          | 422  |
+  | No code                  | Incorrect DATE value: 'Invalid date'           | 500  |
+
+- **Response if filtered by email and date**: `HTTP status 200`
+  ```json
+  {
+    "recordings": [
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+     "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+      "agent_email": "agent@bankonnect.link",
+      "recording": {
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      }
+    ]
+  }
+  ```
+  - **Response if filtered only by date**: `HTTP status 200`
+  ```json
+  {
+    "recordings": [
+      "agent_email": "agent@bankonnect.link",
+      "recording": {InvalidPasswordException
+        "RecordingId": "Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdanucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super great agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+     "agent_email": "agent_2@bankonnect.link",
+      "recording": {
+        "RecordingId": "asd23dasd-d0w98cmr02-0d29cdi20d2",
+        "agentId": "9sdaad32ddasdnucmod-3cdsamocad-d3cdasud09m",
+        "agentName": "Super hyper agent",
+        "tags": [
+          "c-entire-call-negative"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      },
+      "agent_email": "agent_3@bankonnect.link",
+      "recording": {
+        "RecordingId": "32crwfsd-eccfsfc2rcw-ewdcwecfsd",
+        "agentId": "crwecwr32r-cwdrc2-2crfsda",
+        "agentName": "Super agent",
+        "tags": [
+          "c-entire-call-positive"
+        ],
+        "thumbnail": "https://final-recordings.s3.us-west-.amazonaws.com/thumbnails/Y93217E9DJUC2J-d0w98cmr02-0d29cdi20d2.jpg",
+      }
+    ]
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.9 Post comments to an agent
+Route that lets managers post comments to agents
+
+- **Endpoint**: `/manager/postComment`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "super_id": "adiaynb38rnfc-2ecfdwscd2wfs-fsdd2xds-d2edw",
+    "agent_email": "agent@bankonnect.link",
+    "comment": "This is a super good comment.",
+    "rating": 5
+  }
+  ```
+- **Validations**:
+  - **Body validations**:
+    | Field       | Validation                                 |
+    | ----------- | ------------------------------------------ |
+    | super_id    | Must be a string                           |
+    | agent_email | Must be a valid email                      |
+    | comment     | Must be a string                           |
+    | rating      | Rating must be numeric and between 1 and 5 |
+  - **Other validations**:
+    | Field                    | Validation                                                      |
+    | ------------------------ | --------------------------------------------------------------- |
+    | Access token             | Required                                                        |
+    | Administrator privileges | No administrator privileges needed                              |
+    | Quality role             | It is required to be a quality agent in order to use this route |
+
+- **Errors**:
+  | Code                     | Message                                        | Http |
+  | ------------------------ | ---------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
+  | UserNotQualityException  | The logged account is not a quality agent      | 401  |
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "message": "Comment posted to agent@bankonnect.link"
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
 
 ## 5.10 Update manager's profile picture
+Route that returns the last recordings made in ascendent or descendent order
+
+- **Endpoint**: `/manager/updateProfilePicture`
+- **Method**: `POST`
+- **Body**: 
+- ```json
+  {
+    "user_email": "agent@bankonnect.link",
+    "profile_picture": "http://bankonnect.link/pic.png",
+  }
+  ```
+- **Validations**:
+  - **Body validations**:
+    | Field           | Validation            |
+    | --------------- | --------------------- |
+    | user_email      | Must be a valid email |
+    | profile_picture | Must be a string      |
+  - **Other validations**:
+    | Field                    | Validation                         |
+    | ------------------------ | ---------------------------------- |
+    | Access token             | Required                           |
+    | Administrator privileges | No administrator privileges needed |
+
+- **Errors**:
+  | Code                    | Message                                        | Http |
+  | ----------------------- | ---------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists | 500  |
+  | NoTokenFound            | The token is not present in the request        | 500  |
+  | InvalidTokenException   | The token is no valid                          | 500  |
+  | No code                 | user_email must be a valid email               | 422  |
+  | No code                 | profile_picture must be a string"              | 422  |
+  
+
+
+- **Response**: `HTTP status 200`
+  ```json
+  {
+    "message": "Profile picture updated"
+  }
+  ```
+- **If an error occurs**: `HTTP status 500`
+  ```json
+  {
+    "code": "Error code",
+    "message": "Error message"
+  }
+  ```
+
 
 # 6. ThirdPartyServicesController.ts
 
@@ -1159,6 +1702,7 @@ This route asks for a specified third-party service consutling AWS Lambda API Ga
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1183,7 +1727,7 @@ Obtains the app configurations of a determined user.
 
 - **Endpoint**: `/userConfig/getUserConfig`
 - **Method**: `GET`
-- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
+- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backend.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1196,6 +1740,7 @@ Obtains the app configurations of a determined user.
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1223,7 +1768,7 @@ Obtains the app configurations of a determined user.
 
 - **Endpoint**: `/userConfig/getUserConfig`
 - **Method**: `GET`
-- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
+- **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backend.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
 - **Validations**:
   | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
@@ -1236,6 +1781,7 @@ Obtains the app configurations of a determined user.
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1277,11 +1823,13 @@ Obtains the app configurations of a determined user.
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                     | Message                                                | Http |
+  | ------------------------ | ------------------------------------------------------ | ---- |
+  | UsernameExistsException  | An account with the given email already exists         | 500  |
+  | InvalidPasswordException | Password did not conform with policy                   | 500  |
+  | InvalidTokenException    | The token is no valid                                  | 500  |
+  | NoTokenFound             | The token is not present in the request                | 500  |
+  | No code                  | "Cannot read properties of undefined (reading 'attrs') | 500  |
 
 - **Response**: `HTTP status 200`
   ```json

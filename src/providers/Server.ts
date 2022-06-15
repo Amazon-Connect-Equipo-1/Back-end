@@ -29,15 +29,13 @@ class Server{
     private httpsServer:any;
 
     //Constructor
-    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string;privateKey:any;certificate:any}){
+    constructor(appInit:{port:number;middlewares:any[];controllers:AbstractController[];env:string;}){
         this.app = express();
-        this.credentials = {key: appInit.privateKey, cert: appInit.certificate}
         this.port = appInit.port;
         this.httpsPort = HTTPS_PORT;
         this.env = appInit.env;
         this.loadMiddlewares(appInit.middlewares);
         this.routes(appInit.controllers);
-        this.httpsServer = https.createServer(this.credentials,this.app)
     }
 
     //Methods
@@ -95,10 +93,7 @@ class Server{
             //Running the server
             console.log(`Server: Running @'http://localhost:${this.port}'`);
         });
-        this.httpsServer.listen(this.httpsPort, () => {
-            //Runing https server
-            console.log(`Server HTTPS: Running @'https://localhost:${this.httpsPort}'`);
-        });
+        
     }
 }
 
