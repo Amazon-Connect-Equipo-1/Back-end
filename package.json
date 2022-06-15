@@ -36,6 +36,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
     "mysql2": "^2.3.3",
+    "node": "^17.7.2",
     "node-fetch": "^2.6.1",
     "sequelize": "^6.19.0",
     "uuid": "^8.3.2"

@@ -70,17 +70,17 @@ This route lets you get all the data of a specific agent.
 - **Body**: Doesn't receive a body because of `GET` method but receives a query parameter like this: `https://backtest.bannkonect.link/agent/agentProfile?email=agent@bankonnect.link`
 
 - **Validations**: _No body validation needed_.
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -121,11 +121,11 @@ This route lets you get all the feedback an agent has received.
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
 
@@ -176,21 +176,21 @@ This route lets an agent to mark as read the feedback provided by a quality agen
 - **Validations**:
 
   - **Body validations**
-    | Field | Validation |
+    | Field      | Validation                  |
     | ---------- | --------------------------- |
     | comment_id | Comment ID must be a string |
   - **Other validations**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Required |
+    | Access token             | Required                           |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -223,22 +223,22 @@ This route is used to change the agent's profile picture when needed.
 - **Validations**:
 
   - **Body validations**:
-    | Field | Validation |
+    | Field           | Validation            |
     | --------------- | --------------------- |
-    | user_email | Must be a valid email |
-    | profile_picture | Must be a string |
+    | user_email      | Must be a valid email |
+    | profile_picture | Must be a string      |
   - **Other validations**:
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Required |
+    | Access token             | Required                           |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -269,17 +269,17 @@ This route is used to change the status of an agent when a call is active or whe
   }
   ```
 - **Validations**: _No body validation needed_.
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -318,27 +318,27 @@ Route that lets an agent to sign up in our application
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email address |
-    | password | Must be a string |
-    | password | Must be at least 8 characters long |
-    | name | Must be a string |
-    |name| Must be between 2 and 40 characters long|
-    | super_email | Must be a valid email |  
-    |profile_picture|Must be a string|
+    | Field           | Validation                               |
+    | --------------- | ---------------------------------------- |
+    | email           | Must be a valid email address            |
+    | password        | Must be a string                         |
+    | password        | Must be at least 8 characters long       |
+    | name            | Must be a string                         |
+    | name            | Must be between 2 and 40 characters long |
+    | super_email     | Must be a valid email                    |
+    | profile_picture | Must be a string                         |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | Code                      | Message                                                                                                                                                | Http |
+  | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---- |
+  | InvalidRequestException   | A user with username Supername already exists in your directory                                                                                        | 500  |
+  | UsernameExistsException   | An account with the given email already exists.                                                                                                        | 500  |
+  | InvalidParameterException | Invalid password. Password should be between 8 to 64 characters, and must contain at least one uppercase letter, one lowercase letter, and one number. | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -382,27 +382,27 @@ Route that lets a manager to sign up in our application
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email address |
-    | password | Must be a string |
-    | password | Must be at least 8 characters long |
-    | name | Must be a string |
-    |name| Must be between 2 and 40 characters long|
-    | role | Must be boolean |  
-    |profile_picture|Must be a string|
+    | Field           | Validation                               |
+    | --------------- | ---------------------------------------- |
+    | email           | Must be a valid email address            |
+    | password        | Must be a string                         |
+    | password        | Must be at least 8 characters long       |
+    | name            | Must be a string                         |
+    | name            | Must be between 2 and 40 characters long |
+    | role            | Must be boolean                          |
+    | profile_picture | Must be a string                         |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | Code                      | Message                                                                                                                                                                 | Http |
+  | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+  | InvalidParameterException | User name can only contain the following characters: a-z, A-Z, 0-9, _ (underscore), - (hyphen), + (plus), . (period) and should follow email's format when using @ (at) | 500  |
+  | InvalidParameterException | Invalid phone number format.                                                                                                                                            | 500  |
+  | InvalidRequestException   | A user with username Managersnamee already exists in your directory                                                                                                     | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -435,38 +435,34 @@ Route that lets a manager to sign up in our application
 - **Body**:
   ```json
   {
-    "name": "Manager's name",
-    "password":"My_P4ssw0rD!",
-    "email": "manager_or_quality@bankonnect.link",
-    "role": true, // True for quality agents and false for admin only
-    "phone_number": "+526781927877",
-    "profile_picture": "https://bankonnect.link/pic.png"
+    "email": "agentemail@bankonnect.link",
+    "code": "231955"
   }
   ```
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email address |
-    | password | Must be a string |
-    | password | Must be at least 8 characters long |
-    | name | Must be a string |
-    |name| Must be between 2 and 40 characters long|
-    | role | Must be boolean |  
-    |profile_picture|Must be a string|
+    | Field           | Validation                               |
+    | --------------- | ---------------------------------------- |
+    | email           | Must be a valid email address            |
+    | password        | Must be a string                         |
+    | password        | Must be at least 8 characters long       |
+    | name            | Must be a string                         |
+    | name            | Must be between 2 and 40 characters long |
+    | role            | Must be boolean                          |
+    | profile_picture | Must be a string                         |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | CodeMismatchException  | Invalid verification code provided, please try again. | 500  |
+  | UserNotFoundException | Username/client id combination not found.          | 500  |
+  | code             | Must be between 6 and 8 characters       | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -506,27 +502,29 @@ Route that lets a user (agent, manager or quality analyst) to sign in our app
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email address |
-    | password | Must be a string |
-    | password | Must be at least 8 characters long |
-    | name | Must be a string |
-    |name| Must be between 2 and 40 characters long|
-    | super_email | Must be a valid email |  
-    |profile_picture|Must be a string|
+    | Field           | Validation                               |
+    | --------------- | ---------------------------------------- |
+    | email           | Must be a valid email address            |
+    | password        | Must be a string                         |
+    | password        | Must be at least 8 characters long       |
+    | name            | Must be a string                         |
+    | name            | Must be between 2 and 40 characters long |
+    | super_email     | Must be a valid email                    |
+    | profile_picture | Must be a string                         |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | NotAuthorizedException  | Incorrect username or password. | 500  |
+  | UserNotFoundException | User does not exist.           | 500  |
+  
+
+ 
 
 - **Response**: `HTTP status 200`
   ```json
@@ -563,21 +561,20 @@ Route that lets an agent to sign out from our app
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email|
+    | Field | Validation            |
+    | ----- | --------------------- |
+    | email | Must be a valid email |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | InvalidTokenException | The token is not valid.           | 500  |
+  | MissingRequiredParameter             | Missing required key 'AccessToken' in params       | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -609,21 +606,20 @@ Route that sends an email to a user (agent, manager or quality analyst) if they 
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email|
+    | Field | Validation            |
+    | ----- | --------------------- |
+    | email | Must be a valid email |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UserNotFoundException  | Username/client id combination not found. | 500  |
+  
 
 - **Response**: `HTTP status 200`
   ```json
@@ -657,24 +653,24 @@ Route that lets a user (agent, manager or quality analyst) to change and confirm
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
-    | ------------ | ---------------------------------------- |
-    | email | Must be a valid email|
-    |confirmation_code|Must be a string|
-    |password|Must be a string|
-    |password|Must be at least 8 characters|
+    | Field             | Validation                    |
+    | ----------------- | ----------------------------- |
+    | email             | Must be a valid email         |
+    | confirmation_code | Must be a string              |
+    | password          | Must be a string              |
+    | password          | Must be at least 8 characters |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | CodeMismatchException  | Invalid verification code provided, please try again. | 500  |
+  | UserNotFoundException | Username/client id combination not found.           | 500  |
+  | no code             | Must be at least 8 characters      | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -706,17 +702,17 @@ Route that return the active user's email address
 - **Method**: `GET`
 - **Body**: _No body needed_.
 - **Validations**: _No body validations needed_.
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | InvalidTokenException  |  | 500  |
+  | NotAuthorizedException | Access Token has been revoked         | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -741,17 +737,17 @@ Route that sends an email to a user (agent, manager or quality analyst) if they 
 - **Method**: `GET`
 - **Body**: _No body needed_.
 - **Validations**: _No body validations needed_.
-  | Field | Validation |
-  | ------------------------ | ---------------------------------- |
-  | Access token | Required |
-  | Administrator privileges |Administrator privileges required |
+  | Field                    | Validation                        |
+  | ------------------------ | --------------------------------- |
+  | Access token             | Required                          |
+  | Administrator privileges | Administrator privileges required |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | InvalidTokenException  | The token is not valid. | 500  |
+  | NotAuthorizedException | Access Token has been revoked          | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -830,29 +826,30 @@ This route is used to register a client on the system.
 - **Validations**:
 
   - **Body validations:**
-    | Field | Validation |
+    | Field        | Validation                               |
     | ------------ | ---------------------------------------- |
-    | client_name | Must be a string |
-    | client_name | Must be between 2 and 40 characters long |
-    | password | Password must be a string |
-    | password | Must be at least 8 characters long |
-    | email | Must be a valid email |
-    | phone_number | Must be a string |
-    | phone_number | Must be a valid phone number |
-    | client_pin | Must be a string |
-    | client_pin | Pin must be only 4 characters long |
+    | client_name  | Must be a string                         |
+    | client_name  | Must be between 2 and 40 characters long |
+    | password     | Password must be a string                |
+    | password     | Must be at least 8 characters long       |
+    | email        | Must be a valid email                    |
+    | phone_number | Must be a string                         |
+    | phone_number | Must be a valid phone number             |
+    | client_pin   | Must be a string                         |
+    | client_pin   | Pin must be only 4 characters long       |
   - **Other validations:**
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | No code  | An account with Must be a valid email | 422  |
+  | No code | Validation error           | 500  |
+  | No code             | Pin must be only 4 characters long      | 422  |
+  | No code             | Must be between 2 and 40 characters long      | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -893,22 +890,21 @@ This route allows a client to log in to the system.
 - **Validations**:
 
   - **Body validations**:
-    | Field | Validation |
-    | ------------------------ | ---------------------------------- |
-    | email | Must be a valid email |
-    | password |Password must be a string|
+    | Field    | Validation                |
+    | -------- | ------------------------- |
+    | email    | Must be a valid email     |
+    | password | Password must be a string |
   - **Other validations**:
-    | Field | Validation |
+    | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token | Not required |
+    | Access token             | Not required                       |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | No code  | Incorrect email or password | 500  |
+  | No code | Must be a valid email           | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -957,19 +953,19 @@ Adds a recorded keystroke to an S3 bucket and stores it in the table KeyClickRec
   }
   ```
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | key | Must be a string |
-  | agent_id | Must be a string |
-  | Access token | Required |
+  | key                      | Must be a string                   |
+  | agent_id                 | Must be a string                   |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -999,19 +995,19 @@ Adds a recorded keystroke to an S3 bucket and stores it in the table KeyClickRec
   }
   ```
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | button | Must be a string |
-  | agent_id | Must be a string |
-  | Access token | Required |
+  | button                   | Must be a string                   |
+  | agent_id                 | Must be a string                   |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1035,17 +1031,17 @@ Deletes all the files created locally when recording keys and clicks.
 - **Method**: `GET`
 - **Body**: Doesn't recieve a body because of `GET` method
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1152,17 +1148,17 @@ This route asks for a specified third-party service consutling AWS Lambda API Ga
   }
   ``` 
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1189,17 +1185,17 @@ Obtains the app configurations of a determined user.
 - **Method**: `GET`
 - **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1229,17 +1225,17 @@ Obtains the app configurations of a determined user.
 - **Method**: `GET`
 - **Body**: Doesn't recieve a body because of `GET` method but receives a query parameter like this: `https://backtest.bankonnect.link/userConfig/getUserConfig?id=aisud293o-psop-03pe-8fi0-0d9eiru5peo2`
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1275,17 +1271,17 @@ Obtains the app configurations of a determined user.
   }
   ```
 - **Validations**:
-  | Field | Validation |
+  | Field                    | Validation                         |
   | ------------------------ | ---------------------------------- |
-  | Access token | Required |
+  | Access token             | Required                           |
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code | Message | Http |
+  | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException | An account with the given email already exists | 500 |
-  | InvalidPasswordException | Password did not conform with policy | 500 |
-  | NoTokenFound | The token is not present in the request | 500 |
+  | UsernameExistsException  | An account with the given email already exists | 500  |
+  | InvalidPasswordException | Password did not conform with policy           | 500  |
+  | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
