@@ -85,12 +85,12 @@ This route lets you get all the data of a specific agent.
 - **Response**: `HTTP status 200`
   ```json
   {
-    "agent_id": "asdasd-1323-asdgg-3f-3df4",
-    "super_id": "lkjk3m3kl-3-342342fds-32fdsfwl",
-    "name":  "Agent's name",
-    "password": "MyP4ssw0rD!",
-    "email": "agent@bankonnect.link",
-    "profile_picture": "https://profile.com/picture.png",
+    "agent_id": "asdasdlo-1323-asdg-3fsl-3df401o23l4s",
+    "super_id": "kjk3m3kl-3l3s-3423-42fd-32fdsfwllp32",
+    "name":  "Bruce Banner",
+    "password": "okasdpojjdpaojpsojpaokpoaipoi",
+    "email": "awesome_hulk@bankonnect.link",
+    "profile_picture": "https://profile.com/hulk.png",
     "rating" 4.8,
     "status": "Active",
     "calls": 90
@@ -123,27 +123,25 @@ This route lets you get all the feedback an agent has received.
 - **Errors**:
   | Code                     | Message                                        | Http |
   | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
 
 - **Response**: `HTTP status 200`
 
   ```json
   {
-    "agent_name": "name@server.com",
-    "agent_email": "MYP4sw4rd$",
+    "agent_name": "Stephen Strange",
+    "agent_email": "dr.strange@gmail.com",
     "comments": [
       {
         "comment_id": 203492,
-        "super_id": "0asodsajdhda-213eqsdas-31231dsaa-aseds",
+        "super_id": "0asodsaj-dhda-213e-3123-asedsskelopl",
         "comment": "You can improve.",
         "rating": 3,
         "date": "2022-06-06 15:13:56"
       },
       {
         "comment_id": 203493,
-        "super_id": "089alksajd80-2dasd22sdas-3dqweopaa-a331ds",
+        "super_id": "089alksa-2das-d22s-3dqw-eopaaa331ds4",
         "comment": "You are great!",
         "rating": 5,
         "date": "2022-06-07 20:01:17"

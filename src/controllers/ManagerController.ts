@@ -534,7 +534,7 @@ class ManagerController extends AbstractController{
             let recordings = await db["Calls"].findAll({
                 attributes: ["call_id"],
                 order: [
-                    ['date', order]
+                    ['time_start', order]
                 ],
                 limit: 50
             });
