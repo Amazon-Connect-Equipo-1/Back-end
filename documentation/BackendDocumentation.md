@@ -76,11 +76,14 @@ This route lets you get all the data of a specific agent.
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                     | Message                                                   | Http |
+  | ------------------------ | --------------------------------------------------------- | ---- |
+  | UsernameExistsException  | An account with the given email already exists            | 500  |
+  | InvalidPasswordException | Password did not conform with policy                      | 500  |
+  | NoTokenFound             | The token is not present in the request                   | 500  |
+  | InvalidTokenException    | The token is no valid                                     | 500  |
+  | No code                  | No agent with email: agent@bankonnect.link found          | 500  |
+  | No code                  | WHERE parameter \"email\" has invalid \"undefined\" value | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -121,9 +124,13 @@ This route lets you get all the feedback an agent has received.
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                  | Message                                                   | Http |
+  | --------------------- | --------------------------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request                   | 500  |
+  | InvalidTokenException | The token is no valid                                     | 500  |
+  | No code               | Cannot read properties of undefined (reading 'agent_id')  | 500  |
+  | No code               | WHERE parameter \"email\" has invalid \"undefined\" value | 500  |
+
 
 - **Response**: `HTTP status 200`
 
@@ -184,11 +191,13 @@ This route lets an agent to mark as read the feedback provided by a quality agen
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                    | Message                                        | Http |
+  | ----------------------- | ---------------------------------------------- | ---- |
+  | UsernameExistsException | An account with the given email already exists | 500  |
+  | NoTokenFound            | The token is not present in the request        | 500  |
+  | InvalidTokenException   | The token is no valid                          | 500  |
+  | No code                 | Comment ID must be a string                    | 422  |
+  
 
 - **Response**: `HTTP status 200`
   ```json
@@ -237,6 +246,9 @@ This route is used to change the agent's profile picture when needed.
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
+  | No code                  | Must be a valid email                          | 422  |
+  | No code                  | profile_picture must be a string               | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -257,7 +269,7 @@ This route is used to change the agent's profile picture when needed.
 
 This route is used to change the status of an agent when a call is active or when the agent is online or offline.
 
-- **Endpoint**: `/agent/updateStatus`
+- **Endpoint**: `/agent/updateAgentStatus`
 - **Method**: `POST`
 - **Body**:
   ```json
@@ -278,6 +290,7 @@ This route is used to change the status of an agent when a call is active or whe
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -456,11 +469,11 @@ Route that lets a manager to sign up in our application
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | CodeMismatchException  | Invalid verification code provided, please try again. | 500  |
-  | UserNotFoundException | Username/client id combination not found.          | 500  |
-  | code             | Must be between 6 and 8 characters       | 422  |
+  | Code                  | Message                                               | Http |
+  | --------------------- | ----------------------------------------------------- | ---- |
+  | CodeMismatchException | Invalid verification code provided, please try again. | 500  |
+  | UserNotFoundException | Username/client id combination not found.             | 500  |
+  | code                  | Must be between 6 and 8 characters                    | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -516,10 +529,10 @@ Route that lets a user (agent, manager or quality analyst) to sign in our app
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | NotAuthorizedException  | Incorrect username or password. | 500  |
-  | UserNotFoundException | User does not exist.           | 500  |
+  | Code                   | Message                         | Http |
+  | ---------------------- | ------------------------------- | ---- |
+  | NotAuthorizedException | Incorrect username or password. | 500  |
+  | UserNotFoundException  | User does not exist.            | 500  |
   
 
  
@@ -565,14 +578,15 @@ Route that lets an agent to sign out from our app
   - **Other validations:**
     | Field                    | Validation                         |
     | ------------------------ | ---------------------------------- |
-    | Access token             | Required                       |
+    | Access token             | Required                           |
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | InvalidTokenException | The token is not valid.           | 500  |
-  | MissingRequiredParameter             | Missing required key 'AccessToken' in params       | 500  |
+  | Code                     | Message                                      | Http |
+  | ------------------------ | -------------------------------------------- | ---- |
+  | InvalidTokenException    | The token is not valid.                      | 500  |
+  | MissingRequiredParameter | Missing required key 'AccessToken' in params | 500  |
+  | InvalidTokenException    | The token is no valid                        | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -614,9 +628,9 @@ Route that sends an email to a user (agent, manager or quality analyst) if they 
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UserNotFoundException  | Username/client id combination not found. | 500  |
+  | Code                  | Message                                   | Http |
+  | --------------------- | ----------------------------------------- | ---- |
+  | UserNotFoundException | Username/client id combination not found. | 500  |
   
 
 - **Response**: `HTTP status 200`
@@ -664,11 +678,11 @@ Route that lets a user (agent, manager or quality analyst) to change and confirm
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | CodeMismatchException  | Invalid verification code provided, please try again. | 500  |
-  | UserNotFoundException | Username/client id combination not found.           | 500  |
-  | no code             | Must be at least 8 characters      | 422  |
+  | Code                  | Message                                               | Http |
+  | --------------------- | ----------------------------------------------------- | ---- |
+  | CodeMismatchException | Invalid verification code provided, please try again. | 500  |
+  | UserNotFoundException | Username/client id combination not found.             | 500  |
+  | no code               | Must be at least 8 characters                         | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -706,11 +720,11 @@ Route that return the active user's email address
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | InvalidTokenException  |  | 500  |
-  | NotAuthorizedException | Access Token has been revoked         | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                   | Message                                 | Http |
+  | ---------------------- | --------------------------------------- | ---- |
+  | NotAuthorizedException | Access Token has been revoked           | 500  |
+  | NoTokenFound           | The token is not present in the request | 500  |
+  | InvalidTokenException  | The token is no valid                   | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -741,11 +755,12 @@ Route that sends an email to a user (agent, manager or quality analyst) if they 
   | Administrator privileges | Administrator privileges required |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | InvalidTokenException  | The token is not valid. | 500  |
-  | NotAuthorizedException | Access Token has been revoked          | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                   | Message                                 | Http |
+  | ---------------------- | --------------------------------------- | ---- |
+  | InvalidTokenException  | The token is not valid.                 | 500  |
+  | NotAuthorizedException | Access Token has been revoked           | 500  |
+  | NoTokenFound           | The token is not present in the request | 500  |
+
 
 - **Response**: `HTTP status 200`
   ```json
@@ -842,12 +857,12 @@ This route is used to register a client on the system.
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | No code  | An account with Must be a valid email | 422  |
-  | No code | Validation error           | 500  |
-  | No code             | Pin must be only 4 characters long      | 422  |
-  | No code             | Must be between 2 and 40 characters long      | 422  |
+  | Code    | Message                                  | Http |
+  | ------- | ---------------------------------------- | ---- |
+  | No code | An account with Must be a valid email    | 422  |
+  | No code | Validation error                         | 500  |
+  | No code | Pin must be only 4 characters long       | 422  |
+  | No code | Must be between 2 and 40 characters long | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -899,10 +914,10 @@ This route allows a client to log in to the system.
     | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | No code  | Incorrect email or password | 500  |
-  | No code | Must be a valid email           | 422  |
+  | Code    | Message                     | Http |
+  | ------- | --------------------------- | ---- |
+  | No code | Incorrect email or password | 500  |
+  | No code | Must be a valid email       | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -959,11 +974,12 @@ Adds a recorded keystroke to an S3 bucket and stores it in the table KeyClickRec
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                  | Message                                 | Http |
+  | --------------------- | --------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request | 500  |
+  | InvalidTokenException | The token is no valid                   | 500  |
+  | No code               | key must be a string                    | 422  |
+  | No code               | agent_id must be a string               | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1001,11 +1017,12 @@ Adds a recorded keystroke to an S3 bucket and stores it in the table KeyClickRec
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code                     | Message                                        | Http |
-  | ------------------------ | ---------------------------------------------- | ---- |
-  | UsernameExistsException  | An account with the given email already exists | 500  |
-  | InvalidPasswordException | Password did not conform with policy           | 500  |
-  | NoTokenFound             | The token is not present in the request        | 500  |
+  | Code                  | Message                                 | Http |
+  | --------------------- | --------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request | 500  |
+  | InvalidTokenException | The token is no valid                   | 500  |
+  | No code               | button must be a string                 | 422  |
+  | No code               | agent_id must be a string               | 422  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1040,6 +1057,7 @@ Deletes all the files created locally when recording keys and clicks.
   | UsernameExistsException  | An account with the given email already exists | 500  |
   | InvalidPasswordException | Password did not conform with policy           | 500  |
   | NoTokenFound             | The token is not present in the request        | 500  |
+  | InvalidTokenException    | The token is no valid                          | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
@@ -1070,9 +1088,10 @@ Route that returns a list of all the agents registered in our app
   | Administrator privileges | No administrator privileges needed |
 
 - **Errors**:
-  | Code         | Message                                 | Http |
-  | ------------ | --------------------------------------- | ---- |
-  | NoTokenFound | The token is not present in the request | 500  |
+  | Code                  | Message                                 | Http |
+  | --------------------- | --------------------------------------- | ---- |
+  | NoTokenFound          | The token is not present in the request | 500  |
+  | InvalidTokenException | The token is no valid                   | 500  |
 
 - **Response**: `HTTP status 200`
   ```json
